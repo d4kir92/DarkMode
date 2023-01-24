@@ -46,9 +46,45 @@ end
 DMHIDDEN = CreateFrame( "FRAME", "DMHIDDEN" )
 DMHIDDEN:Hide()
 
+local checkFrames = {
+	"", -- self
+
+	".Background",
+	".Bg",
+	".Bg.TopSection",
+	".Bg.BottomEdge",
+
+	"Inset", -- INSET
+	"Inset.Bg",
+	"Inset.NineSlice", -- INSET, NINESLICE
+	"Inset.NineSlice.TopEdge",
+	"Inset.NineSlice.RightEdge",
+	"Inset.NineSlice.LeftEdge",
+	"Inset.NineSlice.BottomEdge",
+	"Inset.NineSlice.TopRightCorner",
+	"Inset.NineSlice.TopLeftCorner",
+	"Inset.NineSlice.BottomRightCorner",
+	"Inset.NineSlice.BottomLeftCorner",
+	
+	".NineSlice", -- NINESLICE
+	".NineSlice.TopEdge",
+	".NineSlice.RightEdge",
+	".NineSlice.LeftEdge",
+	".NineSlice.BottomEdge",
+	".NineSlice.TopRightCorner",
+	".NineSlice.TopLeftCorner",
+	".NineSlice.BottomRightCorner",
+	".NineSlice.BottomLeftCorner",
+
+	"ScrollFrame", -- SCROLLFRAME
+	".Begin",
+	".Middle",
+	".End",
+	".ScrollBar.Background",
+}
+
 local DMUi = {
 	-- Collections
-	-- Classic ERA
 	["ActionButtons"] = {
 		"ActionButton",
 		"MultiBarBottomLeftButton",
@@ -66,15 +102,20 @@ local DMUi = {
 		"MultiBar5Button",
 		"MultiBar6Button",
 		"MultiBar7Button",
+
+		"StanceButton",
+
+		"PetActionButton",
 	},
 	["Minimap"] = {
 		"MinimapBorder",
 		"MinimapBorderTop",
 		"TimeManagerClockButton",
+		"MinimapCompassTexture",
+		"MinimapCluster.BorderTop",
 	},
 
 	-- Textures
-	-- Classic ERA
 	"PlayerFrameTexture",
 	"TargetFrameTextureFrameTexture",
 	"FocusFrameTextureFrameTexture",
@@ -89,6 +130,7 @@ local DMUi = {
 	-- RETAIL
 	"PlayerFrame.PlayerFrameContainer.FrameTexture",
 	"TargetFrame.TargetFrameContainer.FrameTexture",
+	"FocusFrame.TargetFrameContainer.FrameTexture",
 }
 
 local DMUiAddons = {
@@ -96,9 +138,10 @@ local DMUiAddons = {
 }
 
 local DMFrames = {
-	-- Classic ERA
 	-- 1
 	"PaperDollFrame",
+	"CharacterFrame",
+	"CharacterStatsPane",
 	"CharacterFrameTab1",
 	"CharacterFrameTab2",
 	"CharacterFrameTab3",
@@ -136,6 +179,8 @@ local DMFrames = {
 	"QuestLogFrame",
 	"QuestLogCollapseAllButton",
 	--"QuestLogExpandButtonFrame", -- false
+	"QuestMapFrame",
+	"QuestScrollFrame.ScrollBar",
 
 	-- 5
 	"FriendsFrame",
@@ -157,9 +202,18 @@ local DMFrames = {
 	"LFMFrame",
 	"LFGBrowseFrame",
 	"LFGListingFrame",
+	"PVEFrame",
+	"PVEFrameTab1",
+	"PVEFrameTab2",
+	"PVEFrameTab3",
+	"PVEFrameTab4",
+	"PVPFrame",
+	"ChallengesFrame",
+
 
 	-- 8
 	"GameMenuFrame",
+	"GameMenuFrame.Header",
 
 	-- NPC
 	"QuestFrameDetailPanel",
@@ -173,7 +227,9 @@ local DMFrames = {
 	"QuestRewardScrollFrame",
 	"QuestFrameRewardPanel",
 
+	"GossipFrame",
 	"GossipFrame.GreetingPanel",
+	"GossipFrame.GreetingPanel.ScrollBox",
 	"GossipFrame.GreetingPanel.ScrollBar.Background",
 
 	"MerchantFrame",
@@ -211,14 +267,21 @@ local DMFrames = {
 	"TimeManagerFrame",
 
 	"MailFrame",
+	"MailFrameTab1",
+	"MailFrameTab2",
 	"InboxFrame",
 	"SendMailFrame",
 	"SendMailMoney",
 	"SendMailMoneyBg",
 	"SendMailMoneyFrame",
+	"SendMail",
 	"MailEditBoxScrollBar",
 
 	"BankFrame",
+	"BankFrameTab1",
+	"BankFrameTab2",
+	"BankFrameMoneyFrame",
+	"BankFrameMoneyFrameBorder",
 
 	"BackpackTokenFrame",
 	"ContainerFrame1",
@@ -233,6 +296,7 @@ local DMFrames = {
 	"ContainerFrame10",
 	"ContainerFrame11",
 	"ContainerFrame12",
+	"ContainerFrameCombinedBags",
 
 	"PVPFrame",
 	"PVPParentFrame",
@@ -281,6 +345,11 @@ local DMFramesAddons = {
 	"BidBuyoutButton",
 	"BidCloseButton",
 
+	"AuctionHouseFrame",
+	"AuctionHouseFrameBuyTab",
+	"AuctionHouseFrameSellTab",
+	"AuctionHouseFrameAuctionsTab",
+
 	"PlayerTalentFrame",
 	"PlayerTalentFramePointsBar",
 	"PlayerSpecTab1",
@@ -293,12 +362,50 @@ local DMFramesAddons = {
 	"PlayerTalentFrameTab4",
 	"PlayerTalentFrameTab5",
 
+	"ClassTalentFrame",
+	"ClassTalentFrame.TabSystem",
+	"ClassTalentFrame.TalentsTab.BottomBar",
+
 	"AchievementFrame",
+	"AchievementFrame.Header",
 	"AchievementFrameTab1",
 	"AchievementFrameTab2",
+	"AchievementFrameTab3",
+	"AchievementFrameTab4",
 	"AchievementFrameHeader",
 	"AchievementFrameCategories",
 	"AchievementFrameSummary",
+
+	"WeeklyRewardsFrame",
+
+	"CommunitiesFrame",
+	"CommunitiesFrameCommunitiesList",
+	"CommunitiesFrame.MemberList",
+	"CommunitiesFrame.Chat.MessageFrame.ScrollBar",
+	--"CommunitiesFrame.ChatTab",
+	--"CommunitiesFrame.RosterTab",
+	--"CommunitiesFrame.GuildBenefitsTab",
+	--"CommunitiesFrame.GuildInfoTab",
+
+	"CollectionsJournal",
+	"CollectionsJournalTab1",
+	"CollectionsJournalTab2",
+	"CollectionsJournalTab3",
+	"CollectionsJournalTab4",
+	"CollectionsJournalTab5",
+	"CollectionsJournalTab6",
+	"WardrobeCollectionFrame",
+	"WardrobeCollectionFrame.ItemsCollectionFrame",
+	"ToyBox",
+	"ToyBox.iconsFrame",
+	"HeirloomsJournal",
+	"HeirloomsJournal.iconsFrame",
+
+	"EncounterJournal",
+	"EncounterJournalSuggestTab",
+	"EncounterJournalDungeonTab",
+	"EncounterJournalRaidTab",
+	"EncounterJournalInstanceSelect",
 }
 
 local DMTexts = {
@@ -367,6 +474,8 @@ DMT[136797] = true
 DMT[131116] = true
 DMT[130709] = true
 DMT[136382] = true
+DMT[136382] = true
+DMT[1723833] = true
 
 function DarkMode:GetGlobalColor()
 	local colorMode = DMColorModes[DarkMode:GV( "COLORMODE", 1 )]
@@ -391,16 +500,26 @@ function DarkMode:GetGlobalColor()
 end
 
 local DMTextures = {}
-function DarkMode:UpdateColor( texture )
-	if texture and texture.SetVertexColor and texture.GetTexture then
-		if texture:GetTexture() == nil then 
+function DarkMode:UpdateColor( texture, show, name )
+	if texture == nil then
+		print("INVALID TEXTURE OBJECT")
+		return false
+	end
+	local textureId = nil
+	if texture.GetTexture ~= nil then
+		textureId = texture:GetTexture()
+	end
+
+	if textureId and DMT[textureId] then
+		return false
+	end
+
+	if textureId == nil and texture.SetColorTexture and strfind( name or "", "ContainerFrame", 1, true ) ~= nil then
+		texture:SetColorTexture( DarkMode:GetGlobalColor() )
+		return true
+	elseif textureId and texture.SetVertexColor then
+		if texture.SetText then
 			return false
-		end
-		if DMT[texture:GetTexture()] then
-			return false
-		end
-		if texture:GetParent():GetName() == "XX" then -- DEBUG
-			print("> TextureName:", texture:GetTexture())
 		end
 
 		if texture.dm_setup == nil then
@@ -413,7 +532,10 @@ function DarkMode:UpdateColor( texture )
 			end )
 		end
 		texture:SetVertexColor( DarkMode:GetGlobalColor() )
-		tinsert( DMTextures, texture )
+
+		if not tContains( DMTextures, texture ) then
+			tinsert( DMTextures, texture )
+		end
 		return true
 	end
 	return false
@@ -427,37 +549,66 @@ end
 
 function DarkMode:GetFrame( name )
 	local frame = _G[name]
-	if frame ~= nil then
+	if frame ~= nil and type( frame ) == "table" then
 		return frame
 	elseif strfind( name, ".", 1, true ) then
 		for i, v in pairs( { strsplit( ".", name ) } ) do
 			if i == 1 then
-				frame = _G[v]
+				if type( _G[v] ) == "table" then
+					frame = _G[v]
+				elseif i > 1 then
+					return nil
+				end
 			elseif frame then
-				frame = frame[v]
+				if type( frame[v] ) == "table" then
+					frame = frame[v]
+				elseif i > 1 then
+					return nil
+				end
 			else
 				return nil
 			end
 		end
-		return frame
+		if type( frame ) == "table" then
+			return frame
+		end
 	end
 	return nil
 end
 
-function DarkMode:FindTextures( name )
-	local frame = DarkMode:GetFrame( name )
+function DarkMode:FindTextures( frame, show, name )
 	if frame ~= nil then
 		if frame.SetVertexColor then
-			DarkMode:UpdateColor( frame )
+			DarkMode:UpdateColor( frame, show, name )
 		else
-			if frame.GetRegions then
+			if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
 				for i, v in pairs( { frame:GetRegions() } ) do
-					if v.SetVertexColor and v.GetTexture then
-						DarkMode:UpdateColor( v )
+					if v.SetVertexColor then
+						DarkMode:UpdateColor( v, show, name )
+					end
+				end
+			end
+			if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
+				for i, v in pairs( { frame:GetChildren() } ) do
+					if v.SetVertexColor then
+						DarkMode:UpdateColor( v, show, name )
 					end
 				end
 			end
 		end
+	end
+end
+
+function DarkMode:FindTexturesByName( name, show )
+	local frame = DarkMode:GetFrame( name, show )
+
+	local show = false
+	if name and strfind( name, "Container", 1, true ) and strfind( name, "TopSection", 1, true ) then
+		show = true
+	end
+
+	if frame then
+		DarkMode:FindTextures( frame, show, name )
 	end
 end
 
@@ -474,7 +625,10 @@ function DarkMode:UpdateText( text, name, layer )
 			end )
 		end
 		text:SetTextColor( 1, 1, 1, 1 )
-		tinsert( DMFS, text )
+
+		if not tContains( DMFS, text ) then
+			tinsert( DMFS, text )
+		end
 		return true
 	end
 	return false
@@ -511,15 +665,29 @@ end
 
 function DarkMode:FindTextsByName( name )
 	local frame = DarkMode:GetFrame( name )
-	DarkMode:FindTexts( frame )
+	if frame then
+		DarkMode:FindTexts( frame )
+	end
 end
 
 function DarkMode:InitGreetingPanel()
 	local frame = DarkMode:GetFrame( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+	local frameTab = {
+		"GossipFrame",
+		"GossipFrame.GreetingPanel",
+		"GossipFrame.GreetingPanel.ScrollBox",
+		"GossipFrame.GreetingPanel.ScrollBar.Background",
+	}
 	if frame then
 		frame:HookScript( "OnShow", function(self, ... )
-			C_Timer.After( 0, function()
+			C_Timer.After( 0.01, function()
 				DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+
+				for index, name in pairs( frameTab ) do
+					for i, v in pairs( checkFrames ) do
+						DarkMode:FindTexturesByName( name .. v )
+					end
+				end
 			end )
 		end )
 	end
@@ -550,20 +718,19 @@ function DarkMode:Event( event, ... )
 						end
 					elseif index == "Minimap" then
 						for i, name in pairs( tab ) do
-							DarkMode:FindTextures( name )
+							DarkMode:FindTexturesByName( name )
 						end
 					elseif type( tab ) == "string" then
-						DarkMode:FindTextures( tab )
+						DarkMode:FindTexturesByName( tab )
 					else
 						print( "Missing", index, tab )
 					end
 				end
 
 				for index, name in pairs( DMFrames ) do
-					DarkMode:FindTextures( name )
-					DarkMode:FindTextures( name .. "Inset" )
-					DarkMode:FindTextures( name .. ".NineSlice" )
-					DarkMode:FindTextures( name .. "ScrollFrame" )
+					for i, v in pairs( checkFrames ) do
+						DarkMode:FindTexturesByName( name .. v )
+					end
 				end
 				for index, name in pairs( DMTexts ) do
 					DarkMode:FindTextsByName( name )
@@ -640,10 +807,30 @@ function DarkMode:Event( event, ... )
 		end
 	elseif event == "ADDON_LOADED" then
 		for index, name in pairs( DMFramesAddons ) do
-			DarkMode:FindTextures( name )
-			DarkMode:FindTextures( name .. "Inset" )
-			DarkMode:FindTextures( name .. ".NineSlice" )
-			DarkMode:FindTextures( name .. "ScrollFrame" )
+			for i, v in pairs( checkFrames ) do
+				DarkMode:FindTexturesByName( name .. v )
+			end
+		end
+
+		if ClassTalentFrame then
+			if ClassTalentFrame.dm_setup == nil then
+				ClassTalentFrame.dm_setup = true
+				
+				function ClassTalentFrame:UpdateColors()
+					local tabs = { ClassTalentFrame.TabSystem:GetChildren() }
+					for i, v in pairs( tabs ) do
+						for x, w in pairs( { v:GetRegions() } ) do 
+							DarkMode:UpdateColor( w )
+						end
+					end
+				end
+				
+
+				ClassTalentFrame:HookScript( "OnShow", function( self )
+					ClassTalentFrame:UpdateColors()
+				end )
+				ClassTalentFrame:UpdateColors()
+			end
 		end
 	end
 end
