@@ -105,12 +105,17 @@ local DMFrames = {
 	"CharacterFrameTab4",
 	"CharacterFrameTab5",
 	"ReputationFrame",
+	"ReputationListScrollFrame",
 	"SkillFrame",
 	"SkillListScrollFrame",
 	"SkillDetailScrollFrame",
 	"HonorFrame",
 	"PetPaperDollFrame",
+	"PetPaperDollFrameTab1",
+	"PetPaperDollFrameTab2",
+	"PetPaperDollFrameTab3",
 	"PetPaperDollFrameExpBar",
+	"TokenFrame",
 
 	-- 2
 	"SpellBookFrame",
@@ -122,6 +127,8 @@ local DMFrames = {
 	"SpellBookSkillLineTab6",
 	"SpellBookSkillLineTab7", -- WhatsTraining
 	"WhatsTrainingFrame",
+	"SpellBookFrameTabButton1",
+	"SpellBookFrameTabButton2",
 
 	-- 3 requires addon loaded
 
@@ -148,6 +155,8 @@ local DMFrames = {
 	"LFGParentFrameTab1",
 	"LFGParentFrameTab2",
 	"LFMFrame",
+	"LFGBrowseFrame",
+	"LFGListingFrame",
 
 	-- 8
 	"GameMenuFrame",
@@ -164,8 +173,8 @@ local DMFrames = {
 	"QuestRewardScrollFrame",
 	"QuestFrameRewardPanel",
 
-	--"GossipFrame.GreetingPanel",
-	--"GossipFrame.GreetingPanel.ScrollBar.Background",
+	"GossipFrame.GreetingPanel",
+	"GossipFrame.GreetingPanel.ScrollBar.Background",
 
 	"MerchantFrame",
 	"MerchantBuyBackItem",
@@ -189,7 +198,6 @@ local DMFrames = {
 
 	-- 
 	"AddonList",
-	"AddonListScrollFrame",
 	"AddonListDisableAllButton_RightSeparator",
 	"AddonListEnableAllButton_RightSeparator",
 	"AddonListOkayButton_LeftSeparator",
@@ -225,6 +233,15 @@ local DMFrames = {
 	"ContainerFrame10",
 	"ContainerFrame11",
 	"ContainerFrame12",
+
+	"PVPFrame",
+	"PVPParentFrame",
+	"PVPParentFrameTab1",
+	"PVPParentFrameTab2",
+	"BattlefieldFrame",
+	"BattlefieldFrameType",
+
+	"TaxiFrame",
 }
 
 local DMFramesAddons = {
@@ -242,7 +259,7 @@ local DMFramesAddons = {
 	"MacroButtonScrollFrame",
 
 	"TradeSkillFrame",
-	"TradeSkillListScrollFrame",
+	"TradeSkillList",
 
 	"AuctionFrame",
 	"AuctionFrameTab1",
@@ -263,6 +280,25 @@ local DMFramesAddons = {
 	"BidBidButton",
 	"BidBuyoutButton",
 	"BidCloseButton",
+
+	"PlayerTalentFrame",
+	"PlayerTalentFramePointsBar",
+	"PlayerSpecTab1",
+	"PlayerSpecTab2",
+	"PlayerSpecTab3",
+	"PlayerSpecTab4",
+	"PlayerTalentFrameTab1",
+	"PlayerTalentFrameTab2",
+	"PlayerTalentFrameTab3",
+	"PlayerTalentFrameTab4",
+	"PlayerTalentFrameTab5",
+
+	"AchievementFrame",
+	"AchievementFrameTab1",
+	"AchievementFrameTab2",
+	"AchievementFrameHeader",
+	"AchievementFrameCategories",
+	"AchievementFrameSummary",
 }
 
 local DMTexts = {
@@ -304,9 +340,6 @@ local DMTexts = {
 	"GossipTitleButton13",
 	"GossipTitleButton14",
 	"GossipTitleButton15",
-
-	"GossipFrame.GreetingPanel.ScrollBox.ScrollTarget",
-
 }
 
 local DMT = {}
@@ -325,6 +358,15 @@ DMT["RTPortrait1"] = true
 DMT["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMT["Interface\\MailFrame\\Mail-Icon"] = true
 DMT["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
+DMT[136830] = true
+DMT[130724] = true
+DMT[130718] = true
+DMT[135770] = true
+DMT[135775] = true
+DMT[136797] = true
+DMT[131116] = true
+DMT[130709] = true
+DMT[136382] = true
 
 function DarkMode:GetGlobalColor()
 	local colorMode = DMColorModes[DarkMode:GV( "COLORMODE", 1 )]
@@ -357,7 +399,7 @@ function DarkMode:UpdateColor( texture )
 		if DMT[texture:GetTexture()] then
 			return false
 		end
-		if texture:GetParent():GetName() == "XX" then --ClassTrainerFrame
+		if texture:GetParent():GetName() == "XX" then -- DEBUG
 			print("> TextureName:", texture:GetTexture())
 		end
 
@@ -438,9 +480,7 @@ function DarkMode:UpdateText( text, name, layer )
 	return false
 end
 
-
-function DarkMode:FindTexts( name )
-	local frame = DarkMode:GetFrame( name )
+function DarkMode:FindTexts( frame )
 	if frame ~= nil then
 		if frame.SetTextColor then
 			DarkMode:UpdateText( frame, name, 1 )
@@ -450,6 +490,9 @@ function DarkMode:FindTexts( name )
 					if v.SetTextColor then
 						DarkMode:UpdateText( v, name, 2 )
 					end
+					if type( v ) == "table" then
+						DarkMode:FindTexts( v )
+					end
 				end
 			end
 			if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
@@ -457,9 +500,28 @@ function DarkMode:FindTexts( name )
 					if v.SetTextColor then
 						DarkMode:UpdateText( v, name, 3 )
 					end
+					if type( v ) == "table" then
+						DarkMode:FindTexts( v )
+					end
 				end
 			end
 		end
+	end
+end
+
+function DarkMode:FindTextsByName( name )
+	local frame = DarkMode:GetFrame( name )
+	DarkMode:FindTexts( frame )
+end
+
+function DarkMode:InitGreetingPanel()
+	local frame = DarkMode:GetFrame( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+	if frame then
+		frame:HookScript( "OnShow", function(self, ... )
+			C_Timer.After( 0, function()
+				DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+			end )
+		end )
 	end
 end
 
@@ -472,7 +534,9 @@ function DarkMode:Event( event, ... )
 			DarkMode:InitDB()
 
 			DarkMode:InitDMSettings()
-			
+
+			DarkMode:InitGreetingPanel()
+
 			C_Timer.After( 0.1, function()
 				for index, tab in pairs( DMUi ) do
 					if index == "ActionButtons" then
@@ -499,9 +563,10 @@ function DarkMode:Event( event, ... )
 					DarkMode:FindTextures( name )
 					DarkMode:FindTextures( name .. "Inset" )
 					DarkMode:FindTextures( name .. ".NineSlice" )
+					DarkMode:FindTextures( name .. "ScrollFrame" )
 				end
 				for index, name in pairs( DMTexts ) do
-					DarkMode:FindTexts( name )
+					DarkMode:FindTextsByName( name )
 				end
 			end )
 
@@ -578,6 +643,7 @@ function DarkMode:Event( event, ... )
 			DarkMode:FindTextures( name )
 			DarkMode:FindTextures( name .. "Inset" )
 			DarkMode:FindTextures( name .. ".NineSlice" )
+			DarkMode:FindTextures( name .. "ScrollFrame" )
 		end
 	end
 end
