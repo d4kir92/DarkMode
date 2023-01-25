@@ -17,7 +17,8 @@ function DarkMode:Lang_enUS()
 		["GENERAL"] = "General",
 		["SHOWMINIMAPBUTTON"] = "Show Minimap Button",
 
-		["COLORMODE"] = "Color Mode",
+		["COLORMODE"] = "Color Mode Ui",
+		["COLORMODEF"] = "Color Mode Windows",
 	}
 
 	DarkMode:UpdateLanguageTab( tab )

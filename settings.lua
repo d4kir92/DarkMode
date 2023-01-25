@@ -2,7 +2,7 @@
 local AddOnName, DarkMode = ...
 
 local config = {
-	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.1" )
+	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.2" )
 }
 
 local searchStr = ""
@@ -20,6 +20,7 @@ DMColorModes = {
 	"Darker+",
 	"Black",
 	"ClassColor",
+	"Default",
 	"Custom",
 }
 
@@ -225,11 +226,18 @@ function DarkMode:InitDMSettings()
 
 		AddCategory( "GENERAL" )
 		AddCheckBox( 4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton )
+
 		local sCM = AddSlider( 4, "COLORMODE", 1, function( self, val )
-			self.Text:SetText( "Color Mode: " .. DMColorModes[val] )
+			self.Text:SetText( DarkMode:GT( "COLORMODE" ) .. ": " .. DMColorModes[val] )
 			DarkMode:UpdateColors()
 		end, 1, getn( DMColorModes ), 1 )
-		sCM.Text:SetText( "Color Mode: " .. DMColorModes[DarkMode:GV( "COLORMODE", 1 )] )
+		sCM.Text:SetText( DarkMode:GT( "COLORMODE" ) .. ": " .. DMColorModes[DarkMode:GV( "COLORMODE", 1 )] )
+
+		local sCMF = AddSlider( 4, "COLORMODEF", 1, function( self, val )
+			self.Text:SetText( DarkMode:GT( "COLORMODEF" ) .. ": " .. DMColorModes[val] )
+			DarkMode:UpdateColors()
+		end, 1, getn( DMColorModes ), 1 )
+		sCMF.Text:SetText( DarkMode:GT( "COLORMODEF" ) .. ": " .. DMColorModes[DarkMode:GV( "COLORMODEF", 1 )] )
 	end
 
 	DMSettings.Search = CreateFrame( "EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate" )

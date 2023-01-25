@@ -46,462 +46,9 @@ end
 DMHIDDEN = CreateFrame( "FRAME", "DMHIDDEN" )
 DMHIDDEN:Hide()
 
-local checkFrames = {
-	"", -- self
-
-	".Background",
-	".Bg",
-	".Bg.TopSection",
-	".Bg.BottomEdge",
-
-	"Inset", -- INSET
-	"Inset.Bg",
-	"Inset.NineSlice", -- INSET, NINESLICE
-	"Inset.NineSlice.TopEdge",
-	"Inset.NineSlice.RightEdge",
-	"Inset.NineSlice.LeftEdge",
-	"Inset.NineSlice.BottomEdge",
-	"Inset.NineSlice.TopRightCorner",
-	"Inset.NineSlice.TopLeftCorner",
-	"Inset.NineSlice.BottomRightCorner",
-	"Inset.NineSlice.BottomLeftCorner",
-	
-	".NineSlice", -- NINESLICE
-	".NineSlice.TopEdge",
-	".NineSlice.RightEdge",
-	".NineSlice.LeftEdge",
-	".NineSlice.BottomEdge",
-	".NineSlice.TopRightCorner",
-	".NineSlice.TopLeftCorner",
-	".NineSlice.BottomRightCorner",
-	".NineSlice.BottomLeftCorner",
-
-	"ScrollFrame", -- SCROLLFRAME
-	".Begin",
-	".Middle",
-	".End",
-	".ScrollBar.Background",
-}
-
-local DMUi = {
-	-- Collections
-	["ActionButtons"] = {
-		"ActionButton",
-		"MultiBarBottomLeftButton",
-		"MultiBarBottomRightButton",
-		"MultiBarLeftButton",
-		"MultiBarRightButton",
-
-		-- MoveAny
-		"ActionBar7Button",
-		"ActionBar8Button",
-		"ActionBar9Button",
-		"ActionBar10Button",
-
-		-- RETAIL
-		"MultiBar5Button",
-		"MultiBar6Button",
-		"MultiBar7Button",
-
-		"StanceButton",
-
-		"PetActionButton",
-	},
-	["Minimap"] = {
-		"MinimapBorder",
-		"MinimapBorderTop",
-		"TimeManagerClockButton",
-		"MinimapCompassTexture",
-		"MinimapCluster.BorderTop",
-	},
-
-	-- Textures
-	"PlayerFrameTexture",
-	"TargetFrameTextureFrameTexture",
-	"FocusFrameTextureFrameTexture",
-	"TargetFrameToTTextureFrameTexture",
-	"PetFrameTexture",
-
-	-- Classic ERA Frames
-	"MainMenuBarArtFrame",
-	"MainMenuExpBar",
-	"ReputationWatchBar.StatusBar",
-
-	-- RETAIL
-	"PlayerFrame.PlayerFrameContainer.FrameTexture",
-	"TargetFrame.TargetFrameContainer.FrameTexture",
-	"FocusFrame.TargetFrameContainer.FrameTexture",
-}
-
-local DMUiAddons = {
-	"FocusFrame.FocusFrameContainer.FrameTexture",
-}
-
-local DMFrames = {
-	-- 1
-	"PaperDollFrame",
-	"CharacterFrame",
-	"CharacterStatsPane",
-	"CharacterFrameTab1",
-	"CharacterFrameTab2",
-	"CharacterFrameTab3",
-	"CharacterFrameTab4",
-	"CharacterFrameTab5",
-	"ReputationFrame",
-	"ReputationListScrollFrame",
-	"SkillFrame",
-	"SkillListScrollFrame",
-	"SkillDetailScrollFrame",
-	"HonorFrame",
-	"PetPaperDollFrame",
-	"PetPaperDollFrameTab1",
-	"PetPaperDollFrameTab2",
-	"PetPaperDollFrameTab3",
-	"PetPaperDollFrameExpBar",
-	"TokenFrame",
-
-	-- 2
-	"SpellBookFrame",
-	"SpellBookSkillLineTab1",
-	"SpellBookSkillLineTab2",
-	"SpellBookSkillLineTab3",
-	"SpellBookSkillLineTab4",
-	"SpellBookSkillLineTab5",
-	"SpellBookSkillLineTab6",
-	"SpellBookSkillLineTab7", -- WhatsTraining
-	"WhatsTrainingFrame",
-	"SpellBookFrameTabButton1",
-	"SpellBookFrameTabButton2",
-
-	-- 3 requires addon loaded
-
-	-- 4
-	"QuestLogFrame",
-	"QuestLogCollapseAllButton",
-	--"QuestLogExpandButtonFrame", -- false
-	"QuestMapFrame",
-	"QuestScrollFrame.ScrollBar",
-
-	-- 5
-	"FriendsFrame",
-	"FriendsFrameFriendsScrollFrame",
-	"FriendsFrameTab1",
-	"FriendsFrameTab2",
-	"FriendsFrameTab3",
-	"FriendsFrameTab4",
-	"WhoFrameList",
-
-	-- 6
-	"WorldMapFrame",
-	"WorldMapFrame.BorderFrame",
-
-	-- 7
-	"LFGParentFrame",
-	"LFGParentFrameTab1",
-	"LFGParentFrameTab2",
-	"LFMFrame",
-	"LFGBrowseFrame",
-	"LFGListingFrame",
-	"PVEFrame",
-	"PVEFrameTab1",
-	"PVEFrameTab2",
-	"PVEFrameTab3",
-	"PVEFrameTab4",
-	"PVPFrame",
-	"ChallengesFrame",
-
-
-	-- 8
-	"GameMenuFrame",
-	"GameMenuFrame.Border",
-	"GameMenuFrame.Header",
-
-	-- NPC
-	"QuestFrameDetailPanel",
-	"QuestDetailScrollFrame",
-	"GossipFrameGreetingPanel",
-	"GossipGreetingScrollFrame",
-	"QuestFrameGreetingPanel",
-	"QuestGreetingScrollFrame",
-	"QuestFrameProgressPanel",
-	"QuestProgressScrollFrame",
-	"QuestRewardScrollFrame",
-	"QuestFrameRewardPanel",
-
-	"GossipFrame",
-	"GossipFrame.GreetingPanel",
-	"GossipFrame.GreetingPanel.ScrollBox",
-	"GossipFrame.GreetingPanel.ScrollBar.Background",
-
-	"MerchantFrame",
-	"MerchantBuyBackItem",
-	"MerchantFrameTab1",
-	"MerchantFrameTab2",
-	"MerchantItem1",
-	"MerchantItem2",
-	"MerchantItem3",
-	"MerchantItem4",
-	"MerchantItem5",
-	"MerchantItem6",
-	"MerchantItem7",
-	"MerchantItem8",
-	"MerchantItem9",
-	"MerchantItem10",
-	"MerchantItem11",
-	"MerchantItem12",
-	"MerchantMoney",
-	"MerchantMoneyBg",
-	"PetStableFrame",
-
-	-- 
-	"AddonList",
-	"AddonListDisableAllButton_RightSeparator",
-	"AddonListEnableAllButton_RightSeparator",
-	"AddonListOkayButton_LeftSeparator",
-	"AddonListOkayButton_RightSeparator",
-	"AddonListCancelButton_LeftSeparator",
-
-	"HelpFrame",
-	"VideoOptionsFrame",
-	"InterfaceOptionsFrame",
-
-	"TimeManagerFrame",
-
-	"MailFrame",
-	"MailFrameTab1",
-	"MailFrameTab2",
-	"InboxFrame",
-	"SendMailFrame",
-	"SendMailMoney",
-	"SendMailMoneyBg",
-	"SendMailMoneyFrame",
-	"SendMail",
-	"MailEditBoxScrollBar",
-
-	"BankFrame",
-	"BankFrameTab1",
-	"BankFrameTab2",
-	"BankFrameMoneyFrame",
-	"BankFrameMoneyFrameBorder",
-
-	"BackpackTokenFrame",
-	"ContainerFrame1",
-	"ContainerFrame2",
-	"ContainerFrame3",
-	"ContainerFrame4",
-	"ContainerFrame5",
-	"ContainerFrame6",
-	"ContainerFrame7",
-	"ContainerFrame8",
-	"ContainerFrame9",
-	"ContainerFrame10",
-	"ContainerFrame11",
-	"ContainerFrame12",
-	"ContainerFrameCombinedBags",
-
-	"PVPFrame",
-	"PVPParentFrame",
-	"PVPParentFrameTab1",
-	"PVPParentFrameTab2",
-	"BattlefieldFrame",
-	"BattlefieldFrameType",
-
-	"TaxiFrame",
-}
-
-local DMFramesAddons = {
-	"ClassTrainerFrame",
-	"ClassTrainerListScrollFrame",
-	"ClassTrainerExpandButtonFrame",
-
-	"KeyBindingFrame",
-	"KeyBindingFrame.header",
-
-	"MacroFrame",
-	"MacroFrameTab1",
-	"MacroFrameTab2",
-	"MacroFrameTextBackground",
-	"MacroButtonScrollFrame",
-
-	"TradeSkillFrame",
-	"TradeSkillList",
-
-	"AuctionFrame",
-	"AuctionFrameTab1",
-	"AuctionFrameTab2",
-	"AuctionFrameTab3",
-	"AuctionFrameTab4",
-	"AuctionFrameTab5",
-	"AuctionFrameTab6",
-	"AuctionFrameTab7",
-	"AuctionFrameTab8",
-	"AuctionFrameTab9",
-	"AuctionFrameTab10",
-	"AuctionFrameTab11",
-	"AuctionFrameTab12",
-	"BrowseBidButton",
-	"BrowseBuyoutButton",
-	"BrowseCloseButton",
-	"BidBidButton",
-	"BidBuyoutButton",
-	"BidCloseButton",
-
-	"AuctionHouseFrame",
-	"AuctionHouseFrameBuyTab",
-	"AuctionHouseFrameSellTab",
-	"AuctionHouseFrameAuctionsTab",
-
-	"PlayerTalentFrame",
-	"PlayerTalentFramePointsBar",
-	"PlayerSpecTab1",
-	"PlayerSpecTab2",
-	"PlayerSpecTab3",
-	"PlayerSpecTab4",
-	"PlayerTalentFrameTab1",
-	"PlayerTalentFrameTab2",
-	"PlayerTalentFrameTab3",
-	"PlayerTalentFrameTab4",
-	"PlayerTalentFrameTab5",
-
-	"ClassTalentFrame",
-	"ClassTalentFrame.TabSystem",
-	"ClassTalentFrame.TalentsTab.BottomBar",
-
-	"AchievementFrame",
-	"AchievementFrame.Header",
-	"AchievementFrameTab1",
-	"AchievementFrameTab2",
-	"AchievementFrameTab3",
-	"AchievementFrameTab4",
-	"AchievementFrameHeader",
-	"AchievementFrameCategories",
-	"AchievementFrameSummary",
-
-	"WeeklyRewardsFrame",
-
-	"CommunitiesFrame",
-	"CommunitiesFrameCommunitiesList",
-	"CommunitiesFrame.MemberList",
-	"CommunitiesFrame.Chat.MessageFrame.ScrollBar",
-	--"CommunitiesFrame.ChatTab",
-	--"CommunitiesFrame.RosterTab",
-	--"CommunitiesFrame.GuildBenefitsTab",
-	--"CommunitiesFrame.GuildInfoTab",
-
-	"CollectionsJournal",
-	"CollectionsJournalTab1",
-	"CollectionsJournalTab2",
-	"CollectionsJournalTab3",
-	"CollectionsJournalTab4",
-	"CollectionsJournalTab5",
-	"CollectionsJournalTab6",
-	"WardrobeCollectionFrame",
-	"WardrobeCollectionFrame.ItemsCollectionFrame",
-	"ToyBox",
-	"ToyBox.iconsFrame",
-	"HeirloomsJournal",
-	"HeirloomsJournal.iconsFrame",
-
-	"EncounterJournal",
-	"EncounterJournalSuggestTab",
-	"EncounterJournalDungeonTab",
-	"EncounterJournalRaidTab",
-	"EncounterJournalInstanceSelect",
-}
-
-local DMTexts = {
-	"GossipGreetingScrollChildFrame",
-	"QuestGreetingScrollChildFrame",
-	"QuestProgressScrollChildFrame",
-	"QuestRewardScrollChildFrame",
-
-	"QuestLogDetailScrollChildFrame",
-
-	--"QuestDetailScrollChildFrame",
-	"QuestInfoTitleHeader",
-	"QuestInfoDescriptionText",
-	"QuestInfoObjectivesHeader",
-	"QuestInfoObjectivesText",
-	"QuestInfoRewardText",
-
-	"QuestInfoRewardsFrame",
-
-	"GossipGreetingText",
-
-	"QuestTitleButton1",
-	"QuestTitleButton2",
-	"QuestTitleButton3",
-	"QuestTitleButton4",
-	"QuestTitleButton5",
-	"GossipTitleButton1",
-	"GossipTitleButton2",
-	"GossipTitleButton3",
-	"GossipTitleButton4",
-	"GossipTitleButton5",
-	"GossipTitleButton6",
-	"GossipTitleButton7",
-	"GossipTitleButton8",
-	"GossipTitleButton9",
-	"GossipTitleButton10",
-	"GossipTitleButton11",
-	"GossipTitleButton12",
-	"GossipTitleButton13",
-	"GossipTitleButton14",
-	"GossipTitleButton15",
-}
-
-local DMT = {}
-DMT["Interface\\QuestFrame\\UI-QuestLog-BookIcon"] = true
-DMT["Interface\\Spellbook\\Spellbook-Icon"] = true
-DMT["Interface\\FriendsFrame\\FriendsFrameScrollIcon"] = true
-DMT["Interface\\MacroFrame\\MacroFrame-Icon"] = true
-DMT["Interface\\Buttons\\UI-CheckBox-Check"] = true
-DMT["Interface\\Buttons\\UI-MinusButton-UP"] = true
-DMT["Interface\\Buttons\\UI-PlusButton-Hilight"] = true
-DMT["Interface\\Buttons\\UI-Panel-Button-Up"] = true
-DMT["Interface\\Buttons\\UI-Panel-Button-Highlight"] = true
-DMT["Interface\\TimeManager\\GlobeIcon"] = true
-DMT[137012] = true
-DMT["RTPortrait1"] = true
-DMT["Interface\\TargetingFrame\\UI-StatusBar"] = true
-DMT["Interface\\MailFrame\\Mail-Icon"] = true
-DMT["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
-DMT[136830] = true
-DMT[130724] = true
-DMT[130718] = true
-DMT[135770] = true
-DMT[135775] = true
-DMT[136797] = true
-DMT[131116] = true
-DMT[130709] = true
-DMT[136382] = true
-DMT[136382] = true
-DMT[1723833] = true
-
-function DarkMode:GetGlobalColor()
-	local colorMode = DMColorModes[DarkMode:GV( "COLORMODE", 1 )]
-	if colorMode == "Dark" then
-		return 0.180, 0.180, 0.180, 1
-	elseif colorMode == "Dark+" then
-		return 0.140, 0.140, 0.140, 1
-	elseif colorMode == "Darker" then
-		return 0.100, 0.100, 0.100, 1
-	elseif colorMode == "Darker+" then
-		return 0.060, 0.060, 0.060, 1
-	elseif colorMode == "Black" then
-		return 0.000, 0.000, 0.000, 1
-	elseif colorMode == "ClassColor" then
-		local PlayerClass, PlayerClassEng, PlayerClassIndex = UnitClass( "PLAYER" )
-		local r, g, b, hex = GetClassColor( PlayerClassEng )
-		return r, g, b, 1
-	elseif colorMode == "Custom" then
-		return 1, 1, 1, 0.1
-	end
-	return 1.000, 0.000, 0.000, 0.3
-end
-
-local DMTextures = {}
-function DarkMode:UpdateColor( texture, show, name )
+local DMTexturesUi = {}
+local DMTexturesFrames = {}
+function DarkMode:UpdateColor( texture, ui )
 	if texture == nil then
 		print("INVALID TEXTURE OBJECT")
 		return false
@@ -511,12 +58,16 @@ function DarkMode:UpdateColor( texture, show, name )
 		textureId = texture:GetTexture()
 	end
 
-	if textureId and DMT[textureId] then
+	if textureId and DarkMode:GetTextureBlockTable()[textureId] then
 		return false
 	end
 
 	if textureId == nil and texture.SetColorTexture and strfind( name or "", "ContainerFrame", 1, true ) ~= nil then
-		texture:SetColorTexture( DarkMode:GetGlobalColor() )
+		if ui then
+			texture:SetColorTexture( DarkMode:GetUiColor() )
+		else
+			texture:SetColorTexture( DarkMode:GetFrameColor() )
+		end
 		return true
 	elseif textureId and texture.SetVertexColor then
 		if texture.SetText then
@@ -528,14 +79,27 @@ function DarkMode:UpdateColor( texture, show, name )
 			hooksecurefunc( texture, "SetVertexColor", function( self, r, g, b, a )
 				if self.dm_setvertexcolor then return end
 				self.dm_setvertexcolor = true
-				self:SetVertexColor( DarkMode:GetGlobalColor() )
+				if ui then
+					self:SetVertexColor( DarkMode:GetUiColor() )
+				else
+					self:SetVertexColor( DarkMode:GetFrameColor() )
+				end
 				self.dm_setvertexcolor = false
 			end )
 		end
-		texture:SetVertexColor( DarkMode:GetGlobalColor() )
-
-		if not tContains( DMTextures, texture ) then
-			tinsert( DMTextures, texture )
+		if ui then
+			texture:SetVertexColor( DarkMode:GetUiColor() )
+		else
+			texture:SetVertexColor( DarkMode:GetFrameColor() )
+		end
+		if ui then
+			if not tContains( DMTexturesUi, texture ) then
+				tinsert( DMTexturesUi, texture )
+			end
+		else
+			if not tContains( DMTexturesFrames, texture ) then
+				tinsert( DMTexturesFrames, texture )
+			end
 		end
 		return true
 	end
@@ -543,8 +107,11 @@ function DarkMode:UpdateColor( texture, show, name )
 end
 
 function DarkMode:UpdateColors()
-	for i, v in pairs( DMTextures ) do
-		v:SetVertexColor( DarkMode:GetGlobalColor() )
+	for i, v in pairs( DMTexturesUi ) do
+		v:SetVertexColor( DarkMode:GetUiColor() )
+	end
+	for i, v in pairs( DMTexturesFrames ) do
+		v:SetVertexColor( DarkMode:GetFrameColor() )
 	end
 end
 
@@ -577,33 +144,33 @@ function DarkMode:GetFrame( name )
 	return nil
 end
 
-function DarkMode:FindTextures( frame, show, name )
+function DarkMode:FindTextures( frame, ui )
 	if frame ~= nil then
 		if name and strfind( name, "GameMenuFrame.Border", 1, true ) then
 			--print(frame, frame.SetVertexColor)
 		end
 		if frame.SetVertexColor then
-			DarkMode:UpdateColor( frame, show, name )
+			DarkMode:UpdateColor( frame, ui )
 		end
 		if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
 			for i, v in pairs( { frame:GetRegions() } ) do
 				if v.SetVertexColor then
-					DarkMode:UpdateColor( v, show, name )
+					DarkMode:UpdateColor( v, ui )
 				end
 			end
 		end
 		if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
 			for i, v in pairs( { frame:GetChildren() } ) do
 				if v.SetVertexColor then
-					DarkMode:UpdateColor( v, show, name )
+					DarkMode:UpdateColor( v, ui )
 				end
 			end
 		end
 	end
 end
 
-function DarkMode:FindTexturesByName( name, show )
-	local frame = DarkMode:GetFrame( name, show )
+function DarkMode:FindTexturesByName( name, ui )
+	local frame = DarkMode:GetFrame( name )
 
 	local show = false
 	if name and strfind( name, "Container", 1, true ) and strfind( name, "TopSection", 1, true ) then
@@ -611,7 +178,7 @@ function DarkMode:FindTexturesByName( name, show )
 	end
 
 	if frame then
-		DarkMode:FindTextures( frame, show, name )
+		DarkMode:FindTextures( frame, ui )
 	end
 end
 
@@ -687,7 +254,7 @@ function DarkMode:InitGreetingPanel()
 				DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
 
 				for index, name in pairs( frameTab ) do
-					for i, v in pairs( checkFrames ) do
+					for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
 						DarkMode:FindTexturesByName( name .. v )
 					end
 				end
@@ -709,33 +276,33 @@ function DarkMode:Event( event, ... )
 			DarkMode:InitGreetingPanel()
 
 			C_Timer.After( 0.1, function()
-				for index, tab in pairs( DMUi ) do
+				for index, tab in pairs( DarkMode:GetUiTable() ) do
 					if index == "ActionButtons" then
 						for i, name in pairs( tab ) do
 							for x = 1, 12 do
 								local btnTexture = _G[name .. x .. "NormalTexture"]
 								if btnTexture then
-									DarkMode:UpdateColor( btnTexture )
+									DarkMode:UpdateColor( btnTexture, true )
 								end
 							end
 						end
 					elseif index == "Minimap" then
 						for i, name in pairs( tab ) do
-							DarkMode:FindTexturesByName( name )
+							DarkMode:FindTexturesByName( name, true )
 						end
 					elseif type( tab ) == "string" then
-						DarkMode:FindTexturesByName( tab )
+						DarkMode:FindTexturesByName( tab , true)
 					else
 						print( "Missing", index, tab )
 					end
 				end
 
-				for index, name in pairs( DMFrames ) do
-					for i, v in pairs( checkFrames ) do
+				for index, name in pairs( DarkMode:GetFrameTable() ) do
+					for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
 						DarkMode:FindTexturesByName( name .. v )
 					end
 				end
-				for index, name in pairs( DMTexts ) do
+				for index, name in pairs( DarkMode:GetFrameTextTable() ) do
 					DarkMode:FindTextsByName( name )
 				end
 			end )
@@ -809,8 +376,8 @@ function DarkMode:Event( event, ... )
 			end
 		end
 	elseif event == "ADDON_LOADED" then
-		for index, name in pairs( DMFramesAddons ) do
-			for i, v in pairs( checkFrames ) do
+		for index, name in pairs( DarkMode:GetFrameAddonsTable() ) do
+			for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
 				DarkMode:FindTexturesByName( name .. v )
 			end
 		end
