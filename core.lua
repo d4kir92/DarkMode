@@ -213,6 +213,7 @@ local DMFrames = {
 
 	-- 8
 	"GameMenuFrame",
+	"GameMenuFrame.Border",
 	"GameMenuFrame.Header",
 
 	-- NPC
@@ -578,21 +579,23 @@ end
 
 function DarkMode:FindTextures( frame, show, name )
 	if frame ~= nil then
+		if name and strfind( name, "GameMenuFrame.Border", 1, true ) then
+			--print(frame, frame.SetVertexColor)
+		end
 		if frame.SetVertexColor then
 			DarkMode:UpdateColor( frame, show, name )
-		else
-			if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
-				for i, v in pairs( { frame:GetRegions() } ) do
-					if v.SetVertexColor then
-						DarkMode:UpdateColor( v, show, name )
-					end
+		end
+		if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
+			for i, v in pairs( { frame:GetRegions() } ) do
+				if v.SetVertexColor then
+					DarkMode:UpdateColor( v, show, name )
 				end
 			end
-			if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
-				for i, v in pairs( { frame:GetChildren() } ) do
-					if v.SetVertexColor then
-						DarkMode:UpdateColor( v, show, name )
-					end
+		end
+		if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
+			for i, v in pairs( { frame:GetChildren() } ) do
+				if v.SetVertexColor then
+					DarkMode:UpdateColor( v, show, name )
 				end
 			end
 		end
