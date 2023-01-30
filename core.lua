@@ -146,15 +146,22 @@ end
 
 function DarkMode:FindTextures( frame, ui )
 	if frame ~= nil then
-		if name and strfind( name, "GameMenuFrame.Border", 1, true ) then
-			--print(frame, frame.SetVertexColor)
+		local show = false
+		if frame.GetName and frame:GetName() and strfind( frame:GetName(), "XX", 1, true ) then
+			show = true
 		end
 		if frame.SetVertexColor then
+			if show and frame.GetTexture then
+				print(">", frame:GetTextureFilePath(), v:GetSize())
+			end
 			DarkMode:UpdateColor( frame, ui )
 		end
 		if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
 			for i, v in pairs( { frame:GetRegions() } ) do
 				if v.SetVertexColor then
+					if show and v.GetTexture then
+						print(">>", v:GetTextureFilePath(), v:GetSize())
+					end
 					DarkMode:UpdateColor( v, ui )
 				end
 			end
@@ -162,6 +169,9 @@ function DarkMode:FindTextures( frame, ui )
 		if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
 			for i, v in pairs( { frame:GetChildren() } ) do
 				if v.SetVertexColor then
+					if show and v.GetTexture then
+						print(">>>", v:GetTextureFilePath(), v:GetSize())
+					end
 					DarkMode:UpdateColor( v, ui )
 				end
 			end
@@ -383,6 +393,19 @@ function DarkMode:Event( event, ... )
 			end
 		end
 
+		if PlayerTalentFrame then
+			for i, v in pairs( { "PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4" } ) do
+				local tab = _G[v]
+				if tab then
+					for x, w in pairs( { tab:GetRegions() } ) do 
+						if x == 1 then
+							DarkMode:UpdateColor( w )
+						end
+					end
+				end
+			end
+		end
+
 		if ClassTalentFrame then
 			if ClassTalentFrame.dm_setup == nil then
 				ClassTalentFrame.dm_setup = true
@@ -396,7 +419,6 @@ function DarkMode:Event( event, ... )
 					end
 				end
 				
-
 				ClassTalentFrame:HookScript( "OnShow", function( self )
 					ClassTalentFrame:UpdateColors()
 				end )

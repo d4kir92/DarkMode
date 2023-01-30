@@ -132,11 +132,29 @@ local DMUi = {
 	"MainMenuBarArtFrame",
 	"MainMenuExpBar",
 	"ReputationWatchBar.StatusBar",
+	"MainStatusTrackingBarContainer.BarFrameTexture",
+	"SecondaryStatusTrackingBarContainer.BarFrameTexture",
 
 	-- RETAIL
 	"PlayerFrame.PlayerFrameContainer.FrameTexture",
 	"TargetFrame.TargetFrameContainer.FrameTexture",
 	"FocusFrame.TargetFrameContainer.FrameTexture",
+
+	-- Bartender
+	"BT4BarBlizzardArt",
+	"BlizzardArtLeftCap",
+	"BlizzardArtRightCap",
+
+	"ChatFrame1Tab",
+	"ChatFrame2Tab",
+	"ChatFrame3Tab",
+	"ChatFrame4Tab",
+	"ChatFrame5Tab",
+	"ChatFrame6Tab",
+	"ChatFrame7Tab",
+	"ChatFrame8Tab",
+	"ChatFrame9Tab",
+	"ChatFrame10Tab",
 }
 
 function DarkMode:GetUiTable()
@@ -342,6 +360,7 @@ local DMFramesAddons = {
 	"MacroFrameTab2",
 	"MacroFrameTextBackground",
 	"MacroButtonScrollFrame",
+	"MacroFrame.MacroSelector.ScrollBar.Background",
 
 	"TradeSkillFrame",
 	"TradeSkillList",
@@ -373,10 +392,6 @@ local DMFramesAddons = {
 
 	"PlayerTalentFrame",
 	"PlayerTalentFramePointsBar",
-	"PlayerSpecTab1",
-	"PlayerSpecTab2",
-	"PlayerSpecTab3",
-	"PlayerSpecTab4",
 	"PlayerTalentFrameTab1",
 	"PlayerTalentFrameTab2",
 	"PlayerTalentFrameTab3",
@@ -491,22 +506,43 @@ DMTextureBlock["Interface\\Buttons\\UI-Panel-Button-Highlight"] = true
 DMTextureBlock["Interface\\Buttons\\ButtonHilight-Square"] = true
 DMTextureBlock["Interface\\Buttons\\CheckButtonHilight"] = true
 DMTextureBlock["Interface\\TimeManager\\GlobeIcon"] = true
-DMTextureBlock[137012] = true
 DMTextureBlock["RTPortrait1"] = true
 DMTextureBlock["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMTextureBlock["Interface\\MailFrame\\Mail-Icon"] = true
 DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
-DMTextureBlock[136830] = true
-DMTextureBlock[130724] = true
-DMTextureBlock[130718] = true
-DMTextureBlock[135770] = true
-DMTextureBlock[135775] = true
-DMTextureBlock[136797] = true
-DMTextureBlock[131116] = true
-DMTextureBlock[130709] = true
-DMTextureBlock[136382] = true
-DMTextureBlock[136382] = true
-DMTextureBlock[1723833] = true
+
+if DarkMode:GetWoWBuild() == "RETAIL" then
+	DMTextureBlock[130724] = true
+elseif DarkMode:GetWoWBuild() == "WRATH" then
+	DMTextureBlock[136830] = true -- Spellbook Icon
+	DMTextureBlock[136797] = true -- QuestLogFrame Icon
+	DMTextureBlock[131116] = true -- FriendsFrame Icon
+	DMTextureBlock[136382] = true -- MailFrame Icon
+	DMTextureBlock[130709] = true -- "Interface/BattlefieldFrame/UI-Battlefield-Icon",
+elseif DarkMode:GetWoWBuild() == "TBC" then
+
+elseif DarkMode:GetWoWBuild() == "CLASSIC" then
+
+end
+
+-- StatusBar
+DMTextureBlock[137012] = true -- "Interface/TargetingFrame/UI-StatusBar"
+
+-- Button
+DMTextureBlock[130717] = true -- "Interface/Buttons/ButtonHilight-Round"
+DMTextureBlock[130718] = true -- "Interface/Buttons/ButtonHilight-Square"
+DMTextureBlock[130719] = true -- "Interface/Buttons/ButtonHilight-SquareQuickslot"
+
+-- CHAT Tabs
+DMTextureBlock[374174] = true
+DMTextureBlock[374176] = true
+DMTextureBlock[374178] = true
+DMTextureBlock[374168] = true
+DMTextureBlock[374170] = true
+DMTextureBlock[374172] = true
+-- CHAT Tabs
+
+-- ids: https://www.townlong-yak.com/framexml/live/Helix/ArtTextureID.lua
 
 function DarkMode:GetTextureBlockTable()
 	return DMTextureBlock
