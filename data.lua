@@ -37,6 +37,15 @@ function DarkMode:GetFrameColor()
 	return r, g, b, a
 end
 
+function DarkMode:GetTextColor( r, g, b, a )
+	if r and g and b then
+		local sum = r + g + b
+		if sum > 1 then
+			return 0, 0, 0, 1
+		end
+	end
+	return 1, 1, 1, 1
+end
 
 
 local DMRepeatingFrames = {
@@ -222,8 +231,10 @@ local DMFrames = {
 	"GameMenuFrame.Header",
 
 	-- NPC
+	"QuestFrame",
 	"QuestFrameDetailPanel",
 	"QuestDetailScrollFrame",
+	"QuestDetailScrollChildFrame",
 	"GossipFrameGreetingPanel",
 	"GossipGreetingScrollFrame",
 	"QuestFrameGreetingPanel",

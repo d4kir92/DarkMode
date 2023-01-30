@@ -2,7 +2,7 @@
 local AddOnName, DarkMode = ...
 
 local config = {
-	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.2" )
+	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.3" )
 }
 
 local searchStr = ""

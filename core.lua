@@ -190,11 +190,12 @@ function DarkMode:UpdateText( text, name, layer )
 			hooksecurefunc( text, "SetTextColor", function( self, r, g, b, a )
 				if self.dm_settextcolor then return end
 				self.dm_settextcolor = true
-				self:SetTextColor( 1, 1, 1, 1 )
+				local r, g, b, a = DarkMode:GetTextColor( DarkMode:GetFrameColor() )
+				self:SetTextColor( r, g, b, a )
 				self.dm_settextcolor = false
 			end )
 		end
-		text:SetTextColor( 1, 1, 1, 1 )
+		text:SetTextColor( DarkMode:GetTextColor( DarkMode:GetFrameColor() ) )
 
 		if not tContains( DMFS, text ) then
 			tinsert( DMFS, text )
@@ -204,7 +205,7 @@ function DarkMode:UpdateText( text, name, layer )
 	return false
 end
 
-function DarkMode:FindTexts( frame )
+function DarkMode:FindTexts( frame, name )
 	if frame ~= nil then
 		if frame.SetTextColor then
 			DarkMode:UpdateText( frame, name, 1 )
@@ -215,7 +216,7 @@ function DarkMode:FindTexts( frame )
 						DarkMode:UpdateText( v, name, 2 )
 					end
 					if type( v ) == "table" then
-						DarkMode:FindTexts( v )
+						DarkMode:FindTexts( v, name )
 					end
 				end
 			end
@@ -225,7 +226,7 @@ function DarkMode:FindTexts( frame )
 						DarkMode:UpdateText( v, name, 3 )
 					end
 					if type( v ) == "table" then
-						DarkMode:FindTexts( v )
+						DarkMode:FindTexts( v, name )
 					end
 				end
 			end
@@ -236,7 +237,7 @@ end
 function DarkMode:FindTextsByName( name )
 	local frame = DarkMode:GetFrame( name )
 	if frame then
-		DarkMode:FindTexts( frame )
+		DarkMode:FindTexts( frame, name )
 	end
 end
 
