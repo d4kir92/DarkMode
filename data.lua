@@ -3,7 +3,7 @@ local AddOnName, DarkMode = ...
 
 
 
-function DarkMode:GetColor( id )
+function DarkMode:GetColor( id, name )
 	local colorMode = DMColorModes[id]
 	if colorMode == "Dark" then
 		return 0.180, 0.180, 0.180, 1
@@ -22,18 +22,49 @@ function DarkMode:GetColor( id )
 	elseif colorMode == "Default" then
 		return 1, 1, 1, 1
 	elseif colorMode == "Custom" then
-		return 1, 1, 1, 0.1
+		return DarkMode:GetCustomColor( name )
 	end
 	return 1.000, 0.000, 0.000, 0.3
 end
 
+function DarkMode:GetCustomColor( name )
+	if name == nil then
+		return 1, 1, 1, 0.5
+	end
+
+	local r = DMTAB[name .. "_r"]
+	local g = DMTAB[name .. "_g"]
+	local b = DMTAB[name .. "_b"]
+	local a = DMTAB[name .. "_a"]
+	if r and g and b and a then
+		return r, g, b, a
+	else
+		return 1, 1, 1, 0.5
+	end
+end
+
+function DarkMode:SetCustomColor( name, r, g, b, a )
+	DMTAB[name .. "_r"] = r
+	DMTAB[name .. "_g"] = g
+	DMTAB[name .. "_b"] = b
+	DMTAB[name .. "_a"] = a
+
+	DarkMode:UpdateColors()
+end
+
+
 function DarkMode:GetUiColor()
-	local r, g, b, a = DarkMode:GetColor( DarkMode:GV( "COLORMODE", 1 ) )
+	local r, g, b, a = DarkMode:GetColor( DarkMode:GV( "COLORMODE", 1 ), "CUSTOMUIC" )
+	return r, g, b, a
+end
+
+function DarkMode:GetUFColor()
+	local r, g, b, a = DarkMode:GetColor( DarkMode:GV( "COLORMODEUF", 1 ), "CUSTOMUFC" )
 	return r, g, b, a
 end
 
 function DarkMode:GetFrameColor()
-	local r, g, b, a = DarkMode:GetColor( DarkMode:GV( "COLORMODEF", 1 ) )
+	local r, g, b, a = DarkMode:GetColor( DarkMode:GV( "COLORMODEF", 1 ), "CUSTOMFRC" )
 	return r, g, b, a
 end
 
@@ -120,13 +151,19 @@ local DMUi = {
 		"MinimapCompassTexture",
 		"MinimapCluster.BorderTop",
 	},
+	["UnitFrames"] = {
+		-- Textures
+		"PlayerFrameTexture",
+		"TargetFrameTextureFrameTexture",
+		"FocusFrameTextureFrameTexture",
+		"TargetFrameToTTextureFrameTexture",
+		"PetFrameTexture",
 
-	-- Textures
-	"PlayerFrameTexture",
-	"TargetFrameTextureFrameTexture",
-	"FocusFrameTextureFrameTexture",
-	"TargetFrameToTTextureFrameTexture",
-	"PetFrameTexture",
+		-- RETAIL
+		"PlayerFrame.PlayerFrameContainer.FrameTexture",
+		"TargetFrame.TargetFrameContainer.FrameTexture",
+		"FocusFrame.TargetFrameContainer.FrameTexture",
+	},
 
 	-- Classic ERA Frames
 	"MainMenuBarArtFrame",
@@ -134,11 +171,6 @@ local DMUi = {
 	"ReputationWatchBar.StatusBar",
 	"MainStatusTrackingBarContainer.BarFrameTexture",
 	"SecondaryStatusTrackingBarContainer.BarFrameTexture",
-
-	-- RETAIL
-	"PlayerFrame.PlayerFrameContainer.FrameTexture",
-	"TargetFrame.TargetFrameContainer.FrameTexture",
-	"FocusFrame.TargetFrameContainer.FrameTexture",
 
 	-- Bartender
 	"BT4BarBlizzardArt",
@@ -438,10 +470,13 @@ local DMFramesAddons = {
 	"HeirloomsJournal.iconsFrame",
 
 	"EncounterJournal",
+	"EncounterJournalMonthlyActivitiesTab",
 	"EncounterJournalSuggestTab",
 	"EncounterJournalDungeonTab",
 	"EncounterJournalRaidTab",
 	"EncounterJournalInstanceSelect",
+
+	"CalendarFrame",
 }
 
 function DarkMode:GetFrameAddonsTable()

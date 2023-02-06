@@ -11,7 +11,12 @@ function DarkMode:Lang_deDE()
 		["SHOWMINIMAPBUTTON"] = "Minimapknopf anzeigen",
 		
 		["COLORMODE"] = "Farbmodus Ui",
+		["COLORMODEUF"] = "Farbmodus Einheitenfenster",
 		["COLORMODEF"] = "Farbmodus Fenster",
+
+		["CUSTOMUIC"] = "Benutzerdefiniert Ui Farbe",
+		["CUSTOMUFC"] = "Benutzerdefiniert Einheitenfenster Farbe",
+		["CUSTOMFRC"] = "Benutzerdefiniert Fenster Farbe",
 	}
 
 	DarkMode:UpdateLanguageTab( tab )

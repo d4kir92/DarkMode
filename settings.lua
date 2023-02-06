@@ -2,7 +2,7 @@
 local AddOnName, DarkMode = ...
 
 local config = {
-	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.4" )
+	["title"] = format( "DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.5" )
 }
 
 local searchStr = ""
@@ -12,6 +12,7 @@ local cbs = {}
 local dds = {}
 local ebs = {}
 local sls = {}
+local cps = {}
 
 DMColorModes = {
 	"Dark",
@@ -169,11 +170,53 @@ local function AddSlider( x, key, val, func, vmin, vmax, steps )
 				end
 			end
 		end)
-		posy = posy - 10
 	end
+
+	posy = posy - 10
 	DMSetPos( sls[key], key, x )
+	posy = posy - 10
 
 	return sls[key]
+end
+
+function DarkMode:ShowColorPicker( r, g, b, a, changedCallback )
+	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback;
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
+	ColorPickerFrame.previousValues = { r, g, b, a };
+	ColorPickerFrame:SetColorRGB( r, g, b )
+	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = (a ~= nil), 1 - a;
+
+	ColorPickerFrame:Hide(); -- Need to run the OnShow handler.
+	ColorPickerFrame:Show();
+end
+
+function DarkMode:AddColorPicker( name, parent, x, y )
+	if cps[name] == nil then
+		cps[name] = CreateFrame( "Button", name, parent, "UIPanelButtonTemplate" )
+		local btn = cps[name]
+		btn:SetSize( 300, 25 )
+		btn:SetPoint( "TOPLEFT", parent, "TOPLEFT", x, posy )
+		btn:SetText( DarkMode:GT( name ) )
+
+		btn:SetScript( "OnClick", function()
+			local r, g, b, a = DarkMode:GetCustomColor( name )
+			DarkMode:ShowColorPicker( r, g, b, a, function( restore )
+				local newR, newG, newB, newA;
+				if restore then
+					newR, newG, newB, newA = unpack(restore);
+				else
+					newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB();
+				end
+				
+				DarkMode:SetCustomColor( name, newR, newG, newB, newA )
+			end)
+		end )
+	end
+
+	DMSetPos( cps[name], name, x )
+	posy = posy - 10
+
+	return cps[name]
 end
 
 function DarkMode:ToggleSettings()
@@ -227,17 +270,26 @@ function DarkMode:InitDMSettings()
 		AddCategory( "GENERAL" )
 		AddCheckBox( 4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton )
 
-		local sCM = AddSlider( 4, "COLORMODE", 1, function( self, val )
+		local sCM = AddSlider( 4, "COLORMODE", DarkMode:GV( "COLORMODE", 1 ), function( self, val )
 			self.Text:SetText( DarkMode:GT( "COLORMODE" ) .. ": " .. DMColorModes[val] )
 			DarkMode:UpdateColors()
 		end, 1, getn( DMColorModes ), 1 )
 		sCM.Text:SetText( DarkMode:GT( "COLORMODE" ) .. ": " .. DMColorModes[DarkMode:GV( "COLORMODE", 1 )] )
+		DarkMode:AddColorPicker( "CUSTOMUIC", DMSettings.SC, 0, 0 )
 
-		local sCMF = AddSlider( 4, "COLORMODEF", 1, function( self, val )
+		local sCM = AddSlider( 4, "COLORMODEUF", DarkMode:GV( "COLORMODEUF", 7 ), function( self, val )
+			self.Text:SetText( DarkMode:GT( "COLORMODEUF" ) .. ": " .. DMColorModes[val] )
+			DarkMode:UpdateColors()
+		end, 1, getn( DMColorModes ), 1 )
+		sCM.Text:SetText( DarkMode:GT( "COLORMODEUF" ) .. ": " .. DMColorModes[DarkMode:GV( "COLORMODEUF", 7 )] )
+		DarkMode:AddColorPicker( "CUSTOMUFC", DMSettings.SC, 0, 0 )
+
+		local sCMF = AddSlider( 4, "COLORMODEF", DarkMode:GV( "COLORMODEF", 1 ), function( self, val )
 			self.Text:SetText( DarkMode:GT( "COLORMODEF" ) .. ": " .. DMColorModes[val] )
 			DarkMode:UpdateColors()
 		end, 1, getn( DMColorModes ), 1 )
 		sCMF.Text:SetText( DarkMode:GT( "COLORMODEF" ) .. ": " .. DMColorModes[DarkMode:GV( "COLORMODEF", 1 )] )
+		DarkMode:AddColorPicker( "CUSTOMFRC", DMSettings.SC, 0, 0 )
 	end
 
 	DMSettings.Search = CreateFrame( "EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate" )

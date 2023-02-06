@@ -47,8 +47,9 @@ DMHIDDEN = CreateFrame( "FRAME", "DMHIDDEN" )
 DMHIDDEN:Hide()
 
 local DMTexturesUi = {}
+local DMTexturesUF = {}
 local DMTexturesFrames = {}
-function DarkMode:UpdateColor( texture, ui )
+function DarkMode:UpdateColor( texture, typ )
 	if texture == nil then
 		print("INVALID TEXTURE OBJECT")
 		return false
@@ -63,8 +64,10 @@ function DarkMode:UpdateColor( texture, ui )
 	end
 
 	if textureId == nil and texture.SetColorTexture and strfind( name or "", "ContainerFrame", 1, true ) ~= nil then
-		if ui then
+		if typ == "ui" then
 			texture:SetColorTexture( DarkMode:GetUiColor() )
+		elseif typ == "uf" then
+			texture:SetColorTexture( DarkMode:GetUFColor() )
 		else
 			texture:SetColorTexture( DarkMode:GetFrameColor() )
 		end
@@ -79,22 +82,30 @@ function DarkMode:UpdateColor( texture, ui )
 			hooksecurefunc( texture, "SetVertexColor", function( self, r, g, b, a )
 				if self.dm_setvertexcolor then return end
 				self.dm_setvertexcolor = true
-				if ui then
+				if typ == "ui" then
 					self:SetVertexColor( DarkMode:GetUiColor() )
+				elseif typ == "uf" then
+					self:SetVertexColor( DarkMode:GetUFColor() )
 				else
 					self:SetVertexColor( DarkMode:GetFrameColor() )
 				end
 				self.dm_setvertexcolor = false
 			end )
 		end
-		if ui then
+		if typ == "ui" then
 			texture:SetVertexColor( DarkMode:GetUiColor() )
+		elseif typ == "uf" then
+			texture:SetVertexColor( DarkMode:GetUFColor() )
 		else
 			texture:SetVertexColor( DarkMode:GetFrameColor() )
 		end
-		if ui then
+		if typ == "ui" then
 			if not tContains( DMTexturesUi, texture ) then
 				tinsert( DMTexturesUi, texture )
+			end
+		elseif typ == "uf" then
+			if not tContains( DMTexturesUF, texture ) then
+				tinsert( DMTexturesUF, texture )
 			end
 		else
 			if not tContains( DMTexturesFrames, texture ) then
@@ -104,15 +115,6 @@ function DarkMode:UpdateColor( texture, ui )
 		return true
 	end
 	return false
-end
-
-function DarkMode:UpdateColors()
-	for i, v in pairs( DMTexturesUi ) do
-		v:SetVertexColor( DarkMode:GetUiColor() )
-	end
-	for i, v in pairs( DMTexturesFrames ) do
-		v:SetVertexColor( DarkMode:GetFrameColor() )
-	end
 end
 
 function DarkMode:GetFrame( name )
@@ -142,54 +144,6 @@ function DarkMode:GetFrame( name )
 		end
 	end
 	return nil
-end
-
-function DarkMode:FindTextures( frame, ui )
-	if frame ~= nil then
-		local show = false
-		if frame.GetName and frame:GetName() and strfind( frame:GetName(), "XX", 1, true ) then
-			show = true
-		end
-		if frame.SetVertexColor then
-			if show and frame.GetTexture then
-				print(">", frame:GetTextureFilePath(), v:GetSize())
-			end
-			DarkMode:UpdateColor( frame, ui )
-		end
-		if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
-			for i, v in pairs( { frame:GetRegions() } ) do
-				if v.SetVertexColor then
-					if show and v.GetTexture then
-						print(">>", v:GetTextureFilePath(), v:GetSize())
-					end
-					DarkMode:UpdateColor( v, ui )
-				end
-			end
-		end
-		if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
-			for i, v in pairs( { frame:GetChildren() } ) do
-				if v.SetVertexColor then
-					if show and v.GetTexture then
-						print(">>>", v:GetTextureFilePath(), v:GetSize())
-					end
-					DarkMode:UpdateColor( v, ui )
-				end
-			end
-		end
-	end
-end
-
-function DarkMode:FindTexturesByName( name, ui )
-	local frame = DarkMode:GetFrame( name )
-
-	local show = false
-	if name and strfind( name, "Container", 1, true ) and strfind( name, "TopSection", 1, true ) then
-		show = true
-	end
-
-	if frame then
-		DarkMode:FindTextures( frame, ui )
-	end
 end
 
 local DMFS = {}
@@ -251,6 +205,69 @@ function DarkMode:FindTextsByName( name )
 	end
 end
 
+function DarkMode:UpdateColors()
+	for i, v in pairs( DMTexturesUi ) do
+		v:SetVertexColor( DarkMode:GetUiColor() )
+	end
+	for i, v in pairs( DMTexturesUF ) do
+		v:SetVertexColor( DarkMode:GetUFColor() )
+	end
+	for i, v in pairs( DMFS ) do
+		v:SetTextColor( DarkMode:GetFrameColor() )
+	end
+	for i, v in pairs( DMTexturesFrames ) do
+		v:SetVertexColor( DarkMode:GetFrameColor() )
+	end
+end
+
+function DarkMode:FindTextures( frame, typ )
+	if frame ~= nil then
+		local show = false
+		if frame.GetName and frame:GetName() and strfind( frame:GetName(), "XX", 1, true ) then
+			show = true
+		end
+		if frame.SetVertexColor then
+			if show and frame.GetTexture then
+				--print(">", frame:GetTextureFilePath(), v:GetSize())
+			end
+			DarkMode:UpdateColor( frame, typ )
+		end
+		if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
+			for i, v in pairs( { frame:GetRegions() } ) do
+				if v.SetVertexColor then
+					if show and v.GetTexture then
+						--print(">>", v:GetTextureFilePath(), v:GetSize())
+					end
+					DarkMode:UpdateColor( v, typ )
+				end
+			end
+		end
+		if frame.GetChildren and getn( { frame:GetChildren() } ) > 0 then
+			for i, v in pairs( { frame:GetChildren() } ) do
+				if v.SetVertexColor then
+					if show and v.GetTexture then
+						--print(">>>", v:GetTextureFilePath(), v:GetSize())
+					end
+					DarkMode:UpdateColor( v, typ )
+				end
+			end
+		end
+	end
+end
+
+function DarkMode:FindTexturesByName( name, typ )
+	local frame = DarkMode:GetFrame( name )
+
+	local show = false
+	if name and strfind( name, "Container", 1, true ) and strfind( name, "TopSection", 1, true ) then
+		show = true
+	end
+
+	if frame then
+		DarkMode:FindTextures( frame, typ )
+	end
+end
+
 function DarkMode:InitGreetingPanel()
 	local frame = DarkMode:GetFrame( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
 	local frameTab = {
@@ -266,7 +283,7 @@ function DarkMode:InitGreetingPanel()
 
 				for index, name in pairs( frameTab ) do
 					for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
-						DarkMode:FindTexturesByName( name .. v )
+						DarkMode:FindTexturesByName( name .. v, "frames" )
 					end
 				end
 			end )
@@ -293,16 +310,27 @@ function DarkMode:Event( event, ... )
 							for x = 1, 12 do
 								local btnTexture = _G[name .. x .. "NormalTexture"]
 								if btnTexture then
-									DarkMode:UpdateColor( btnTexture, true )
+									DarkMode:UpdateColor( btnTexture, "ui" )
+								end
+								local btnTexture2 = _G[name .. x .. "FloatingBG"]
+								if btnTexture2 then
+									DarkMode:UpdateColor( btnTexture2, "ui" )
+								end
+								if _G[name .. x] and _G[name .. x]["SlotBackground"] then
+									DarkMode:UpdateColor( _G[name .. x]["SlotBackground"], "ui" )
 								end
 							end
 						end
 					elseif index == "Minimap" then
 						for i, name in pairs( tab ) do
-							DarkMode:FindTexturesByName( name, true )
+							DarkMode:FindTexturesByName( name, "ui" )
+						end
+					elseif index == "UnitFrames" then
+						for i, v in pairs( tab ) do
+							DarkMode:FindTexturesByName( v, "uf" )
 						end
 					elseif type( tab ) == "string" then
-						DarkMode:FindTexturesByName( tab , true)
+						DarkMode:FindTexturesByName( tab, "ui" )
 					else
 						print( "Missing", index, tab )
 					end
@@ -310,7 +338,7 @@ function DarkMode:Event( event, ... )
 
 				for index, name in pairs( DarkMode:GetFrameTable() ) do
 					for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
-						DarkMode:FindTexturesByName( name .. v )
+						DarkMode:FindTexturesByName( name .. v, "frames" )
 					end
 				end
 				for index, name in pairs( DarkMode:GetFrameTextTable() ) do
@@ -389,7 +417,7 @@ function DarkMode:Event( event, ... )
 	elseif event == "ADDON_LOADED" then
 		for index, name in pairs( DarkMode:GetFrameAddonsTable() ) do
 			for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
-				DarkMode:FindTexturesByName( name .. v )
+				DarkMode:FindTexturesByName( name .. v, "frames" )
 			end
 		end
 
@@ -399,7 +427,7 @@ function DarkMode:Event( event, ... )
 				if tab then
 					for x, w in pairs( { tab:GetRegions() } ) do 
 						if x == 1 then
-							DarkMode:UpdateColor( w )
+							DarkMode:UpdateColor( w, "frames" )
 						end
 					end
 				end
@@ -414,7 +442,7 @@ function DarkMode:Event( event, ... )
 					local tabs = { ClassTalentFrame.TabSystem:GetChildren() }
 					for i, v in pairs( tabs ) do
 						for x, w in pairs( { v:GetRegions() } ) do 
-							DarkMode:UpdateColor( w )
+							DarkMode:UpdateColor( w, "frames" )
 						end
 					end
 				end
