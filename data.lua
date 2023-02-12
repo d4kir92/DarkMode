@@ -171,6 +171,7 @@ local DMUi = {
 	"ReputationWatchBar.StatusBar",
 	"MainStatusTrackingBarContainer.BarFrameTexture",
 	"SecondaryStatusTrackingBarContainer.BarFrameTexture",
+	"MainMenuBarMaxLevelBar",
 
 	-- Bartender
 	"BT4BarBlizzardArt",
