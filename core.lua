@@ -146,6 +146,17 @@ function DarkMode:GetFrame( name )
 	return nil
 end
 
+local function RGBToHexC( r, g, b )
+	r = r <= 1 and r >= 0 and r or 0
+	g = g <= 1 and g >= 0 and g or 0
+	b = b <= 1 and b >= 0 and b or 0
+	return "|cFF" .. string.format( "%02x%02x%02x", r * 255, g * 255, b * 255 )
+end
+
+local function RemoveColorCodes( text )
+    return text:gsub("|c%x%x%x%x%x%x%x%x", ""):gsub("|r", "")
+end
+
 local DMFS = {}
 function DarkMode:UpdateText( text, name, layer )
 	if text and text.SetTextColor then
@@ -156,6 +167,9 @@ function DarkMode:UpdateText( text, name, layer )
 				self.dm_settextcolor = true
 				local r, g, b, a = DarkMode:GetTextColor( DarkMode:GetFrameColor() )
 				self:SetTextColor( r, g, b, a )
+				if self:GetText() then
+					self:SetText( RGBToHexC( r, g, b ) .. RemoveColorCodes(self:GetText()) )
+				end
 				self.dm_settextcolor = false
 			end )
 		end
@@ -171,7 +185,7 @@ end
 
 function DarkMode:FindTexts( frame, name )
 	if frame ~= nil then
-		if frame.SetTextColor then
+		if frame.SetTextColor then		
 			DarkMode:UpdateText( frame, name, 1 )
 		else
 			if frame.GetRegions and getn( { frame:GetRegions() } ) > 0 then
