@@ -290,18 +290,35 @@ function DarkMode:InitGreetingPanel()
 		"GossipFrame.GreetingPanel.ScrollBox",
 		"GossipFrame.GreetingPanel.ScrollBar.Background",
 	}
-	if frame then
-		frame:HookScript( "OnShow", function(self, ... )
-			C_Timer.After( 0.01, function()
-				DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
 
-				for index, name in pairs( frameTab ) do
-					for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
-						DarkMode:FindTexturesByName( name .. v, "frames" )
-					end
-				end
+	function DarkMode:UpdateGossipFrame()
+		DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+
+		for index, name in pairs( frameTab ) do
+			for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
+				DarkMode:FindTexturesByName( name .. v, "frames" )
+			end
+		end
+	end
+
+	if frame then
+		hooksecurefunc( GossipFrame.GreetingPanel.ScrollBox, "FullUpdate" ,function()
+			DarkMode:UpdateGossipFrame()
+		end )
+
+		frame:HookScript( "OnShow", function(self, ... )
+			C_Timer.After( 0.05, function()
+				DarkMode:UpdateGossipFrame()
 			end )
 		end )
+		
+		if GossipFrame.OnEvent then
+			hooksecurefunc( GossipFrame, "OnEvent", function()
+				C_Timer.After( 0.05, function()
+					DarkMode:UpdateGossipFrame()
+				end )
+			end )
+		end
 	end
 end
 
