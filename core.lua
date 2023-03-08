@@ -322,6 +322,30 @@ function DarkMode:InitGreetingPanel()
 	end
 end
 
+function DarkMode:InitQuestFrame()
+	local frame = DarkMode:GetFrame( "QuestFrameGreetingPanel" )
+
+	function DarkMode:UpdateQuestFrame()
+		DarkMode:FindTextsByName( "QuestFrameGreetingPanel" )
+	end
+
+	if frame then
+		frame:HookScript( "OnShow", function(self, ... )
+			C_Timer.After( 0.05, function()
+				DarkMode:UpdateQuestFrame()
+			end )
+		end )
+		
+		if QuestFrame.OnEvent then
+			hooksecurefunc( QuestFrame, "OnEvent", function()
+				C_Timer.After( 0.05, function()
+					DarkMode:UpdateQuestFrame()
+				end )
+			end )
+		end
+	end
+end
+
 function DarkMode:Event( event, ... )
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -333,6 +357,7 @@ function DarkMode:Event( event, ... )
 			DarkMode:InitDMSettings()
 
 			DarkMode:InitGreetingPanel()
+			DarkMode:InitQuestFrame()
 
 			C_Timer.After( 0.1, function()
 				for index, tab in pairs( DarkMode:GetUiTable() ) do
