@@ -242,7 +242,7 @@ function DarkMode:FindTextures( frame, typ )
 		end
 		if frame.SetVertexColor then
 			if show and frame.GetTexture then
-				--print(">", frame:GetTextureFilePath(), v:GetSize())
+				print(">", frame:GetTextureFilePath(), v:GetSize())
 			end
 			DarkMode:UpdateColor( frame, typ )
 		end
@@ -250,7 +250,7 @@ function DarkMode:FindTextures( frame, typ )
 			for i, v in pairs( { frame:GetRegions() } ) do
 				if v.SetVertexColor then
 					if show and v.GetTexture then
-						--print(">>", v:GetTextureFilePath(), v:GetSize())
+						print(">>", v:GetTextureFilePath(), v:GetSize())
 					end
 					DarkMode:UpdateColor( v, typ )
 				end
@@ -260,7 +260,7 @@ function DarkMode:FindTextures( frame, typ )
 			for i, v in pairs( { frame:GetChildren() } ) do
 				if v.SetVertexColor then
 					if show and v.GetTexture then
-						--print(">>>", v:GetTextureFilePath(), v:GetSize())
+						print(">>>", v:GetTextureFilePath(), v:GetSize())
 					end
 					DarkMode:UpdateColor( v, typ )
 				end
@@ -322,6 +322,32 @@ function DarkMode:InitGreetingPanel()
 	end
 end
 
+function DarkMode:InitQuestLogFrame()
+	local frame = DarkMode:GetFrame( "QuestLogFrame" )
+
+	function DarkMode:UpdateQuestLogFrame()
+		for index, name in pairs( DarkMode:GetFrameTextTable() ) do
+			DarkMode:FindTextsByName( name )
+		end
+	end
+
+	if frame then
+		frame:HookScript( "OnShow", function(self, ... )
+			C_Timer.After( 0.05, function()
+				DarkMode:UpdateQuestLogFrame()
+			end )
+		end )
+		
+		if frame.OnEvent then
+			hooksecurefunc( frame, "OnEvent", function()
+				C_Timer.After( 0.05, function()
+					DarkMode:UpdateQuestLogFrame()
+				end )
+			end )
+		end
+	end
+end
+
 function DarkMode:InitQuestFrame()
 	local frame = DarkMode:GetFrame( "QuestFrameGreetingPanel" )
 
@@ -357,6 +383,7 @@ function DarkMode:Event( event, ... )
 			DarkMode:InitDMSettings()
 
 			DarkMode:InitGreetingPanel()
+			DarkMode:InitQuestLogFrame()
 			DarkMode:InitQuestFrame()
 
 			C_Timer.After( 0.1, function()

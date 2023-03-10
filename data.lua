@@ -494,6 +494,13 @@ local DMFrameTexts = {
 
 	--"QuestDetailScrollChildFrame",
 	"QuestInfoTitleHeader",
+	"QuestInfoObjective1",
+	"QuestInfoObjective2",
+	"QuestInfoObjective3",
+	"QuestInfoObjective4",
+	"QuestInfoObjective5",
+	"QuestInfoObjective6",
+	"QuestInfoDescriptionHeader",
 	"QuestInfoDescriptionText",
 	"QuestInfoObjectivesHeader",
 	"QuestInfoObjectivesText",
@@ -557,11 +564,14 @@ DMTextureBlock["RTPortrait1"] = true
 DMTextureBlock["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMTextureBlock["Interface\\MailFrame\\Mail-Icon"] = true
 DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
+DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
 
 if DarkMode:GetWoWBuild() == "RETAIL" then
 	DMTextureBlock[130724] = true
 elseif DarkMode:GetWoWBuild() == "WRATH" then
 	DMTextureBlock[136830] = true -- Spellbook Icon
+	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
+
 	DMTextureBlock[136797] = true -- QuestLogFrame Icon
 	DMTextureBlock[131116] = true -- FriendsFrame Icon
 	DMTextureBlock[136382] = true -- MailFrame Icon
