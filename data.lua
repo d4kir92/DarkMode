@@ -567,7 +567,8 @@ DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
 DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
 
 if DarkMode:GetWoWBuild() == "RETAIL" then
-	DMTextureBlock[130724] = true
+	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
+	DMTextureBlock[136377] = true -- MacroFrame Portrai
 elseif DarkMode:GetWoWBuild() == "WRATH" then
 	DMTextureBlock[136830] = true -- Spellbook Icon
 	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon

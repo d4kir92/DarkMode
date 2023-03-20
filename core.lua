@@ -242,7 +242,7 @@ function DarkMode:FindTextures( frame, typ )
 		end
 		if frame.SetVertexColor then
 			if show and frame.GetTexture then
-				print(">", frame:GetTextureFilePath(), v:GetSize())
+				print(">", frame:GetTextureFilePath(), frame:GetSize())
 			end
 			DarkMode:UpdateColor( frame, typ )
 		end
