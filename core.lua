@@ -292,8 +292,12 @@ function DarkMode:InitGreetingPanel()
 	}
 
 	function DarkMode:UpdateGossipFrame()
-		DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
-
+		if frame == GossipFrame then
+			DarkMode:FindTextsByName( "GossipFrame" )
+		else
+			DarkMode:FindTextsByName( "GossipFrame.GreetingPanel.ScrollBox.ScrollTarget" )
+		end
+		
 		for index, name in pairs( frameTab ) do
 			for i, v in pairs( DarkMode:GetDMRepeatingFrames() ) do
 				DarkMode:FindTexturesByName( name .. v, "frames" )
@@ -301,10 +305,15 @@ function DarkMode:InitGreetingPanel()
 		end
 	end
 
+	if frame == nil then
+		frame = DarkMode:GetFrame( "GossipFrame" )
+	end
 	if frame then
-		hooksecurefunc( GossipFrame.GreetingPanel.ScrollBox, "FullUpdate" ,function()
-			DarkMode:UpdateGossipFrame()
-		end )
+		if GossipFrame.GreetingPanel then
+			hooksecurefunc( GossipFrame.GreetingPanel.ScrollBox, "FullUpdate" ,function()
+				DarkMode:UpdateGossipFrame()
+			end )
+		end
 
 		frame:HookScript( "OnShow", function(self, ... )
 			C_Timer.After( 0.05, function()
