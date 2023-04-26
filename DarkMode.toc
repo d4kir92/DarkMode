@@ -3,7 +3,7 @@
 ## Interface-Wrath: 30401
 ## Interface: 100007
 
-## Version: 0.2.16
+## Version: 0.2.17
 ## Title: DarkMode |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR

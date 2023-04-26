@@ -256,13 +256,17 @@ function DarkMode:FindTextures(frame, typ)
 	if frame ~= nil then
 		local show = false
 
-		if frame.GetName and frame:GetName() and strfind(frame:GetName(), "XX", 1, true) then
-			show = true
+		if frame.GetName and frame:GetName() then
+			if DarkMode:GetIgnoreFrames(frame:GetName()) then
+				return
+			elseif strfind(frame:GetName(), "XX") then
+				show = true
+			end
 		end
 
 		if frame.SetVertexColor then
 			if show and frame.GetTexture then
-				print(">", frame:GetTextureFilePath(), frame:GetSize())
+				print(">", frame:GetName(), frame:GetTextureFilePath(), frame:GetTexture(), "Size:", frame:GetSize())
 			end
 
 			DarkMode:UpdateColor(frame, typ)
@@ -270,9 +274,11 @@ function DarkMode:FindTextures(frame, typ)
 
 		if frame.GetRegions and getn({frame:GetRegions()}) > 0 then
 			for i, v in pairs({frame:GetRegions()}) do
-				if v.SetVertexColor then
+				local hasName = v.GetName ~= nil
+
+				if (hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor) then
 					if show and v.GetTexture then
-						print(">>", v:GetTextureFilePath(), v:GetSize())
+						print(">>", v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
 
 					DarkMode:UpdateColor(v, typ)
@@ -282,9 +288,11 @@ function DarkMode:FindTextures(frame, typ)
 
 		if frame.GetChildren and getn({frame:GetChildren()}) > 0 then
 			for i, v in pairs({frame:GetChildren()}) do
-				if v.SetVertexColor then
+				local hasName = v.GetName ~= nil
+
+				if (hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor) then
 					if show and v.GetTexture then
-						print(">>>", v:GetTextureFilePath(), v:GetSize())
+						print(">>>", v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
 
 					DarkMode:UpdateColor(v, typ)
@@ -460,6 +468,15 @@ function DarkMode:Event(event, ...)
 					DarkMode:FindTextsByName(name)
 				end
 			end)
+
+			--[[ SPECIALS ]]
+			if FriendsFramePortrait then
+				hooksecurefunc(FriendsFramePortrait, "Show", function()
+					FriendsFramePortrait:Hide()
+				end)
+
+				FriendsFramePortrait:Hide()
+			end
 
 			function DarkMode:UpdateMinimapButton()
 				if DMMMBTN then

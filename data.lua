@@ -175,7 +175,9 @@ elseif DarkMode:GetWoWBuild() == "WRATH" then
 	DMTextureBlock[136382] = true -- MailFrame Icon
 	DMTextureBlock[130709] = true -- "Interface/BattlefieldFrame/UI-Battlefield-Icon",
 elseif DarkMode:GetWoWBuild() == "TBC" then
+	DMTextureBlock[131116] = true -- FriendsFrame Icon
 elseif DarkMode:GetWoWBuild() == "CLASSIC" then
+	DMTextureBlock[131116] = true -- FriendsFrame Icon
 end
 
 -- StatusBar
@@ -196,4 +198,15 @@ DMTextureBlock[374172] = true
 -- ids: https://www.townlong-yak.com/framexml/live/Helix/ArtTextureID.lua
 function DarkMode:GetTextureBlockTable()
 	return DMTextureBlock
+end
+
+local DMIgnoreFrames = {}
+DMIgnoreFrames["FriendsFrameIcon"] = true
+DMIgnoreFrames["FriendsFramePortrait"] = true
+DMIgnoreFrames["FriendsFramePortraitFrame"] = true
+DMIgnoreFrames["FriendsTabHeader"] = true
+DMIgnoreFrames["FriendsListFrame"] = true
+
+function DarkMode:GetIgnoreFrames(name)
+	return DMTextureBlock[name]
 end
