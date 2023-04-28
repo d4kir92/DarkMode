@@ -201,11 +201,14 @@ function DarkMode:GetTextureBlockTable()
 end
 
 local DMIgnoreFrames = {}
-DMIgnoreFrames["FriendsFrameIcon"] = true
-DMIgnoreFrames["FriendsFramePortrait"] = true
-DMIgnoreFrames["FriendsFramePortraitFrame"] = true
-DMIgnoreFrames["FriendsTabHeader"] = true
-DMIgnoreFrames["FriendsListFrame"] = true
+
+if DarkMode:GetWoWBuild() ~= "RETAIL" then
+	DMIgnoreFrames["FriendsFrameIcon"] = true
+	DMIgnoreFrames["FriendsFramePortrait"] = true
+	DMIgnoreFrames["FriendsFramePortraitFrame"] = true
+	DMIgnoreFrames["FriendsTabHeader"] = true
+	DMIgnoreFrames["FriendsListFrame"] = true
+end
 
 function DarkMode:GetIgnoreFrames(name)
 	return DMTextureBlock[name]

@@ -58,14 +58,33 @@ function DarkMode:UpdateColor(texture, typ)
 	end
 
 	if textureId and DarkMode:GetTextureBlockTable()[textureId] then return false end
+	if texture:GetAlpha() == 0 then return false end
 
 	if textureId == nil and texture.SetColorTexture then
 		if typ == "ui" then
-			texture:SetColorTexture(DarkMode:GetUiColor())
+			local r, g, b, a = DarkMode:GetUiColor()
+
+			if texture:GetAlpha() < 1 then
+				a = texture:GetAlpha()
+			end
+
+			texture:SetColorTexture(r, g, b, a)
 		elseif typ == "uf" then
-			texture:SetColorTexture(DarkMode:GetUFColor())
+			local r, g, b, a = DarkMode:GetUFColor()
+
+			if texture:GetAlpha() < 1 then
+				a = texture:GetAlpha()
+			end
+
+			texture:SetColorTexture(r, g, b, a)
 		else
-			texture:SetColorTexture(DarkMode:GetFrameColor())
+			local r, g, b, a = DarkMode:GetFrameColor()
+
+			if texture:GetAlpha() < 1 then
+				a = texture:GetAlpha()
+			end
+
+			texture:SetColorTexture(r, g, b, a)
 		end
 
 		return true
@@ -470,7 +489,7 @@ function DarkMode:Event(event, ...)
 			end)
 
 			--[[ SPECIALS ]]
-			if FriendsFramePortrait then
+			if DarkMode:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
 				hooksecurefunc(FriendsFramePortrait, "Show", function()
 					FriendsFramePortrait:Hide()
 				end)
