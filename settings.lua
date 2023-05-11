@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.22")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.23")
 }
 
 local searchStr = ""
@@ -322,7 +322,7 @@ function DarkMode:InitDMSettings()
 
 	DMSettings:UpdateShowErrors()
 	DMSettings.DISCORD = CreateFrame("EditBox", "DMSettings" .. ".DISCORD", DMSettings, "InputBoxTemplate")
-	DMSettings.DISCORD:SetText("discord.gg/cqbURmXgXA")
+	DMSettings.DISCORD:SetText("discord.gg/AYB3qR5hQm")
 	DMSettings.DISCORD:SetSize(160, 24)
 	DMSettings.DISCORD:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", DMSettings:GetWidth() - 160 - 8, -DMSettings:GetHeight() + 24 + 4)
 	DMSettings.DISCORD:SetAutoFocus(false)

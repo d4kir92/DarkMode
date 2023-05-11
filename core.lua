@@ -440,6 +440,45 @@ function DarkMode:Event(event, ...)
 			DarkMode:InitQuestLogFrame()
 			DarkMode:InitQuestFrame()
 
+			if AuraFrameMixin and AuraFrameMixin.Update then
+				hooksecurefunc(AuraFrameMixin, "Update", function(sel)
+					for index, bf in pairs(sel.auraFrames) do
+						if bf and _G["Buff" .. index .. "BorderDM"] == nil then
+							local sw, _ = bf:GetSize()
+							sw = DarkMode:MathR(sw)
+							local scale = 1
+							_G["Buff" .. index .. "BorderDM"] = bf:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
+							local border = _G["Buff" .. index .. "BorderDM"]
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sw * scale, sw * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+							border:SetPoint("TOP", bf, "TOP", 0, 0)
+							DarkMode:UpdateColor(border, "ui")
+						end
+					end
+				end)
+			elseif BuffFrame_UpdateAllBuffAnchors then
+				hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", function()
+					local buttonName = "BuffButton"
+
+					for index = 1, BUFF_ACTUAL_DISPLAY do
+						if _G[buttonName .. index] and _G[buttonName .. index .. "BorderDM"] == nil then
+							local sw, sh = _G[buttonName .. index]:GetSize()
+							sw = DarkMode:MathR(sw)
+							sh = DarkMode:MathR(sh)
+							local scale = 1.1
+							_G[buttonName .. index .. "BorderDM"] = _G[buttonName .. index]:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+							local border = _G[buttonName .. index .. "BorderDM"]
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sw * scale, sh * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+							border:SetPoint("CENTER", _G[buttonName .. index], "CENTER", 0, 0)
+							DarkMode:UpdateColor(border, "ui")
+						end
+					end
+				end)
+			end
+
 			C_Timer.After(0.1, function()
 				for index, tab in pairs(DarkMode:GetUiTable()) do
 					if index == "ActionButtons" then
@@ -459,6 +498,29 @@ function DarkMode:Event(event, ...)
 
 								if _G[name .. x] and _G[name .. x]["SlotBackground"] then
 									DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "ui")
+								end
+
+								if DarkMode:GetWoWBuild() ~= "RETAIL" then
+									local icon = _G[name .. x .. "Icon"]
+
+									if icon then
+										local br = 0.01
+										icon:SetTexCoord(br, 1 - br, br, 1 - br)
+									end
+
+									if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
+										local sw, sh = _G[name .. x]:GetSize()
+										sw = DarkMode:MathR(sw)
+										sh = DarkMode:MathR(sh)
+										local scale = 1.1
+										_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
+										local border = _G[name .. x .. "BorderDM"]
+										border:SetDrawLayer("OVERLAY", 3)
+										border:SetSize(sw * scale, sh * scale)
+										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
+										border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+										DarkMode:UpdateColor(border, "ui")
+									end
 								end
 							end
 						end
