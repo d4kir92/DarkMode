@@ -483,7 +483,14 @@ function DarkMode:Event(event, ...)
 				for index, tab in pairs(DarkMode:GetUiTable()) do
 					if index == "ActionButtons" then
 						for i, name in pairs(tab) do
-							for x = 1, 12 do
+							local max = 12
+
+							--[[ Bar Addons ]]
+							if name == "BT4Button" or name == "DominosActionButton" then
+								max = 120
+							end
+
+							for x = 1, max do
 								local btnTexture = _G[name .. x .. "NormalTexture"]
 
 								if btnTexture then
