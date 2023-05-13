@@ -21,6 +21,7 @@ function DarkMode:Lang_enUS()
 		["CUSTOMUIC"] = "Custom Ui Color",
 		["CUSTOMUFC"] = "Custom UnitFrames Color",
 		["CUSTOMFRC"] = "Custom Windows Color",
+		["MASKACTIONBUTTONS"] = "Mask Actionbuttons",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

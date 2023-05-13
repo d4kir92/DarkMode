@@ -507,7 +507,7 @@ function DarkMode:Event(event, ...)
 									DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "ui")
 								end
 
-								if DarkMode:GetWoWBuild() ~= "RETAIL" then
+								if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
 									local icon = _G[name .. x .. "Icon"]
 
 									if icon then

@@ -13,6 +13,7 @@ function DarkMode:Lang_deDE()
 		["CUSTOMUIC"] = "Benutzerdefiniert Ui Farbe",
 		["CUSTOMUFC"] = "Benutzerdefiniert Einheitenfenster Farbe",
 		["CUSTOMFRC"] = "Benutzerdefiniert Fenster Farbe",
+		["MASKACTIONBUTTONS"] = "Aktionsknöpfe maskieren",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

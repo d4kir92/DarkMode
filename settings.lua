@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.25")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.26")
 }
 
 local searchStr = ""
@@ -233,6 +233,10 @@ function DarkMode:InitDMSettings()
 		posy = -8
 		AddCategory("GENERAL")
 		AddCheckBox(4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton)
+
+		if DarkMode:GetWoWBuild() ~= "RETAIL" then
+			AddCheckBox(4, "MASKACTIONBUTTONS", true)
+		end
 
 		local sCM = AddSlider(4, "COLORMODE", DarkMode:GV("COLORMODE", 1), function(sel, val)
 			sel.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DMColorModes[val])
