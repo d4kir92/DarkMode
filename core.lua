@@ -45,6 +45,8 @@ local DMTexturesUF = {}
 local DMTexturesFrames = {}
 
 function DarkMode:UpdateColor(texture, typ)
+	if not DarkMode:IsValidTexture(texture) then return false end
+
 	if texture == nil then
 		print("INVALID TEXTURE OBJECT")
 
@@ -271,14 +273,22 @@ function DarkMode:UpdateColors()
 	end
 end
 
+function DarkMode:IsValidTexture(obj)
+	if obj.GetTexture and obj:GetTexture() ~= nil then return true end
+	if obj.GetTextureFilePath and obj:GetTextureFilePath() ~= nil then return true end
+
+	return false
+end
+
 function DarkMode:FindTextures(frame, typ)
 	if frame ~= nil then
 		local show = false
+		local findName = "XX"
 
 		if frame.GetName and frame:GetName() then
 			if DarkMode:GetIgnoreFrames(frame:GetName()) then
 				return
-			elseif strfind(frame:GetName(), "XX") then
+			elseif strfind(frame:GetName(), findName) then
 				show = true
 			end
 		end
@@ -493,7 +503,19 @@ function DarkMode:Event(event, ...)
 							for x = 1, max do
 								local btnTexture = _G[name .. x .. "NormalTexture"]
 
-								if btnTexture then
+								if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
+									local sw, sh = _G[name .. x]:GetSize()
+									sw = DarkMode:MathR(sw)
+									sh = DarkMode:MathR(sh)
+									local scale = 1.1
+									_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
+									local border = _G[name .. x .. "BorderFix"]
+									border:SetDrawLayer("OVERLAY", 3)
+									border:SetSize(sw * scale, sh * scale)
+									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+									border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+									DarkMode:UpdateColor(border, "ui")
+								elseif btnTexture then
 									DarkMode:UpdateColor(btnTexture, "ui")
 								end
 
@@ -640,45 +662,47 @@ function DarkMode:Event(event, ...)
 			end
 		end
 	elseif event == "ADDON_LOADED" then
-		for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
-			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "frames")
+		C_Timer.After(0.1, function()
+			for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
+				for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+					DarkMode:FindTexturesByName(name .. v, "frames")
+				end
 			end
-		end
 
-		if PlayerTalentFrame then
-			for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
-				local tab = _G[v]
+			if PlayerTalentFrame then
+				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
+					local tab = _G[v]
 
-				if tab then
-					for x, w in pairs({tab:GetRegions()}) do
-						if x == 1 then
-							DarkMode:UpdateColor(w, "frames")
+					if tab then
+						for x, w in pairs({tab:GetRegions()}) do
+							if x == 1 then
+								DarkMode:UpdateColor(w, "frames")
+							end
 						end
 					end
 				end
 			end
-		end
 
-		if ClassTalentFrame and ClassTalentFrame.dm_setup == nil then
-			ClassTalentFrame.dm_setup = true
+			if ClassTalentFrame and ClassTalentFrame.dm_setup == nil then
+				ClassTalentFrame.dm_setup = true
 
-			function ClassTalentFrame:UpdateColors()
-				local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
+				function ClassTalentFrame:UpdateColors()
+					local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
 
-				for i, v in pairs(tabs) do
-					for x, w in pairs({v:GetRegions()}) do
-						DarkMode:UpdateColor(w, "frames")
+					for i, v in pairs(tabs) do
+						for x, w in pairs({v:GetRegions()}) do
+							DarkMode:UpdateColor(w, "frames")
+						end
 					end
 				end
-			end
 
-			ClassTalentFrame:HookScript("OnShow", function(sel)
+				ClassTalentFrame:HookScript("OnShow", function(sel)
+					ClassTalentFrame:UpdateColors()
+				end)
+
 				ClassTalentFrame:UpdateColors()
-			end)
-
-			ClassTalentFrame:UpdateColors()
-		end
+			end
+		end)
 	end
 end
 
