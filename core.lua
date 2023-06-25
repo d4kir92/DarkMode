@@ -413,6 +413,32 @@ function DarkMode:InitQuestLogFrame()
 			end)
 		end
 	end
+
+	local frame2 = DarkMode:GetFrame("QuestMapFrame")
+
+	function DarkMode:UpdateQuestMapFrame()
+		for index, name in pairs(DarkMode:GetFrameTextTable()) do
+			DarkMode:FindTextsByName(name)
+		end
+	end
+
+	if frame2 then
+		hooksecurefunc(QuestMapFrame.DetailsFrame.SealMaterialBG, "SetVertexColor", function(sel, r, g, b, a)
+			if sel.dm_setvertexcolor then return end
+			sel.dm_setvertexcolor = true
+			sel:SetVertexColor(DarkMode:GetFrameColor())
+			sel.dm_setvertexcolor = false
+		end)
+
+		QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(DarkMode:GetFrameColor())
+
+		function DarkMode:UpdateTextInQuestMapFrame()
+			DarkMode:UpdateQuestMapFrame()
+			C_Timer.After(0.1, DarkMode.UpdateTextInQuestMapFrame)
+		end
+
+		DarkMode:UpdateTextInQuestMapFrame()
+	end
 end
 
 function DarkMode:InitQuestFrame()
