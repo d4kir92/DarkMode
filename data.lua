@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 function DarkMode:GetColor(id, name)
-	local colorMode = DMColorModes[id]
+	local colorMode = DarkMode:GetColorModes()[id]
 
 	if colorMode == "Dark" then
 		return 0.180, 0.180, 0.180, 1

@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.30")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.31")
 }
 
 local searchStr = ""
@@ -11,7 +11,11 @@ local cbs = {}
 local sls = {}
 local cps = {}
 
-DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Default", "Custom",}
+local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Default", "Custom",}
+
+function DarkMode:GetColorModes()
+	return DMColorModes
+end
 
 local function DMSetPos(ele, key, x)
 	if ele == nil then return false end
@@ -239,27 +243,27 @@ function DarkMode:InitDMSettings()
 		end
 
 		local sCM = AddSlider(4, "COLORMODE", DarkMode:GV("COLORMODE", 1), function(sel, val)
-			sel.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DMColorModes[val])
+			sel.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[val])
 			DarkMode:UpdateColors()
-		end, 1, getn(DMColorModes), 1)
+		end, 1, getn(DarkMode:GetColorModes()), 1)
 
-		sCM.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DMColorModes[DarkMode:GV("COLORMODE", 1)])
+		sCM.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODE", 1)])
 		DarkMode:AddColorPicker("CUSTOMUIC", DMSettings.SC, 0, 0)
 
 		local sCMUF = AddSlider(4, "COLORMODEUF", DarkMode:GV("COLORMODEUF", 7), function(sel, val)
-			sel.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DMColorModes[val])
+			sel.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[val])
 			DarkMode:UpdateColors()
-		end, 1, getn(DMColorModes), 1)
+		end, 1, getn(DarkMode:GetColorModes()), 1)
 
-		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DMColorModes[DarkMode:GV("COLORMODEUF", 7)])
+		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 7)])
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
 
 		local sCMF = AddSlider(4, "COLORMODEF", DarkMode:GV("COLORMODEF", 1), function(sel, val)
-			sel.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DMColorModes[val])
+			sel.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[val])
 			DarkMode:UpdateColors()
-		end, 1, getn(DMColorModes), 1)
+		end, 1, getn(DarkMode:GetColorModes()), 1)
 
-		sCMF.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DMColorModes[DarkMode:GV("COLORMODEF", 1)])
+		sCMF.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEF", 1)])
 		DarkMode:AddColorPicker("CUSTOMFRC", DMSettings.SC, 0, 0)
 	end
 
