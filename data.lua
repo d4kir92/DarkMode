@@ -83,12 +83,13 @@ function DarkMode:GetDMRepeatingFrames()
 end
 
 local DMUi = {
-	-- Collections
 	["ActionButtons"] = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarLeftButton", "MultiBarRightButton", "ActionBar7Button", "ActionBar8Button", "ActionBar9Button", "ActionBar10Button", "MultiBar5Button", "MultiBar6Button", "MultiBar7Button", "StanceButton", "PetActionButton", "BT4Button", "BT4StanceButton", "BT4PetButton", "DominosActionButton"},
-	-- MoveAny -- RETAIL
 	["Minimap"] = {"MinimapBorder", "MinimapBorderTop", "TimeManagerClockButton", "MinimapCompassTexture", "MinimapCluster.BorderTop",},
 	["UnitFrames"] = {"PlayerFrameTexture", "TargetFrameTextureFrameTexture", "FocusFrameTextureFrameTexture", "TargetFrameToTTextureFrameTexture", "PetFrameTexture", "PlayerFrame.PlayerFrameContainer.FrameTexture", "TargetFrame.TargetFrameContainer.FrameTexture", "FocusFrame.TargetFrameContainer.FrameTexture",},
-	"MainMenuBarArtFrame", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap", "ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab", "CastingBarFrame.Border"
+	["Tooltips"] = {"GameTooltip", "GameTooltip.NineSlice"},
+	["Artworks"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBarArtFrame", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap",},
+	["Chat"] = {"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
+	["Castbar"] = {"CastingBarFrame.Border"}
 }
 
 -- Textures

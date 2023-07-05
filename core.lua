@@ -579,16 +579,16 @@ function DarkMode:Event(event, ...)
 								end
 							end
 						end
-					elseif index == "Minimap" then
-						for i, name in pairs(tab) do
-							DarkMode:FindTexturesByName(name, "ui")
+					elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Tooltips" or index == "Castbar" then
+						for i, v in pairs(tab) do
+							DarkMode:FindTexturesByName(v, "ui")
 						end
+					elseif type(tab) == "string" then
+						DarkMode:FindTexturesByName(tab, "ui")
 					elseif index == "UnitFrames" then
 						for i, v in pairs(tab) do
 							DarkMode:FindTexturesByName(v, "uf")
 						end
-					elseif type(tab) == "string" then
-						DarkMode:FindTexturesByName(tab, "ui")
 					else
 						print("Missing", index, tab)
 					end
