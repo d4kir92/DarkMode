@@ -653,8 +653,20 @@ function DarkMode:InitQuestFrame()
 		DarkMode:FindTextsByName("QuestFrameGreetingPanel")
 	end
 
+	if QuestFrame then
+		QuestFrame:HookScript("OnShow", function(sel, ...)
+			DarkMode:SearchFrames()
+		end)
+	end
+
 	if QuestFrameRewardPanel then
 		QuestFrameRewardPanel:HookScript("OnShow", function(sel, ...)
+			DarkMode:SearchFrames()
+		end)
+	end
+
+	if QuestFrameDetailPanel then
+		QuestFrameDetailPanel:HookScript("OnShow", function(sel, ...)
 			DarkMode:SearchFrames()
 		end)
 	end
