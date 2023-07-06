@@ -540,24 +540,136 @@ function DarkMode:InitQuestLogFrame()
 	end
 end
 
+function DarkMode:SearchFrames()
+	for index, name in pairs(DarkMode:GetFrameTable()) do
+		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			DarkMode:FindTexturesByName(name .. v, "frames")
+		end
+	end
+end
+
+function DarkMode:SearchAddons()
+	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
+		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			DarkMode:FindTexturesByName(name .. v, "frames")
+		end
+	end
+end
+
+function DarkMode:SearchUi()
+	for index, tab in pairs(DarkMode:GetUiTable()) do
+		if index == "ActionButtons" then
+			for i, name in pairs(tab) do
+				local max = 12
+
+				--[[ Bar Addons ]]
+				if name == "BT4Button" or name == "DominosActionButton" then
+					max = 120
+				end
+
+				for x = 1, max do
+					local btnTexture = _G[name .. x .. "NormalTexture"]
+
+					if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
+						local sw, sh = _G[name .. x]:GetSize()
+						sw = DarkMode:MathR(sw)
+						sh = DarkMode:MathR(sh)
+						local scale = 1.1
+						_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
+						local border = _G[name .. x .. "BorderFix"]
+						border:SetDrawLayer("OVERLAY", 3)
+						border:SetSize(sw * scale, sh * scale)
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+						border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+						DarkMode:UpdateColor(border, "ui")
+					elseif btnTexture then
+						DarkMode:UpdateColor(btnTexture, "ui")
+					end
+
+					local btnTexture2 = _G[name .. x .. "FloatingBG"]
+
+					if btnTexture2 then
+						DarkMode:UpdateColor(btnTexture2, "ui")
+					end
+
+					if _G[name .. x] and _G[name .. x]["SlotBackground"] then
+						DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "ui")
+					end
+
+					if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
+						local icon = _G[name .. x .. "Icon"]
+
+						if icon then
+							local br = 0.01
+							icon:SetTexCoord(br, 1 - br, br, 1 - br)
+						end
+
+						if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
+							local sw, sh = _G[name .. x]:GetSize()
+							sw = DarkMode:MathR(sw)
+							sh = DarkMode:MathR(sh)
+							local scale = 1.1
+							_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
+							local border = _G[name .. x .. "BorderDM"]
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sw * scale, sh * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
+							border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+							DarkMode:UpdateColor(border, "ui")
+						end
+					end
+				end
+			end
+		elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
+			for i, v in pairs(tab) do
+				DarkMode:FindTexturesByName(v, "ui")
+			end
+		elseif index == "Gryphons" then
+			if DarkMode:IsEnabled("GRYPHONS", true) then
+				for i, v in pairs(tab) do
+					DarkMode:FindTexturesByName(v, "ui")
+				end
+			end
+		elseif index == "Tooltips" then
+			for i, v in pairs(tab) do
+				DarkMode:FindTexturesByName(v, "tt")
+			end
+		elseif type(tab) == "string" then
+			DarkMode:FindTexturesByName(tab, "ui")
+		elseif index == "UnitFrames" then
+			for i, v in pairs(tab) do
+				DarkMode:FindTexturesByName(v, "uf")
+			end
+		else
+			print("Missing Ui index:", index, tab)
+		end
+	end
+end
+
 function DarkMode:InitQuestFrame()
 	local frame = DarkMode:GetFrame("QuestFrameGreetingPanel")
 
-	function DarkMode:UpdateQuestFrame()
+	function DarkMode:UpdateQuestFrameGreetingPanel()
 		DarkMode:FindTextsByName("QuestFrameGreetingPanel")
+	end
+
+	if QuestFrameRewardPanel then
+		QuestFrameRewardPanel:HookScript("OnShow", function(sel, ...)
+			DarkMode:SearchFrames()
+		end)
 	end
 
 	if frame then
 		frame:HookScript("OnShow", function(sel, ...)
 			C_Timer.After(0.05, function()
-				DarkMode:UpdateQuestFrame()
+				DarkMode:UpdateQuestFrameGreetingPanel()
 			end)
 		end)
 
 		if QuestFrame.OnEvent then
 			hooksecurefunc(QuestFrame, "OnEvent", function()
 				C_Timer.After(0.05, function()
-					DarkMode:UpdateQuestFrame()
+					DarkMode:UpdateQuestFrameGreetingPanel()
 				end)
 			end)
 		end
@@ -615,99 +727,8 @@ function DarkMode:Event(event, ...)
 			end
 
 			C_Timer.After(0.1, function()
-				for index, tab in pairs(DarkMode:GetUiTable()) do
-					if index == "ActionButtons" then
-						for i, name in pairs(tab) do
-							local max = 12
-
-							--[[ Bar Addons ]]
-							if name == "BT4Button" or name == "DominosActionButton" then
-								max = 120
-							end
-
-							for x = 1, max do
-								local btnTexture = _G[name .. x .. "NormalTexture"]
-
-								if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
-									local sw, sh = _G[name .. x]:GetSize()
-									sw = DarkMode:MathR(sw)
-									sh = DarkMode:MathR(sh)
-									local scale = 1.1
-									_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
-									local border = _G[name .. x .. "BorderFix"]
-									border:SetDrawLayer("OVERLAY", 3)
-									border:SetSize(sw * scale, sh * scale)
-									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-									border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
-									DarkMode:UpdateColor(border, "ui")
-								elseif btnTexture then
-									DarkMode:UpdateColor(btnTexture, "ui")
-								end
-
-								local btnTexture2 = _G[name .. x .. "FloatingBG"]
-
-								if btnTexture2 then
-									DarkMode:UpdateColor(btnTexture2, "ui")
-								end
-
-								if _G[name .. x] and _G[name .. x]["SlotBackground"] then
-									DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "ui")
-								end
-
-								if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
-									local icon = _G[name .. x .. "Icon"]
-
-									if icon then
-										local br = 0.01
-										icon:SetTexCoord(br, 1 - br, br, 1 - br)
-									end
-
-									if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
-										local sw, sh = _G[name .. x]:GetSize()
-										sw = DarkMode:MathR(sw)
-										sh = DarkMode:MathR(sh)
-										local scale = 1.1
-										_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
-										local border = _G[name .. x .. "BorderDM"]
-										border:SetDrawLayer("OVERLAY", 3)
-										border:SetSize(sw * scale, sh * scale)
-										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
-										border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
-										DarkMode:UpdateColor(border, "ui")
-									end
-								end
-							end
-						end
-					elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
-						for i, v in pairs(tab) do
-							DarkMode:FindTexturesByName(v, "ui")
-						end
-					elseif index == "Gryphons" then
-						if DarkMode:IsEnabled("GRYPHONS", true) then
-							for i, v in pairs(tab) do
-								DarkMode:FindTexturesByName(v, "ui")
-							end
-						end
-					elseif index == "Tooltips" then
-						for i, v in pairs(tab) do
-							DarkMode:FindTexturesByName(v, "tt")
-						end
-					elseif type(tab) == "string" then
-						DarkMode:FindTexturesByName(tab, "ui")
-					elseif index == "UnitFrames" then
-						for i, v in pairs(tab) do
-							DarkMode:FindTexturesByName(v, "uf")
-						end
-					else
-						print("Missing Ui index:", index, tab)
-					end
-				end
-
-				for index, name in pairs(DarkMode:GetFrameTable()) do
-					for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-						DarkMode:FindTexturesByName(name .. v, "frames")
-					end
-				end
+				DarkMode:SearchUi()
+				DarkMode:SearchFrames()
 
 				for index, name in pairs(DarkMode:GetFrameTextTable()) do
 					DarkMode:FindTextsByName(name)
@@ -798,11 +819,7 @@ function DarkMode:Event(event, ...)
 		end
 	elseif event == "ADDON_LOADED" then
 		C_Timer.After(0.1, function()
-			for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
-				for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-					DarkMode:FindTexturesByName(name .. v, "frames")
-				end
-			end
+			DarkMode:SearchAddons()
 
 			if PlayerTalentFrame then
 				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
