@@ -9,11 +9,14 @@ function DarkMode:Lang_deDE()
 		["SHOWMINIMAPBUTTON"] = "Minimapknopf anzeigen",
 		["COLORMODE"] = "Farbmodus Ui",
 		["COLORMODEUF"] = "Farbmodus Einheitenfenster",
+		["COLORMODETT"] = "Farbmodus Tooltips",
 		["COLORMODEF"] = "Farbmodus Fenster",
-		["CUSTOMUIC"] = "Benutzerdefiniert Ui Farbe",
-		["CUSTOMUFC"] = "Benutzerdefiniert Einheitenfenster Farbe",
-		["CUSTOMFRC"] = "Benutzerdefiniert Fenster Farbe",
+		["CUSTOMUIC"] = "Benutzerdefinierte Ui Farbe",
+		["CUSTOMUFC"] = "Benutzerdefinierte Einheitenfenster Farbe",
+		["CUSTOMTTC"] = "Benutzerdefinierte Tooltip Farbe",
+		["CUSTOMFRC"] = "Benutzerdefinierte Fenster Farbe",
 		["MASKACTIONBUTTONS"] = "Aktionsknöpfe maskieren",
+		["GRYPHONS"] = "Greifen maskieren",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

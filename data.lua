@@ -20,6 +20,8 @@ function DarkMode:GetColor(id, name)
 		return r, g, b, 1
 	elseif colorMode == "Default" then
 		return 1, 1, 1, 1
+	elseif colorMode == "Off" then
+		return nil, nil, nil, nil
 	elseif colorMode == "Custom" then
 		return DarkMode:GetCustomColor(name)
 	end
@@ -56,7 +58,13 @@ function DarkMode:GetUiColor()
 end
 
 function DarkMode:GetUFColor()
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 1), "CUSTOMUFC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 7), "CUSTOMUFC")
+
+	return r, g, b, a
+end
+
+function DarkMode:GetTTColor()
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODETT", 1), "CUSTOMTTC")
 
 	return r, g, b, a
 end
@@ -68,7 +76,7 @@ function DarkMode:GetFrameColor()
 end
 
 function DarkMode:GetTextColor(r, g, b, a)
-	if r and g and b then
+	if r ~= nil and g ~= nil and b ~= nil then
 		local sum = r + g + b
 		if sum > 1 then return 0, 0, 0, 1 end
 	end
@@ -87,7 +95,8 @@ local DMUi = {
 	["Minimap"] = {"MinimapBorder", "MinimapBorderTop", "TimeManagerClockButton", "MinimapCompassTexture", "MinimapCluster.BorderTop",},
 	["UnitFrames"] = {"PlayerFrameTexture", "TargetFrameTextureFrameTexture", "FocusFrameTextureFrameTexture", "TargetFrameToTTextureFrameTexture", "PetFrameTexture", "PlayerFrame.PlayerFrameContainer.FrameTexture", "TargetFrame.TargetFrameContainer.FrameTexture", "FocusFrame.TargetFrameContainer.FrameTexture",},
 	["Tooltips"] = {"GameTooltip", "GameTooltip.NineSlice", "ItemRefTooltip", "ItemRefTooltip.NineSlice",},
-	["Artworks"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBarArtFrame", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap",},
+	["Artworks"] = {"MainMenuBarArtFrame", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap",},
+	["Gryphons"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBar.EndCaps",},
 	["Chat"] = {"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
 	["Castbar"] = {"CastingBarFrame.Border"}
 }

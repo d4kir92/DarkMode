@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.2.34")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.3.0")
 }
 
 local searchStr = ""
@@ -11,7 +11,7 @@ local cbs = {}
 local sls = {}
 local cps = {}
 
-local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Default", "Custom",}
+local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Default", "Custom", "Off"}
 
 function DarkMode:GetColorModes()
 	return DMColorModes
@@ -242,6 +242,8 @@ function DarkMode:InitDMSettings()
 			AddCheckBox(4, "MASKACTIONBUTTONS", true)
 		end
 
+		AddCheckBox(4, "GRYPHONS", true)
+
 		local sCM = AddSlider(4, "COLORMODE", DarkMode:GV("COLORMODE", 1), function(sel, val)
 			sel.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[val])
 			DarkMode:UpdateColors()
@@ -257,6 +259,14 @@ function DarkMode:InitDMSettings()
 
 		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 7)])
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
+
+		local sCMTT = AddSlider(4, "COLORMODETT", DarkMode:GV("COLORMODETT", 1), function(sel, val)
+			sel.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[val])
+			DarkMode:UpdateColors()
+		end, 1, getn(DarkMode:GetColorModes()), 1)
+
+		sCMTT.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODETT", 7)])
+		DarkMode:AddColorPicker("CUSTOMTTC", DMSettings.SC, 0, 0)
 
 		local sCMF = AddSlider(4, "COLORMODEF", DarkMode:GV("COLORMODEF", 1), function(sel, val)
 			sel.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[val])

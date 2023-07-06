@@ -42,6 +42,7 @@ DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
 local DMTexturesUi = {}
 local DMTexturesUF = {}
+local DMTexturesTT = {}
 local DMTexturesFrames = {}
 
 function DarkMode:UpdateColor(texture, typ)
@@ -66,27 +67,43 @@ function DarkMode:UpdateColor(texture, typ)
 		if typ == "ui" then
 			local r, g, b, a = DarkMode:GetUiColor()
 
-			if texture:GetAlpha() < 1 then
-				a = texture:GetAlpha()
-			end
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
 
-			texture:SetColorTexture(r, g, b, a)
+				texture:SetColorTexture(r, g, b, a)
+			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor()
 
-			if texture:GetAlpha() < 1 then
-				a = texture:GetAlpha()
-			end
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
 
-			texture:SetColorTexture(r, g, b, a)
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "tt" then
+			local r, g, b, a = DarkMode:GetTTColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
 		else
 			local r, g, b, a = DarkMode:GetFrameColor()
 
-			if texture:GetAlpha() < 1 then
-				a = texture:GetAlpha()
-			end
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
 
-			texture:SetColorTexture(r, g, b, a)
+				texture:SetColorTexture(r, g, b, a)
+			end
 		end
 
 		return true
@@ -96,16 +113,34 @@ function DarkMode:UpdateColor(texture, typ)
 		if texture.dm_setup == nil then
 			texture.dm_setup = true
 
-			hooksecurefunc(texture, "SetVertexColor", function(sel, r, g, b, a)
+			hooksecurefunc(texture, "SetVertexColor", function(sel, olr, olg, olb, ola)
 				if sel.dm_setvertexcolor then return end
 				sel.dm_setvertexcolor = true
 
 				if typ == "ui" then
-					sel:SetVertexColor(DarkMode:GetUiColor())
+					local r, g, b, a = DarkMode:GetUiColor()
+
+					if r ~= nil and g ~= nil and b ~= nil then
+						sel:SetVertexColor(r, g, b, a)
+					end
 				elseif typ == "uf" then
-					sel:SetVertexColor(DarkMode:GetUFColor())
+					local r, g, b, a = DarkMode:GetUFColor()
+
+					if r ~= nil and g ~= nil and b ~= nil then
+						sel:SetVertexColor(r, g, b, a)
+					end
+				elseif typ == "tt" then
+					local r, g, b, a = DarkMode:GetTTColor()
+
+					if r ~= nil and g ~= nil and b ~= nil then
+						sel:SetVertexColor(r, g, b, a)
+					end
 				else
-					sel:SetVertexColor(DarkMode:GetFrameColor())
+					local r, g, b, a = DarkMode:GetFrameColor()
+
+					if r ~= nil and g ~= nil and b ~= nil then
+						sel:SetVertexColor(r, g, b, a)
+					end
 				end
 
 				sel.dm_setvertexcolor = false
@@ -113,11 +148,29 @@ function DarkMode:UpdateColor(texture, typ)
 		end
 
 		if typ == "ui" then
-			texture:SetVertexColor(DarkMode:GetUiColor())
+			local r, g, b, a = DarkMode:GetUiColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		elseif typ == "uf" then
-			texture:SetVertexColor(DarkMode:GetUFColor())
+			local r, g, b, a = DarkMode:GetUFColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "tt" then
+			local r, g, b, a = DarkMode:GetTTColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		else
-			texture:SetVertexColor(DarkMode:GetFrameColor())
+			local r, g, b, a = DarkMode:GetFrameColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		end
 
 		if typ == "ui" then
@@ -127,6 +180,10 @@ function DarkMode:UpdateColor(texture, typ)
 		elseif typ == "uf" then
 			if not tContains(DMTexturesUF, texture) then
 				tinsert(DMTexturesUF, texture)
+			end
+		elseif typ == "tt" then
+			if not tContains(DMTexturesTT, texture) then
+				tinsert(DMTexturesTT, texture)
 			end
 		else
 			if not tContains(DMTexturesFrames, texture) then
@@ -189,21 +246,29 @@ function DarkMode:UpdateText(text, name, layer)
 		if text.dm_setup == nil then
 			text.dm_setup = true
 
-			hooksecurefunc(text, "SetTextColor", function(sel, r, g, b, a)
+			hooksecurefunc(text, "SetTextColor", function(sel, olr, olg, olb, ola)
 				if sel.dm_settextcolor then return end
 				sel.dm_settextcolor = true
-				local cr, cg, cb, ca = DarkMode:GetTextColor(DarkMode:GetFrameColor())
-				sel:SetTextColor(cr, cg, cb, ca)
+				local r, g, b, a = DarkMode:GetFrameColor()
 
-				if sel:GetText() then
-					sel:SetText(RGBToHexC(cr, cg, cb) .. RemoveColorCodes(sel:GetText()))
+				if r ~= nil and g ~= nil and b ~= nil then
+					local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
+					sel:SetTextColor(cr, cg, cb, ca)
+
+					if sel:GetText() then
+						sel:SetText(RGBToHexC(cr, cg, cb) .. RemoveColorCodes(sel:GetText()))
+					end
 				end
 
 				sel.dm_settextcolor = false
 			end)
 		end
 
-		text:SetTextColor(DarkMode:GetTextColor(DarkMode:GetFrameColor()))
+		local r, g, b, a = DarkMode:GetFrameColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			text:SetTextColor(DarkMode:GetTextColor(r, g, b, a))
+		end
 
 		if not tContains(DMFS, text) then
 			tinsert(DMFS, text)
@@ -257,19 +322,44 @@ end
 
 function DarkMode:UpdateColors()
 	for i, v in pairs(DMTexturesUi) do
-		v:SetVertexColor(DarkMode:GetUiColor())
+		local r, g, b, a = DarkMode:GetUiColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
 	end
 
 	for i, v in pairs(DMTexturesUF) do
-		v:SetVertexColor(DarkMode:GetUFColor())
+		local r, g, b, a = DarkMode:GetUFColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
 	end
 
+	for i, v in pairs(DMTexturesTT) do
+		local r, g, b, a = DarkMode:GetTTColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
+	-- FONTSTRINGS
 	for i, v in pairs(DMFS) do
-		v:SetTextColor(DarkMode:GetFrameColor())
+		local r, g, b, a = DarkMode:GetFrameColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
 	end
 
 	for i, v in pairs(DMTexturesFrames) do
-		v:SetVertexColor(DarkMode:GetFrameColor())
+		local r, g, b, a = DarkMode:GetFrameColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
 	end
 end
 
@@ -423,14 +513,23 @@ function DarkMode:InitQuestLogFrame()
 	end
 
 	if frame2 then
-		hooksecurefunc(QuestMapFrame.DetailsFrame.SealMaterialBG, "SetVertexColor", function(sel, r, g, b, a)
+		hooksecurefunc(QuestMapFrame.DetailsFrame.SealMaterialBG, "SetVertexColor", function(sel, olr, olg, olb, ola)
 			if sel.dm_setvertexcolor then return end
 			sel.dm_setvertexcolor = true
-			sel:SetVertexColor(DarkMode:GetFrameColor())
+			local r, g, b, a = DarkMode:GetFrameColor()
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				sel:SetVertexColor(r, g, b, a)
+			end
+
 			sel.dm_setvertexcolor = false
 		end)
 
-		QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(DarkMode:GetFrameColor())
+		local r, g, b, a = DarkMode:GetFrameColor()
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(r, g, b, a)
+		end
 
 		function DarkMode:UpdateTextInQuestMapFrame()
 			DarkMode:UpdateQuestMapFrame()
@@ -579,9 +678,19 @@ function DarkMode:Event(event, ...)
 								end
 							end
 						end
-					elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Tooltips" or index == "Castbar" then
+					elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
 						for i, v in pairs(tab) do
 							DarkMode:FindTexturesByName(v, "ui")
+						end
+					elseif index == "Gryphons" then
+						if DarkMode:IsEnabled("GRYPHONS", true) then
+							for i, v in pairs(tab) do
+								DarkMode:FindTexturesByName(v, "ui")
+							end
+						end
+					elseif index == "Tooltips" then
+						for i, v in pairs(tab) do
+							DarkMode:FindTexturesByName(v, "tt")
 						end
 					elseif type(tab) == "string" then
 						DarkMode:FindTexturesByName(tab, "ui")
@@ -590,7 +699,7 @@ function DarkMode:Event(event, ...)
 							DarkMode:FindTexturesByName(v, "uf")
 						end
 					else
-						print("Missing", index, tab)
+						print("Missing Ui index:", index, tab)
 					end
 				end
 

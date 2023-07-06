@@ -17,11 +17,14 @@ function DarkMode:Lang_enUS()
 		["SHOWMINIMAPBUTTON"] = "Show Minimap Button",
 		["COLORMODE"] = "Color Mode Ui",
 		["COLORMODEUF"] = "Color Mode UnitFrames",
+		["COLORMODETT"] = "Color Mode Tooltips",
 		["COLORMODEF"] = "Color Mode Windows",
 		["CUSTOMUIC"] = "Custom Ui Color",
 		["CUSTOMUFC"] = "Custom UnitFrames Color",
+		["CUSTOMTTC"] = "Custom Tooltip Color",
 		["CUSTOMFRC"] = "Custom Windows Color",
 		["MASKACTIONBUTTONS"] = "Mask Actionbuttons",
+		["GRYPHONS"] = "Mask Gryphons",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)
