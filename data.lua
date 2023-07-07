@@ -94,7 +94,7 @@ local DMUi = {
 	["ActionButtons"] = {"ActionButton", "MultiBarBottomLeftButton", "MultiBarBottomRightButton", "MultiBarLeftButton", "MultiBarRightButton", "ActionBar7Button", "ActionBar8Button", "ActionBar9Button", "ActionBar10Button", "MultiBar5Button", "MultiBar6Button", "MultiBar7Button", "StanceButton", "PetActionButton", "BT4Button", "BT4StanceButton", "BT4PetButton", "DominosActionButton"},
 	["Minimap"] = {"MinimapBorder", "MinimapBorderTop", "TimeManagerClockButton", "MinimapCompassTexture", "MinimapCluster.BorderTop",},
 	["UnitFrames"] = {"PlayerFrameTexture", "TargetFrameTextureFrameTexture", "FocusFrameTextureFrameTexture", "TargetFrameToTTextureFrameTexture", "PetFrameTexture", "PlayerFrame.PlayerFrameContainer.FrameTexture", "TargetFrame.TargetFrameContainer.FrameTexture", "FocusFrame.TargetFrameContainer.FrameTexture",},
-	["Tooltips"] = {"GameTooltip", "GameTooltip.NineSlice", "ItemRefTooltip", "ItemRefTooltip.NineSlice",},
+	["Tooltips"] = {"GameTooltip.NineSlice", "ItemRefTooltip.NineSlice", "WhatsTrainingTooltip.NineSlice"},
 	["Artworks"] = {"MainMenuBarArtFrame", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap",},
 	["Gryphons"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBar.EndCaps",},
 	["Chat"] = {"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
@@ -151,19 +151,14 @@ DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
 if DarkMode:GetWoWBuild() == "RETAIL" then
 	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
 	DMTextureBlock[136377] = true -- MacroFrame Portrai
-elseif DarkMode:GetWoWBuild() == "WRATH" then
-	DMTextureBlock[136830] = true -- Spellbook Icon
-	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
-	DMTextureBlock[136797] = true -- QuestLogFrame Icon
-	DMTextureBlock[131116] = true -- FriendsFrame Icon
-	DMTextureBlock[136382] = true -- MailFrame Icon
-	DMTextureBlock[130709] = true -- "Interface/BattlefieldFrame/UI-Battlefield-Icon",
-elseif DarkMode:GetWoWBuild() == "TBC" then
-	DMTextureBlock[131116] = true -- FriendsFrame Icon
-elseif DarkMode:GetWoWBuild() == "CLASSIC" then
-	DMTextureBlock[131116] = true -- FriendsFrame Icon
 end
 
+DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
+DMTextureBlock[136797] = true -- QuestLogFrame Icon
+DMTextureBlock[131116] = true -- FriendsFrame Icon
+DMTextureBlock[136382] = true -- MailFrame Icon
+DMTextureBlock[130709] = true -- "Interface/BattlefieldFrame/UI-Battlefield-Icon",
+DMTextureBlock[136830] = true -- Spellbook Icon
 -- StatusBar
 DMTextureBlock[137012] = true -- "Interface/TargetingFrame/UI-StatusBar"
 -- Button
@@ -195,5 +190,12 @@ if DarkMode:GetWoWBuild() ~= "RETAIL" then
 end
 
 function DarkMode:GetIgnoreFrames(name)
-	return DMTextureBlock[name]
+	return DMTextureBlock[name] or false
+end
+
+local DMIgnoreTextureNames = {}
+DMIgnoreTextureNames["ContainerFrame1Portrait"] = true
+
+function DarkMode:GetIgnoreTextureName(name)
+	return DMIgnoreTextureNames[name] or false
 end
