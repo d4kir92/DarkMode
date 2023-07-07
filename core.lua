@@ -379,6 +379,7 @@ function DarkMode:FindTextures(frame, typ)
 		if frame and frame.GetName and frame:GetName() ~= nil then
 			if string.find(frame:GetName(), "SkillLineTab") then
 				ignoreId1 = 2
+				ignoreId2 = 3
 			elseif string.find(frame:GetName(), "XX") then
 				ignoreId1 = 2
 			end
