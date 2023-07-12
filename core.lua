@@ -375,11 +375,13 @@ function DarkMode:FindTextures(frame, typ)
 		local show = false
 		local ignoreId1 = nil
 		local ignoreId2 = nil
+		local ignoreId3 = nil
 
 		if frame and frame.GetName and frame:GetName() ~= nil then
 			if string.find(frame:GetName(), "SkillLineTab") then
 				ignoreId1 = 2
 				ignoreId2 = 3
+				ignoreId3 = 4
 			elseif string.find(frame:GetName(), "XX") then
 				ignoreId1 = 2
 			end
@@ -407,7 +409,7 @@ function DarkMode:FindTextures(frame, typ)
 			for i, v in pairs({frame:GetRegions()}) do
 				local hasName = v.GetName ~= nil
 
-				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
+				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
 					if show and v.GetTexture then
 						print(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
@@ -423,7 +425,7 @@ function DarkMode:FindTextures(frame, typ)
 			for i, v in pairs({frame:GetChildren()}) do
 				local hasName = v.GetName ~= nil
 
-				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
+				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
 					if show and v.GetTexture then
 						print(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
