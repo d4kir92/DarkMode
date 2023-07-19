@@ -721,15 +721,15 @@ function DarkMode:Event(event, ...)
 				hooksecurefunc(AuraFrameMixin, "Update", function(sel)
 					for index, bf in pairs(sel.auraFrames) do
 						if bf and _G["Buff" .. index .. "BorderDM"] == nil then
-							local sw, _ = bf:GetSize()
-							sw = DarkMode:MathR(sw)
+							local _, sh = bf.Icon:GetSize()
+							sh = DarkMode:MathR(sh)
 							local scale = 1
 							_G["Buff" .. index .. "BorderDM"] = bf:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
 							local border = _G["Buff" .. index .. "BorderDM"]
 							border:SetDrawLayer("OVERLAY", 3)
-							border:SetSize(sw * scale, sw * scale)
+							border:SetSize(sh * scale, sh * scale)
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-							border:SetPoint("TOP", bf, "TOP", 0, 0)
+							border:SetPoint("CENTER", bf.Icon, "CENTER", 0, 0)
 							DarkMode:UpdateColor(border, "ui")
 						end
 					end
