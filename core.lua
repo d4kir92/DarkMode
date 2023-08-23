@@ -664,6 +664,18 @@ function DarkMode:SearchUi()
 	end
 end
 
+local npf = CreateFrame("FRAME")
+npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+
+npf:SetScript("OnEvent", function(self, event, name, ...)
+	local id = string.sub(name, 10)
+
+	C_Timer.After(0.1, function()
+		--DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar", "uf")
+		DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
+	end)
+end)
+
 function DarkMode:InitQuestFrame()
 	local frame = DarkMode:GetFrame("QuestFrameGreetingPanel")
 
