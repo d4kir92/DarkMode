@@ -750,9 +750,10 @@ function DarkMode:Event(event, ...)
 						local bagF = _G[v]
 						local NT = _G[v .. "NormalTexture"]
 
-						if NT and bagF then
+						if NT and bagF and NT.scalesetup == nil then
+							NT.scalesetup = true
 							local sw, sh = bagF:GetSize()
-							local scale = 1.68
+							local scale = 1.67
 							NT:SetSize(sw * scale, sh * scale)
 						end
 					end
