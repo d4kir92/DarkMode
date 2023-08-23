@@ -640,7 +640,9 @@ function DarkMode:SearchUi()
 			end
 		elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
 			for i, v in pairs(tab) do
-				DarkMode:FindTexturesByName(v, "ui")
+				if v ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
+					DarkMode:FindTexturesByName(v, "ui")
+				end
 			end
 		elseif index == "Gryphons" then
 			if DarkMode:IsEnabled("GRYPHONS", true) then
@@ -660,6 +662,16 @@ function DarkMode:SearchUi()
 			end
 		else
 			print("Missing Ui index:", index, tab)
+		end
+	end
+
+	local CMB = _G["CharacterMicroButton"]
+
+	if CMB then
+		for i, v in pairs({CMB:GetRegions()}) do
+			if i == 3 then
+				DarkMode:UpdateColor(v, "ui")
+			end
 		end
 	end
 end
@@ -718,6 +730,8 @@ function DarkMode:InitQuestFrame()
 	end
 end
 
+local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}
+
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -728,6 +742,22 @@ function DarkMode:Event(event, ...)
 			DarkMode:InitGreetingPanel()
 			DarkMode:InitQuestLogFrame()
 			DarkMode:InitQuestFrame()
+
+			if DarkMode:GetWoWBuild() ~= "RETAIL" then
+				-- delay for other addons changing
+				C_Timer.After(2, function()
+					for i, v in pairs(BAGS) do
+						local bagF = _G[v]
+						local NT = _G[v .. "NormalTexture"]
+
+						if NT and bagF then
+							local sw, sh = bagF:GetSize()
+							local scale = 1.68
+							NT:SetSize(sw * scale, sh * scale)
+						end
+					end
+				end)
+			end
 
 			if AuraFrameMixin and AuraFrameMixin.Update then
 				hooksecurefunc(AuraFrameMixin, "Update", function(sel)
@@ -749,6 +779,28 @@ function DarkMode:Event(event, ...)
 			elseif BuffFrame_UpdateAllBuffAnchors then
 				hooksecurefunc("BuffFrame_UpdateAllBuffAnchors", function()
 					local buttonName = "BuffButton"
+
+					for index = 1, BUFF_ACTUAL_DISPLAY do
+						if _G[buttonName .. index] and _G[buttonName .. index .. "BorderDM"] == nil then
+							local sw, sh = _G[buttonName .. index]:GetSize()
+							sw = DarkMode:MathR(sw)
+							sh = DarkMode:MathR(sh)
+							local scale = 1.1
+							_G[buttonName .. index .. "BorderDM"] = _G[buttonName .. index]:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+							local border = _G[buttonName .. index .. "BorderDM"]
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sw * scale, sh * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+							border:SetPoint("CENTER", _G[buttonName .. index], "CENTER", 0, 0)
+							DarkMode:UpdateColor(border, "ui")
+						end
+					end
+				end)
+			end
+
+			if TargetFrame_UpdateAuras then
+				hooksecurefunc("TargetFrame_UpdateAuras", function(frame)
+					local buttonName = frame:GetName() .. "Buff"
 
 					for index = 1, BUFF_ACTUAL_DISPLAY do
 						if _G[buttonName .. index] and _G[buttonName .. index .. "BorderDM"] == nil then
