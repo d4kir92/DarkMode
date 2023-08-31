@@ -665,15 +665,104 @@ function DarkMode:SearchUi()
 		end
 	end
 
-	local CMB = _G["CharacterMicroButton"]
+	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
+		for i, name in pairs(MICRO_BUTTONS) do
+			if name then
+				local mbtn = _G[name]
 
-	if CMB then
-		for i, v in pairs({CMB:GetRegions()}) do
-			if i == 3 then
-				DarkMode:UpdateColor(v, "ui")
+				if mbtn then
+					local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
+					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+					border:SetAllPoints(mbtn)
+					DarkMode:UpdateColor(border, "ui")
+				end
 			end
 		end
 	end
+
+	if KeyRingButton then
+		local border = KeyRingButton:CreateTexture("KeyRingButton" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\krbtn_border")
+		border:SetAllPoints(KeyRingButton)
+		border:SetTexCoord(0, 0.5625, 0, 0.609375)
+		border:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
+	if MinimapZoomIn and MinimapZoomOut then
+		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
+		border:SetAllPoints(MinimapZoomIn)
+		border:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border, "ui")
+		local border2 = MinimapZoomOut:CreateTexture("MinimapZoomOut" .. "DMBorder", "OVERLAY")
+		border2:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
+		border2:SetAllPoints(MinimapZoomOut)
+		border2:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border2, "ui")
+	end
+
+	if MiniMapTrackingFrame then
+		-- Classic Era
+		local border = MiniMapTrackingFrame:CreateTexture("MiniMapTrackingFrame" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+		border:SetPoint("TOPLEFT")
+		border:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
+	if MiniMapTrackingButton then
+		-- Wrath
+		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+		border:SetPoint("TOPLEFT", 0, 1)
+		border:SetDrawLayer("OVERLAY", 3)
+		border:SetScale(0.86)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
+	if MiniMapWorldMapButton then
+		-- Wrath
+		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+		border:SetPoint("TOPLEFT", 0, 1)
+		border:SetDrawLayer("OVERLAY", 3)
+		border:SetScale(0.8)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
+	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" then
+		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
+
+		if DarkMode:GetWoWBuild() == "WRATH" then
+			border:SetPoint("TOPLEFT", -1, 1)
+			border:SetScale(0.82)
+		else
+			border:SetPoint("TOPLEFT")
+		end
+
+		border:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
+	C_Timer.After(0.2, function()
+		if DMMMBTN then
+			for i, name in pairs(DMMMBTN:GetButtonList()) do
+				local btn = _G["LibDBIcon10_" .. name]
+
+				if btn then
+					local border = btn:CreateTexture(name .. "DMBorder", "OVERLAY")
+					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+					border:SetPoint("TOPLEFT", 0, 1)
+					border:SetParent(btn)
+					border:SetScale(0.84)
+					border:SetDrawLayer("OVERLAY", 3)
+					DarkMode:UpdateColor(border, "ui")
+				end
+			end
+		end
+	end)
 end
 
 local npf = CreateFrame("FRAME")
@@ -683,7 +772,6 @@ npf:SetScript("OnEvent", function(self, event, name, ...)
 	local id = string.sub(name, 10)
 
 	C_Timer.After(0.1, function()
-		--DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar", "uf")
 		DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
 	end)
 end)
