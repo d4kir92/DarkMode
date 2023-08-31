@@ -731,6 +731,15 @@ function DarkMode:SearchUi()
 		DarkMode:UpdateColor(border, "ui")
 	end
 
+	if MiniMapMailFrame then
+		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+		border:SetPoint("TOPLEFT", 0, 1)
+		border:SetDrawLayer("OVERLAY", 3)
+		border:SetScale(0.8)
+		DarkMode:UpdateColor(border, "ui")
+	end
+
 	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
