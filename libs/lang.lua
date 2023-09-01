@@ -23,6 +23,10 @@ function DarkMode:UpdateLanguage()
 
 	if GetLocale() == "deDE" then
 		DarkMode:Lang_deDE()
+	elseif GetLocale() == "zhCN" then
+		DarkMode:Lang_zhCN()
+	elseif GetLocale() == "zhTW" then
+		DarkMode:Lang_zhTW()
 	elseif GetLocale() == "enUS" then
 		DarkMode:Lang_enUS()
 	end

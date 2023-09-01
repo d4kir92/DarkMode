@@ -3,7 +3,7 @@
 ## Interface-Wrath: 30402
 ## Interface: 100105
 
-## Version: 0.3.19
+## Version: 0.3.20
 ## Title: DarkMode by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR
@@ -22,6 +22,8 @@ libs/db.lua
 
 locale/enUS.lua
 locale/deDE.lua
+locale/zhCN.lua
+locale/zhTW.lua
 libs/lang.lua
 
 data.lua

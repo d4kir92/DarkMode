@@ -1,7 +1,7 @@
 local _, DarkMode = ...
 
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.3.19")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.3.20")
 }
 
 local searchStr = ""
