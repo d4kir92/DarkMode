@@ -755,7 +755,7 @@ function DarkMode:SearchUi()
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	C_Timer.After(0.2, function()
+	C_Timer.After(1.1, function()
 		if DMMMBTN then
 			for i, name in pairs(DMMMBTN:GetButtonList()) do
 				local btn = _G["LibDBIcon10_" .. name]
