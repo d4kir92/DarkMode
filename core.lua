@@ -772,6 +772,18 @@ function DarkMode:SearchUi()
 			end
 		end
 	end)
+
+	local btwQ = _G["BtWQuestsMinimapButton"]
+
+	if btwQ then
+		local border = btwQ:CreateTexture("BtWQuestsMinimapButton" .. "DMBorder", "OVERLAY")
+		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
+		border:SetPoint("TOPLEFT", 0, 1)
+		border:SetParent(btwQ)
+		border:SetScale(0.9)
+		border:SetDrawLayer("OVERLAY", 3)
+		DarkMode:UpdateColor(border, "ui")
+	end
 end
 
 local npf = CreateFrame("FRAME")
