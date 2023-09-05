@@ -315,7 +315,7 @@ end
 function DarkMode:FindTextsByName(name)
 	local frame = DarkMode:GetFrame(name)
 
-	if frame then
+	if frame and DarkMode:GV("COLORMODEF", 1) ~= 7 then
 		DarkMode:FindTexts(frame, name)
 	end
 end
