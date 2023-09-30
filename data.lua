@@ -1,8 +1,6 @@
 local _, DarkMode = ...
-
 function DarkMode:GetColor(id, name)
 	local colorMode = DarkMode:GetColorModes()[id]
-
 	if colorMode == "Dark" then
 		return 0.180, 0.180, 0.180, 1
 	elseif colorMode == "Dark+" then
@@ -35,7 +33,6 @@ function DarkMode:GetCustomColor(name)
 	local g = DMTAB[name .. "_g"]
 	local b = DMTAB[name .. "_b"]
 	local a = DMTAB[name .. "_a"]
-
 	if r and g and b and a then
 		return r, g, b, a
 	else
@@ -85,7 +82,6 @@ function DarkMode:GetTextColor(r, g, b, a)
 end
 
 local DMRepeatingFrames = {"", ".Background", ".Bg", ".Bg.TopSection", ".Bg.BottomEdge", "Inset", "Inset.Bg", "Inset.NineSlice", "Inset.NineSlice.TopEdge", "Inset.NineSlice.RightEdge", "Inset.NineSlice.LeftEdge", "Inset.NineSlice.BottomEdge", "Inset.NineSlice.TopRightCorner", "Inset.NineSlice.TopLeftCorner", "Inset.NineSlice.BottomRightCorner", "Inset.NineSlice.BottomLeftCorner", ".NineSlice", ".NineSlice.TopEdge", ".NineSlice.RightEdge", ".NineSlice.LeftEdge", ".NineSlice.BottomEdge", ".NineSlice.TopRightCorner", ".NineSlice.TopLeftCorner", ".NineSlice.BottomRightCorner", ".NineSlice.BottomLeftCorner", "ScrollFrame", ".Begin", ".Middle", ".End", ".ScrollBar.Background",}
-
 function DarkMode:GetDMRepeatingFrames()
 	return DMRepeatingFrames
 end
@@ -95,7 +91,7 @@ local DMUi = {
 	["Minimap"] = {"MinimapBorder", "MinimapBorderTop", "TimeManagerClockButton", "MinimapCompassTexture", "MinimapCluster.BorderTop",},
 	["UnitFrames"] = {"PlayerFrameTexture", "TargetFrameTextureFrameTexture", "FocusFrameTextureFrameTexture", "TargetFrameToTTextureFrameTexture", "PetFrameTexture", "PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture", "PlayerFrame.PlayerFrameContainer.FrameTexture", "TargetFrame.TargetFrameContainer.FrameTexture", "FocusFrame.TargetFrameContainer.FrameTexture", "PartyMemberFrame1Texture", "PartyMemberFrame2Texture", "PartyMemberFrame3Texture", "PartyMemberFrame4Texture", "PartyFrame.MemberFrame1.Texture", "PartyFrame.MemberFrame2.Texture", "PartyFrame.MemberFrame3.Texture", "PartyFrame.MemberFrame4.Texture", "CompactRaidFrameContainerBorderFrame", "TargetFrameSpellBar", "FocusFrameSpellBar"},
 	["Tooltips"] = {"GameTooltip.NineSlice", "ItemRefTooltip.NineSlice", "ShoppingTooltip1.NineSlice", "ShoppingTooltip2.NineSlice", "WhatsTrainingTooltip.NineSlice"},
-	["Artworks"] = {"MainMenuBarTexture0", "MainMenuBarTexture1", "MainMenuBarTexture2", "MainMenuBarTexture3", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap", "CompactRaidFrameManager", "CharacterReagentBag0SlotNormalTexture", "CharacterBag0SlotNormalTexture", "CharacterBag1SlotNormalTexture", "CharacterBag2SlotNormalTexture", "CharacterBag3SlotNormalTexture", "MainMenuBarBackpackButtonNormalTexture"},
+	["Artworks"] = {"GroupLootFrame1", "GroupLootFrame2", "GroupLootFrame3", "GroupLootFrame4", "GroupLootFrame5", "MainMenuBarTexture0", "MainMenuBarTexture1", "MainMenuBarTexture2", "MainMenuBarTexture3", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BlizzardArtLeftCap", "BlizzardArtRightCap", "CompactRaidFrameManager", "CharacterReagentBag0SlotNormalTexture", "CharacterBag0SlotNormalTexture", "CharacterBag1SlotNormalTexture", "CharacterBag2SlotNormalTexture", "CharacterBag3SlotNormalTexture", "MainMenuBarBackpackButtonNormalTexture"},
 	["Gryphons"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBar.EndCaps", "MainMenuBarLeftEndCap", "MainMenuBarRightEndCap"},
 	["Chat"] = {"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
 	["Castbar"] = {"CastingBarFrame.Border"}
@@ -114,25 +110,21 @@ function DarkMode:GetUiTable()
 end
 
 local DMUiAddons = {"FocusFrame.FocusFrameContainer.FrameTexture"}
-
 function DarkMode:GetUiAddonsTable()
 	return DMUiAddons
 end
 
 local DMFrames = {"SettingsPanel", "PaperDollFrame", "CharacterFrame", "CharacterStatsPane", "CharacterFrameTab1", "CharacterFrameTab2", "CharacterFrameTab3", "CharacterFrameTab4", "CharacterFrameTab5", "nwtab5", "nwtab6", "ReputationFrame", "ReputationListScrollFrame", "SkillFrame", "SkillListScrollFrame", "SkillDetailScrollFrame", "HonorFrame", "PetPaperDollFrame", "PetPaperDollFrameTab1", "PetPaperDollFrameTab2", "PetPaperDollFrameTab3", "PetPaperDollFrameExpBar", "TokenFrame", "SpellBookFrame", "SpellBookSkillLineTab1", "SpellBookSkillLineTab2", "SpellBookSkillLineTab3", "SpellBookSkillLineTab4", "SpellBookSkillLineTab5", "SpellBookSkillLineTab6", "SpellBookSkillLineTab7", "WhatsTrainingFrame", "SpellBookFrameTabButton1", "SpellBookFrameTabButton2", "QuestLogFrame", "QuestLogCollapseAllButton", "QuestScrollFrame.ScrollBar", "FriendsFrame", "FriendsFrameFriendsScrollFrame", "FriendsFrameTab1", "FriendsFrameTab2", "FriendsFrameTab3", "FriendsFrameTab4", "WhoFrameList", "WorldMapFrame", "WorldMapFrame.BorderFrame", "LFGParentFrame", "LFGParentFrameTab1", "LFGParentFrameTab2", "LFMFrame", "LFGBrowseFrame", "LFGListingFrame", "PVEFrame", "PVEFrameTab1", "PVEFrameTab2", "PVEFrameTab3", "PVEFrameTab4", "PVPFrame", "ChallengesFrame", "GameMenuFrame", "GameMenuFrame.Border", "GameMenuFrame.Header", "QuestFrame", "QuestFrameDetailPanel", "QuestDetailScrollFrame", "QuestDetailScrollChildFrame", "GossipFrameGreetingPanel", "GossipGreetingScrollFrame", "QuestFrameGreetingPanel", "QuestGreetingScrollFrame", "QuestFrameProgressPanel", "QuestProgressScrollFrame", "QuestRewardScrollFrame", "QuestFrameRewardPanel", "QuestInfoRewardsFrame", "GossipFrame", "GossipFrame.GreetingPanel", "GossipFrame.GreetingPanel.ScrollBox", "GossipFrame.GreetingPanel.ScrollBar.Background", "MerchantFrame", "MerchantBuyBackItem", "MerchantFrameTab1", "MerchantFrameTab2", "MerchantItem1", "MerchantItem2", "MerchantItem3", "MerchantItem4", "MerchantItem5", "MerchantItem6", "MerchantItem7", "MerchantItem8", "MerchantItem9", "MerchantItem10", "MerchantItem11", "MerchantItem12", "MerchantMoney", "MerchantMoneyBg", "PetStableFrame", "AddonList", "AddonListDisableAllButton_RightSeparator", "AddonListEnableAllButton_RightSeparator", "AddonListOkayButton_LeftSeparator", "AddonListOkayButton_RightSeparator", "AddonListCancelButton_LeftSeparator", "HelpFrame", "VideoOptionsFrame", "InterfaceOptionsFrame", "TimeManagerFrame", "MailFrame", "MailFrameTab1", "MailFrameTab2", "InboxFrame", "SendMailFrame", "SendMailMoney", "SendMailMoneyBg", "SendMailMoneyFrame", "SendMail", "MailEditBoxScrollBar", "BankFrame", "BankFrameTab1", "BankFrameTab2", "BankFrameMoneyFrame", "BankFrameMoneyFrameBorder", "BackpackTokenFrame", "ContainerFrame1", "ContainerFrame2", "ContainerFrame3", "ContainerFrame4", "ContainerFrame5", "ContainerFrame6", "ContainerFrame7", "ContainerFrame8", "ContainerFrame9", "ContainerFrame10", "ContainerFrame11", "ContainerFrame12", "ContainerFrameCombinedBags", "PVPFrame", "PVPParentFrame", "PVPParentFrameTab1", "PVPParentFrameTab2", "BattlefieldFrame", "BattlefieldFrameType", "TaxiFrame", "YourFrameName", "QuestMapFrame", "QuestMapFrame.DetailsFrame"}
-
 function DarkMode:GetFrameTable()
 	return DMFrames
 end
 
 local DMFramesAddons = {"ClassTrainerFrame", "ClassTrainerListScrollFrame", "ClassTrainerExpandButtonFrame", "KeyBindingFrame", "KeyBindingFrame.header", "MacroFrame", "MacroFrameTab1", "MacroFrameTab2", "MacroFrameTextBackground", "MacroButtonScrollFrame", "MacroFrame.MacroSelector.ScrollBar.Background", "TradeSkillFrame", "CraftFrame", "TradeSkillList", "AuctionFrame", "AuctionFrameTab1", "AuctionFrameTab2", "AuctionFrameTab3", "AuctionFrameTab4", "AuctionFrameTab5", "AuctionFrameTab6", "AuctionFrameTab7", "AuctionFrameTab8", "AuctionFrameTab9", "AuctionFrameTab10", "AuctionFrameTab11", "AuctionFrameTab12", "BrowseBidButton", "BrowseBuyoutButton", "BrowseCloseButton", "BidBidButton", "BidBuyoutButton", "BidCloseButton", "AuctionHouseFrame", "AuctionHouseFrameBuyTab", "AuctionHouseFrameSellTab", "AuctionHouseFrameAuctionsTab", "PlayerTalentFrame", "PlayerTalentFramePointsBar", "PlayerTalentFrameTab1", "PlayerTalentFrameTab2", "PlayerTalentFrameTab3", "PlayerTalentFrameTab4", "PlayerTalentFrameTab5", "ClassTalentFrame", "ClassTalentFrame.TabSystem", "ClassTalentFrame.TalentsTab.BottomBar", "AchievementFrame", "AchievementFrame.Header", "AchievementFrameTab1", "AchievementFrameTab2", "AchievementFrameTab3", "AchievementFrameTab4", "AchievementFrameHeader", "AchievementFrameCategories", "AchievementFrameSummary", "WeeklyRewardsFrame", "CommunitiesFrame", "CommunitiesFrameCommunitiesList", "CommunitiesFrame.MemberList", "CommunitiesFrame.Chat.MessageFrame.ScrollBar", "CollectionsJournal", "CollectionsJournalTab1", "CollectionsJournalTab2", "CollectionsJournalTab3", "CollectionsJournalTab4", "CollectionsJournalTab5", "CollectionsJournalTab6", "WardrobeCollectionFrame", "WardrobeCollectionFrame.ItemsCollectionFrame", "ToyBox", "ToyBox.iconsFrame", "HeirloomsJournal", "HeirloomsJournal.iconsFrame", "EncounterJournal", "EncounterJournalMonthlyActivitiesTab", "EncounterJournalSuggestTab", "EncounterJournalDungeonTab", "EncounterJournalRaidTab", "EncounterJournalLootJournalTab", "EncounterJournalInstanceSelect", "CalendarFrame",}
-
 function DarkMode:GetFrameAddonsTable()
 	return DMFramesAddons
 end
 
 local DMFrameTexts = {"GossipGreetingScrollChildFrame", "QuestGreetingScrollChildFrame", "QuestProgressScrollChildFrame", "QuestRewardScrollChildFrame", "QuestLogDetailScrollChildFrame", "QuestInfoTitleHeader", "QuestInfoQuestType", "QuestInfoObjective1", "QuestInfoObjective2", "QuestInfoObjective3", "QuestInfoObjective4", "QuestInfoObjective5", "QuestInfoObjective6", "QuestInfoDescriptionHeader", "QuestInfoDescriptionText", "QuestInfoObjectivesHeader", "QuestInfoObjectivesText", "QuestInfoRewardText", "QuestInfoRewardsFrame", "GossipGreetingText", "QuestTitleButton1", "QuestTitleButton2", "QuestTitleButton3", "QuestTitleButton4", "QuestTitleButton5", "QuestTitleButton6", "QuestTitleButton7", "QuestTitleButton8", "QuestTitleButton9", "QuestTitleButton10", "QuestTitleButton11", "QuestTitleButton12", "QuestTitleButton13", "QuestTitleButton14", "QuestTitleButton15", "GossipTitleButton1", "GossipTitleButton2", "GossipTitleButton3", "GossipTitleButton4", "GossipTitleButton5", "GossipTitleButton6", "GossipTitleButton7", "GossipTitleButton8", "GossipTitleButton9", "GossipTitleButton10", "GossipTitleButton11", "GossipTitleButton12", "GossipTitleButton13", "GossipTitleButton14", "GossipTitleButton15",}
-
 function DarkMode:GetFrameTextTable()
 	return DMFrameTexts
 end
@@ -155,7 +147,6 @@ DMTextureBlock["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMTextureBlock["Interface\\MailFrame\\Mail-Icon"] = true
 DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
 DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
-
 if DarkMode:GetWoWBuild() == "RETAIL" then
 	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
 	DMTextureBlock[136377] = true -- MacroFrame Portrai
@@ -180,7 +171,6 @@ DMTextureBlock[374178] = true
 DMTextureBlock[374168] = true
 DMTextureBlock[374170] = true
 DMTextureBlock[374172] = true
-
 -- CHAT Tabs
 -- ids: https://www.townlong-yak.com/framexml/live/Helix/ArtTextureID.lua
 function DarkMode:GetTextureBlockTable()
@@ -188,7 +178,6 @@ function DarkMode:GetTextureBlockTable()
 end
 
 local DMIgnoreFrames = {}
-
 if DarkMode:GetWoWBuild() ~= "RETAIL" then
 	DMIgnoreFrames["FriendsFrameIcon"] = true
 	DMIgnoreFrames["FriendsFramePortrait"] = true
@@ -203,7 +192,6 @@ end
 
 local DMIgnoreTextureNames = {}
 DMIgnoreTextureNames["ContainerFrame1Portrait"] = true
-
 function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
