@@ -584,7 +584,7 @@ function DarkMode:SearchUi()
 				local max = 12
 				--[[ Bar Addons ]]
 				if name == "BT4Button" or name == "DominosActionButton" then
-					max = 120
+					max = 200
 				end
 
 				for x = 1, max do
@@ -638,9 +638,18 @@ function DarkMode:SearchUi()
 				end
 			end
 		elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
-			for i, v in pairs(tab) do
-				if v ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
-					DarkMode:FindTexturesByName(v, "ui")
+			for ind, name in pairs(tab) do
+				if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
+					local frame = DarkMode:GetFrame(name)
+					for i, v in pairs({frame:GetChildren()}) do
+						if i == 1 then
+							DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
+						end
+					end
+				end
+
+				if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
+					DarkMode:FindTexturesByName(name, "ui")
 				end
 			end
 		elseif index == "Gryphons" then
