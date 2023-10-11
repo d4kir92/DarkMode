@@ -784,6 +784,10 @@ function DarkMode:SearchUi()
 				end
 			end
 
+			if MiniMapLFGFrame then
+				DarkMode:FindTextures(MiniMapLFGFrame, "ui")
+			end
+
 			if Lib_GPI_Minimap_LFGBulletinBoard then
 				for i, v in pairs({Lib_GPI_Minimap_LFGBulletinBoard:GetRegions()}) do
 					if i == 2 then
