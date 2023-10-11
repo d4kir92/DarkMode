@@ -171,6 +171,7 @@ DMTextureBlock[374178] = true
 DMTextureBlock[374168] = true
 DMTextureBlock[374170] = true
 DMTextureBlock[374172] = true
+DMTextureBlock["Portrait2"] = true -- CollectionsJournal
 -- CHAT Tabs
 -- ids: https://www.townlong-yak.com/framexml/live/Helix/ArtTextureID.lua
 function DarkMode:GetTextureBlockTable()
@@ -184,6 +185,8 @@ if DarkMode:GetWoWBuild() ~= "RETAIL" then
 	DMIgnoreFrames["FriendsFramePortraitFrame"] = true
 	DMIgnoreFrames["FriendsTabHeader"] = true
 	DMIgnoreFrames["FriendsListFrame"] = true
+	DMIgnoreFrames["CollectionsJournalPortrait"] = true
+	DMIgnoreFrames["CollectionsJournalPortraitFrame"] = true
 end
 
 function DarkMode:GetIgnoreFrames(name)

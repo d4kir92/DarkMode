@@ -532,24 +532,27 @@ function DarkMode:InitQuestLogFrame()
 	end
 
 	if frame2 then
-		hooksecurefunc(
-			QuestMapFrame.DetailsFrame.SealMaterialBG,
-			"SetVertexColor",
-			function(sel, olr, olg, olb, ola)
-				if sel.dm_setvertexcolor then return end
-				sel.dm_setvertexcolor = true
-				local r, g, b, a = DarkMode:GetFrameColor()
-				if r ~= nil and g ~= nil and b ~= nil then
-					sel:SetVertexColor(r, g, b, a)
+		if QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.SealMaterialBG and QuestMapFrame.DetailsFrame.SealMaterialBG.SetVertexColor then
+			print(QuestMapFrame.DetailsFrame.SealMaterialBG)
+			hooksecurefunc(
+				QuestMapFrame.DetailsFrame.SealMaterialBG,
+				"SetVertexColor",
+				function(sel, olr, olg, olb, ola)
+					if sel.dm_setvertexcolor then return end
+					sel.dm_setvertexcolor = true
+					local r, g, b, a = DarkMode:GetFrameColor()
+					if r ~= nil and g ~= nil and b ~= nil then
+						sel:SetVertexColor(r, g, b, a)
+					end
+
+					sel.dm_setvertexcolor = false
 				end
+			)
 
-				sel.dm_setvertexcolor = false
+			local r, g, b, a = DarkMode:GetFrameColor()
+			if r ~= nil and g ~= nil and b ~= nil then
+				QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(r, g, b, a)
 			end
-		)
-
-		local r, g, b, a = DarkMode:GetFrameColor()
-		if r ~= nil and g ~= nil and b ~= nil then
-			QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(r, g, b, a)
 		end
 
 		function DarkMode:UpdateTextInQuestMapFrame()
@@ -641,9 +644,11 @@ function DarkMode:SearchUi()
 			for ind, name in pairs(tab) do
 				if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
 					local frame = DarkMode:GetFrame(name)
-					for i, v in pairs({frame:GetChildren()}) do
-						if i == 1 then
-							DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
+					if frame then
+						for i, v in pairs({frame:GetChildren()}) do
+							if i == 1 then
+								DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
+							end
 						end
 					end
 				end
