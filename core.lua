@@ -533,7 +533,6 @@ function DarkMode:InitQuestLogFrame()
 
 	if frame2 then
 		if QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.SealMaterialBG and QuestMapFrame.DetailsFrame.SealMaterialBG.SetVertexColor then
-			print(QuestMapFrame.DetailsFrame.SealMaterialBG)
 			hooksecurefunc(
 				QuestMapFrame.DetailsFrame.SealMaterialBG,
 				"SetVertexColor",
