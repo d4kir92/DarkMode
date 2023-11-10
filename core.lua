@@ -571,10 +571,20 @@ function DarkMode:SearchFrames()
 	end
 end
 
+local foundExpansion = false
 function DarkMode:SearchAddons()
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 			DarkMode:FindTexturesByName(name .. v, "frames")
+		end
+	end
+
+	if not foundExpansion and ExpansionLandingPage and ExpansionLandingPage.Overlay then
+		for i, v in pairs({ExpansionLandingPage.Overlay:GetChildren()}) do
+			if v then
+				foundExpansion = true
+				DarkMode:FindTextures(v.NineSlice, "frames")
+			end
 		end
 	end
 end
