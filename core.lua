@@ -626,6 +626,12 @@ function DarkMode:SearchUi()
 						DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "ui")
 					end
 
+					if _G[name .. x] and _G[name .. x]["RightDivider"] then
+						DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["TopEdge"], "ui")
+						DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["Center"], "ui")
+						DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["BottomEdge"], "ui")
+					end
+
 					if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
 						local icon = _G[name .. x .. "Icon"]
 						if icon then
