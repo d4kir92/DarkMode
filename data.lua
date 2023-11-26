@@ -55,7 +55,7 @@ function DarkMode:GetUiColor()
 end
 
 function DarkMode:GetUFColor()
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 7), "CUSTOMUFC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 1), "CUSTOMUFC")
 
 	return r, g, b, a
 end

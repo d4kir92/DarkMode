@@ -1,6 +1,6 @@
 local _, DarkMode = ...
 local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.3.38")
+	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.3.39")
 }
 
 local searchStr = ""
@@ -259,14 +259,14 @@ function DarkMode:InitDMSettings()
 		local sCMUF = AddSlider(
 			4,
 			"COLORMODEUF",
-			DarkMode:GV("COLORMODEUF", 7),
+			DarkMode:GV("COLORMODEUF", 1),
 			function(sel, val)
 				sel.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 7)])
+		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 1)])
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
 		local sCMTT = AddSlider(
 			4,
@@ -278,7 +278,7 @@ function DarkMode:InitDMSettings()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMTT.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODETT", 7)])
+		sCMTT.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODETT", 1)])
 		DarkMode:AddColorPicker("CUSTOMTTC", DMSettings.SC, 0, 0)
 		local sCMF = AddSlider(
 			4,
