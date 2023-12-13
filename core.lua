@@ -966,6 +966,13 @@ function DarkMode:Event(event, ...)
 			DarkMode:InitGreetingPanel()
 			DarkMode:InitQuestLogFrame()
 			DarkMode:InitQuestFrame()
+			C_Timer.After(
+				1,
+				function()
+					DarkMode:GroupLootUpdate()
+				end
+			)
+
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				C_Timer.After(
@@ -1194,6 +1201,28 @@ function DarkMode:Event(event, ...)
 				end
 			end
 		)
+	elseif event == "START_LOOT_ROLL" then
+		C_Timer.After(
+			0.1,
+			function()
+				DarkMode:GroupLootUpdate()
+			end
+		)
+	end
+end
+
+function DarkMode:GroupLootUpdate()
+	for i, name in pairs(DarkMode:GetGroupLootTable()) do
+		local gf = _G[name]
+		if gf then
+			DarkMode:UpdateColor(gf, "ui")
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames2()) do
+				local texture = gf[v]
+				if texture then
+					DarkMode:UpdateColor(texture, "ui")
+				end
+			end
+		end
 	end
 end
 
@@ -1201,4 +1230,5 @@ local f = CreateFrame("Frame")
 f:SetScript("OnEvent", DarkMode.Event)
 f:RegisterEvent("PLAYER_LOGIN")
 f:RegisterEvent("ADDON_LOADED")
+f:RegisterEvent("START_LOOT_ROLL")
 f.incombat = false
