@@ -66,6 +66,18 @@ function DarkMode:GetTTColor()
 	return r, g, b, a
 end
 
+function DarkMode:GetActionButtonsColor()
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEAB", 1), "CUSTOMABC")
+
+	return r, g, b, a
+end
+
+function DarkMode:GetBuffsAndDebuffsColor()
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEBAD", 1), "CUSTOMBADC")
+
+	return r, g, b, a
+end
+
 function DarkMode:GetFrameColor()
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEF", 1), "CUSTOMFRC")
 
