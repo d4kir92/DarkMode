@@ -619,8 +619,16 @@ function DarkMode:SearchFrames()
 	end
 end
 
+local foundAuctionator = false
 local foundExpansion = false
 function DarkMode:SearchAddons()
+	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
+		foundAuctionator = true
+		for i, v in pairs(AuctionatorAHTabsContainer.Tabs) do
+			DarkMode:FindTextures(v, "frames")
+		end
+	end
+
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 			DarkMode:FindTexturesByName(name .. v, "frames")
