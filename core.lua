@@ -287,10 +287,16 @@ function DarkMode:UpdateText(text, name, layer)
 					sel.dm_settextcolor = true
 					local r, g, b, a = DarkMode:GetFrameColor()
 					if r ~= nil and g ~= nil and b ~= nil then
+						if a == nil then
+							a = 1
+						end
+
 						local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
-						sel:SetTextColor(cr, cg, cb, ca)
-						if sel:GetText() then
-							sel:SetText(RGBToHexC(cr, cg, cb) .. RemoveColorCodes(sel:GetText()))
+						if cr ~= nil and cg ~= nil and cb ~= nil then
+							sel:SetTextColor(cr, cg, cb, ca)
+							if sel:GetText() then
+								sel:SetText(RGBToHexC(cr, cg, cb) .. RemoveColorCodes(sel:GetText()))
+							end
 						end
 					end
 
@@ -301,6 +307,10 @@ function DarkMode:UpdateText(text, name, layer)
 
 		local r, g, b, a = DarkMode:GetFrameColor()
 		if r ~= nil and g ~= nil and b ~= nil then
+			if a == nil then
+				a = 1
+			end
+
 			text:SetTextColor(DarkMode:GetTextColor(r, g, b, a))
 		end
 
@@ -1080,6 +1090,27 @@ function DarkMode:Event(event, ...)
 					DarkMode:SearchFrames()
 					for index, name in pairs(DarkMode:GetFrameTextTable()) do
 						DarkMode:FindTextsByName(name)
+					end
+
+					if ItemTextPageText then
+						hooksecurefunc(
+							ItemTextPageText,
+							"SetTextColor",
+							function(sel, name, ...)
+								if sel.dm_settextcolor then return end
+								sel.dm_settextcolor = true
+								local r, g, b, a = DarkMode:GetFrameColor()
+								local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
+								sel:SetTextColor(name, cr, cg, cb, ca)
+								sel.dm_settextcolor = false
+							end
+						)
+
+						local r, g, b = 1, 1, 1
+						ItemTextPageText:SetTextColor("P", r, g, b)
+						ItemTextPageText:SetTextColor("H1", r, g, b)
+						ItemTextPageText:SetTextColor("H2", r, g, b)
+						ItemTextPageText:SetTextColor("H3", r, g, b)
 					end
 				end
 			)
