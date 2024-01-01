@@ -1,8 +1,4 @@
-local _, DarkMode = ...
-local config = {
-	["title"] = format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.4.5")
-}
-
+local AddonName, DarkMode = ...
 local searchStr = ""
 local posy = -4
 local cas = {}
@@ -226,7 +222,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DMSettings.TitleText:SetText(config.title)
+	D4:SetVersion(AddonName, 136122, "0.4.6")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.4.6"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
