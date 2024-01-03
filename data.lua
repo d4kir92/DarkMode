@@ -87,7 +87,7 @@ end
 function DarkMode:GetTextColor(r, g, b, a)
 	if r ~= nil and g ~= nil and b ~= nil then
 		local sum = r + g + b
-		if sum > 1 then return 0, 0, 0, 1 end
+		if sum >= 2 then return 0, 0, 0, 1 end
 	end
 
 	return 1, 1, 1, 1
