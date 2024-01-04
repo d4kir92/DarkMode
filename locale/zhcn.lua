@@ -1,6 +1,5 @@
 -- zhCN
 local _, DarkMode = ...
-
 function DarkMode:Lang_zhCN()
 	local tab = {
 		["MMBTNLEFT"] = "左键点击 => 菜单选项",
@@ -15,7 +14,6 @@ function DarkMode:Lang_zhCN()
 		["CUSTOMUFC"] = "指定头像颜色",
 		["CUSTOMTTC"] = "指定鼠标提示颜色",
 		["CUSTOMFRC"] = "指定窗口颜色",
-		["MASKACTIONBUTTONS"] = "动作条按钮染色",
 		["GRYPHONS"] = "动作条狮鹫染色",
 	}
 

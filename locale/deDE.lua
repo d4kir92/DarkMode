@@ -18,9 +18,9 @@ function DarkMode:Lang_deDE()
 		["CUSTOMABC"] = "Benutzerdefinierte Aktionsknöpfe Farbe",
 		["CUSTOMBADC"] = "Benutzerdefinierte Buffs und Debuffs Farbe",
 		["CUSTOMFRC"] = "Benutzerdefinierte Fenster Farbe",
-		["MASKACTIONBUTTONS"] = "Aktionsknöpfe maskieren",
+		["MASKACTIONBUTTONS"] = "Rand für Aktionsknöpfe hinzufügen",
 		["GRYPHONS"] = "Greifen maskieren",
-		["MASKBUFFSANDDEBUFFS"] = "Buffs und Debuffs maskieren",
+		["MASKBUFFSANDDEBUFFS"] = "Rand für Buffs und Debuffs hinzufügen",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

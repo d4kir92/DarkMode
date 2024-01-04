@@ -1,6 +1,5 @@
 -- zhTW
 local _, DarkMode = ...
-
 function DarkMode:Lang_zhTW()
 	local tab = {
 		["MMBTNLEFT"] = "左鍵點擊 => 選項設定",
@@ -15,7 +14,6 @@ function DarkMode:Lang_zhTW()
 		["CUSTOMUFC"] = "指定單位框架顏色",
 		["CUSTOMTTC"] = "指定滑鼠提示顏色",
 		["CUSTOMFRC"] = "指定視窗顏色",
-		["MASKACTIONBUTTONS"] = "替快捷鍵按鈕著色",
 		["GRYPHONS"] = "替快捷列獅鷲著色",
 	}
 

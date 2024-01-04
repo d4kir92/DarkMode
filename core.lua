@@ -49,7 +49,7 @@ local DMTexturesTT = {}
 local DMTexturesFrames = {}
 local DMTexturesActionButtons = {}
 local DMTexturesBuffsAndDebuffs = {}
-function DarkMode:UpdateColor(texture, typ)
+function DarkMode:UpdateColor(texture, typ, show)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
 		print("INVALID TEXTURE OBJECT")
@@ -122,10 +122,10 @@ function DarkMode:UpdateColor(texture, typ)
 		end
 
 		return true
-	elseif textureId and texture.SetVertexColor then
+	elseif textureId ~= nil and texture.SetVertexColor then
 		if texture.SetText then return false end
-		if texture.dm_setup == nil then
-			texture.dm_setup = true
+		if texture.dm_setup_texture == nil then
+			texture.dm_setup_texture = true
 			hooksecurefunc(
 				texture,
 				"SetVertexColor",
@@ -277,8 +277,8 @@ end
 local DMFS = {}
 function DarkMode:UpdateText(text, name, layer)
 	if text and text.SetTextColor then
-		if text.dm_setup == nil then
-			text.dm_setup = true
+		if text.dm_setup_text == nil then
+			text.dm_setup_text = true
 			hooksecurefunc(
 				text,
 				"SetTextColor",
@@ -694,6 +694,10 @@ function DarkMode:SearchUi()
 							if btn.__MSQ_Normal then
 								DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
 							end
+
+							if btn.__MSQ_NewNormal then
+								DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
+							end
 						end
 					else
 						local btnTexture2 = _G[name .. x .. "FloatingBG"]
@@ -1031,6 +1035,10 @@ function DarkMode:Event(event, ...)
 								if bagF.__MSQ_Normal then
 									DarkMode:UpdateColor(bagF.__MSQ_Normal, "actionbuttons")
 								end
+
+								if bagF.__MSQ_NewNormal then
+									DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "actionbuttons")
+								end
 							end
 						end
 					end
@@ -1044,7 +1052,7 @@ function DarkMode:Event(event, ...)
 						"Update",
 						function(sel)
 							for index, bf in pairs(sel.auraFrames) do
-								if bf and _G["Buff" .. index .. "BorderDM"] == nil then
+								if bf and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 									local _, sh = bf.Icon:GetSize()
 									sh = DarkMode:MathR(sh)
 									local scale = 1
@@ -1066,7 +1074,7 @@ function DarkMode:Event(event, ...)
 							local buttonName = "BuffButton"
 							for index = 1, BUFF_ACTUAL_DISPLAY do
 								local btn = _G[buttonName .. index]
-								if btn and _G[buttonName .. index .. "BorderDM"] == nil then
+								if btn and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 									local MSQ = LibStub("Masque", true)
 									if MSQ then
 										if btn.__MSQ_Mask then
@@ -1075,6 +1083,10 @@ function DarkMode:Event(event, ...)
 
 										if btn.__MSQ_Normal then
 											DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+										end
+
+										if btn.__MSQ_NewNormal then
+											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 										end
 									else
 										local sw, sh = btn:GetSize()
@@ -1101,7 +1113,7 @@ function DarkMode:Event(event, ...)
 						function(frame)
 							local buttonName = frame:GetName() .. "Buff"
 							for index = 1, BUFF_ACTUAL_DISPLAY do
-								if _G[buttonName .. index] and _G[buttonName .. index .. "BorderDM"] == nil then
+								if _G[buttonName .. index] and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 									local sw, sh = _G[buttonName .. index]:GetSize()
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
@@ -1255,8 +1267,8 @@ function DarkMode:Event(event, ...)
 					end
 				end
 
-				if ClassTalentFrame and ClassTalentFrame.dm_setup == nil then
-					ClassTalentFrame.dm_setup = true
+				if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
+					ClassTalentFrame.dm_setup_talent = true
 					function ClassTalentFrame:UpdateColors()
 						local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
 						for i, v in pairs(tabs) do
