@@ -928,6 +928,7 @@ npf:SetScript(
 	end
 )
 
+local searchQuestFrames = false
 function DarkMode:InitQuestFrame()
 	local frame = DarkMode:GetFrame("QuestFrameGreetingPanel")
 	function DarkMode:UpdateQuestFrameGreetingPanel()
@@ -938,7 +939,17 @@ function DarkMode:InitQuestFrame()
 		QuestFrame:HookScript(
 			"OnShow",
 			function(sel, ...)
-				DarkMode:SearchFrames()
+				if not searchQuestFrames then
+					searchQuestFrames = true
+					C_Timer.After(
+						1,
+						function()
+							searchQuestFrames = false
+						end
+					)
+
+					DarkMode:SearchFrames()
+				end
 			end
 		)
 	end
@@ -947,7 +958,17 @@ function DarkMode:InitQuestFrame()
 		QuestFrameRewardPanel:HookScript(
 			"OnShow",
 			function(sel, ...)
-				DarkMode:SearchFrames()
+				if not searchQuestFrames then
+					searchQuestFrames = true
+					C_Timer.After(
+						1,
+						function()
+							searchQuestFrames = false
+						end
+					)
+
+					DarkMode:SearchFrames()
+				end
 			end
 		)
 	end
@@ -956,7 +977,17 @@ function DarkMode:InitQuestFrame()
 		QuestFrameDetailPanel:HookScript(
 			"OnShow",
 			function(sel, ...)
-				DarkMode:SearchFrames()
+				if not searchQuestFrames then
+					searchQuestFrames = true
+					C_Timer.After(
+						1,
+						function()
+							searchQuestFrames = false
+						end
+					)
+
+					DarkMode:SearchFrames()
+				end
 			end
 		)
 	end
