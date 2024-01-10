@@ -1040,6 +1040,57 @@ function DarkMode:Event(event, ...)
 				end
 			)
 
+			local chatButtons = {
+				["ChatFrame%sButtonFrameBottomButton"] = {0.77, -0.5, 0},
+				["ChatFrame%sButtonFrameDownButton"] = {0.77, -0.5, 0},
+				["ChatFrame%sButtonFrameUpButton"] = {0.77, -0.5, 0},
+			}
+
+			local chatSpecialButtons = {
+				["ChatFrameMenuButton"] = {0.77, 0, 0},
+				["ChatFrameChannelButton"] = {0.94, 0, 0}
+			}
+
+			if ChatFrame1ButtonFrameBottomButton then
+				for i = 1, 10 do
+					for btnName, btnTab in pairs(chatButtons) do
+						local btn = _G[format(btnName, i)]
+						if btn then
+							local scale = btnTab[1]
+							local px = btnTab[2]
+							local py = btnTab[3]
+							local _, sh = btn:GetSize()
+							sh = DarkMode:MathR(sh)
+							btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
+							local border = btn.border
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sh * scale, sh * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+							border:SetPoint("CENTER", btn, "CENTER", px, py)
+							DarkMode:UpdateColor(border, "frame")
+						end
+					end
+				end
+
+				for btnName, btnTab in pairs(chatSpecialButtons) do
+					local btn = _G[btnName]
+					if btn then
+						local scale = btnTab[1]
+						local px = btnTab[2]
+						local py = btnTab[3]
+						local _, sh = btn:GetSize()
+						sh = DarkMode:MathR(sh)
+						btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
+						local border = btn.border
+						border:SetDrawLayer("OVERLAY", 3)
+						border:SetSize(sh * scale, sh * scale)
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+						border:SetPoint("CENTER", btn, "CENTER", px, py)
+						DarkMode:UpdateColor(border, "frame")
+					end
+				end
+			end
+
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				C_Timer.After(

@@ -110,7 +110,7 @@ local DMUi = {
 	["Tooltips"] = {"GameTooltip.NineSlice", "ItemRefTooltip.NineSlice", "ShoppingTooltip1.NineSlice", "ShoppingTooltip2.NineSlice", "WhatsTrainingTooltip.NineSlice"},
 	["Artworks"] = {"MainMenuBar.BorderArt", "MainMenuBarTextureExtender", "MainMenuBarTexture0", "MainMenuBarTexture1", "MainMenuBarTexture2", "MainMenuBarTexture3", "MainMenuExpBar", "ReputationWatchBar.StatusBar", "MainStatusTrackingBarContainer.BarFrameTexture", "SecondaryStatusTrackingBarContainer.BarFrameTexture", "MainMenuBarMaxLevelBar", "BT4BarBlizzardArt", "BT4BarBlizzardArt.nineSliceParent", "BlizzardArtLeftCap", "BlizzardArtRightCap", "CompactRaidFrameManager", "CharacterReagentBag0SlotNormalTexture", "CharacterBag0SlotNormalTexture", "CharacterBag1SlotNormalTexture", "CharacterBag2SlotNormalTexture", "CharacterBag3SlotNormalTexture", "MainMenuBarBackpackButtonNormalTexture"},
 	["Gryphons"] = {"MA_LeftEndCap", "MA_RightEndCap", "MainMenuBar.EndCaps", "MainMenuBarLeftEndCap", "MainMenuBarRightEndCap"},
-	["Chat"] = {"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
+	["Chat"] = {"ChatFrame1EditBox", "ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab", "ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",},
 	["Castbar"] = {"CastingBarFrame.Border", "PlayerCastingBarFrame.Background", "PlayerCastingBarFrame.Border", "PlayerCastingBarFrame.TextBorder"}
 }
 
