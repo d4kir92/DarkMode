@@ -1061,12 +1061,23 @@ function DarkMode:Event(event, ...)
 							local py = btnTab[3]
 							local _, sh = btn:GetSize()
 							sh = DarkMode:MathR(sh)
-							btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
+							btn.border = btn:CreateTexture(format(btnName, i) .. ".border", "OVERLAY")
 							local border = btn.border
 							border:SetDrawLayer("OVERLAY", 3)
 							border:SetSize(sh * scale, sh * scale)
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
 							border:SetPoint("CENTER", btn, "CENTER", px, py)
+							hooksecurefunc(
+								btn,
+								"SetNormalTexture",
+								function(sel, texture)
+									-- Leatrix Plus fix...
+									if texture == "" then
+										border:SetAlpha(0)
+									end
+								end
+							)
+
 							DarkMode:UpdateColor(border, "frame")
 						end
 					end
