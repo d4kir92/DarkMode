@@ -655,125 +655,132 @@ function DarkMode:SearchAddons()
 	end
 end
 
-function DarkMode:SearchUi()
+function DarkMode:SearchUi(from)
+	local raidOnly = from == "raid"
 	for index, tab in pairs(DarkMode:GetUiTable()) do
-		if index == "ActionButtons" then
-			for i, name in pairs(tab) do
-				local max = 12
-				--[[ Bar Addons ]]
-				if name == "BT4Button" or name == "DominosActionButton" then
-					max = 200
-				end
-
-				for x = 1, max do
-					local btnTexture = _G[name .. x .. "NormalTexture"]
-					if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
-						local sw, sh = _G[name .. x]:GetSize()
-						sw = DarkMode:MathR(sw)
-						sh = DarkMode:MathR(sh)
-						local scale = 1.1
-						_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
-						local border = _G[name .. x .. "BorderFix"]
-						border:SetDrawLayer("OVERLAY", 3)
-						border:SetSize(sw * scale, sh * scale)
-						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-						border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
-						DarkMode:UpdateColor(border, "actionbuttons")
-					elseif btnTexture then
-						DarkMode:UpdateColor(btnTexture, "actionbuttons")
-					end
-
-					local MSQ = LibStub("Masque", true)
-					if MSQ then
-						local btn = _G[name .. x]
-						if btn then
-							if btn.__MSQ_Mask then
-								DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
-							end
-
-							if btn.__MSQ_Normal then
-								DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
-							end
-
-							if btn.__MSQ_NewNormal then
-								DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
-							end
-						end
-					else
-						local btnTexture2 = _G[name .. x .. "FloatingBG"]
-						if btnTexture2 then
-							DarkMode:UpdateColor(btnTexture2, "actionbuttons")
-						end
-
-						if _G[name .. x] and _G[name .. x]["SlotBackground"] then
-							DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "actionbuttons")
-						end
-
-						if _G[name .. x] and _G[name .. x]["RightDivider"] then
-							DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["TopEdge"], "actionbuttons")
-							DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["Center"], "actionbuttons")
-							DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["BottomEdge"], "actionbuttons")
-						end
-					end
-
-					if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
-						local icon = _G[name .. x .. "Icon"]
-						if icon then
-							local br = 0.01
-							icon:SetTexCoord(br, 1 - br, br, 1 - br)
-						end
-
-						if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
-							local sw, sh = _G[name .. x]:GetSize()
-							sw = DarkMode:MathR(sw)
-							sh = DarkMode:MathR(sh)
-							local scale = 1.1
-							_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
-							local border = _G[name .. x .. "BorderDM"]
-							border:SetDrawLayer("OVERLAY", 3)
-							border:SetSize(sw * scale, sh * scale)
-							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
-							border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
-							DarkMode:UpdateColor(border, "actionbuttons")
-						end
-					end
-				end
-			end
-		elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
-			for ind, name in pairs(tab) do
-				if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
-					local frame = DarkMode:GetFrame(name)
-					if frame then
-						for i, v in pairs({frame:GetChildren()}) do
-							if i == 1 then
-								DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
-							end
-						end
-					end
-				end
-
-				if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
-					DarkMode:FindTexturesByName(name, "ui")
-				end
-			end
-		elseif index == "Gryphons" then
-			if DarkMode:IsEnabled("GRYPHONS", true) then
-				for i, v in pairs(tab) do
-					DarkMode:FindTexturesByName(v, "ui")
-				end
-			end
-		elseif index == "Tooltips" then
-			for i, v in pairs(tab) do
-				DarkMode:FindTexturesByName(v, "tt")
-			end
-		elseif type(tab) == "string" then
-			DarkMode:FindTexturesByName(tab, "ui")
-		elseif index == "UnitFrames" then
+		if raidOnly and index == "UnitFrames" then
 			for i, v in pairs(tab) do
 				DarkMode:FindTexturesByName(v, "uf")
 			end
 		else
-			print("Missing Ui index:", index, tab)
+			if index == "ActionButtons" then
+				for i, name in pairs(tab) do
+					local max = 12
+					--[[ Bar Addons ]]
+					if name == "BT4Button" or name == "DominosActionButton" then
+						max = 200
+					end
+
+					for x = 1, max do
+						local btnTexture = _G[name .. x .. "NormalTexture"]
+						if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
+							local sw, sh = _G[name .. x]:GetSize()
+							sw = DarkMode:MathR(sw)
+							sh = DarkMode:MathR(sh)
+							local scale = 1.1
+							_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
+							local border = _G[name .. x .. "BorderFix"]
+							border:SetDrawLayer("OVERLAY", 3)
+							border:SetSize(sw * scale, sh * scale)
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+							border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+							DarkMode:UpdateColor(border, "actionbuttons")
+						elseif btnTexture then
+							DarkMode:UpdateColor(btnTexture, "actionbuttons")
+						end
+
+						local MSQ = LibStub("Masque", true)
+						if MSQ then
+							local btn = _G[name .. x]
+							if btn then
+								if btn.__MSQ_Mask then
+									DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+								end
+
+								if btn.__MSQ_Normal then
+									DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+								end
+
+								if btn.__MSQ_NewNormal then
+									DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
+								end
+							end
+						else
+							local btnTexture2 = _G[name .. x .. "FloatingBG"]
+							if btnTexture2 then
+								DarkMode:UpdateColor(btnTexture2, "actionbuttons")
+							end
+
+							if _G[name .. x] and _G[name .. x]["SlotBackground"] then
+								DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "actionbuttons")
+							end
+
+							if _G[name .. x] and _G[name .. x]["RightDivider"] then
+								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["TopEdge"], "actionbuttons")
+								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["Center"], "actionbuttons")
+								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["BottomEdge"], "actionbuttons")
+							end
+						end
+
+						if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
+							local icon = _G[name .. x .. "Icon"]
+							if icon then
+								local br = 0.01
+								icon:SetTexCoord(br, 1 - br, br, 1 - br)
+							end
+
+							if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
+								local sw, sh = _G[name .. x]:GetSize()
+								sw = DarkMode:MathR(sw)
+								sh = DarkMode:MathR(sh)
+								local scale = 1.1
+								_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
+								local border = _G[name .. x .. "BorderDM"]
+								border:SetDrawLayer("OVERLAY", 3)
+								border:SetSize(sw * scale, sh * scale)
+								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
+								border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+								DarkMode:UpdateColor(border, "actionbuttons")
+							end
+						end
+					end
+				end
+			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
+				for ind, name in pairs(tab) do
+					if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
+						local frame = DarkMode:GetFrame(name)
+						if frame then
+							for i, v in pairs({frame:GetChildren()}) do
+								if i == 1 then
+									DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
+								end
+							end
+						end
+					end
+
+					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
+						DarkMode:FindTexturesByName(name, "ui")
+					end
+				end
+			elseif index == "Gryphons" then
+				if DarkMode:IsEnabled("GRYPHONS", true) then
+					for i, v in pairs(tab) do
+						DarkMode:FindTexturesByName(v, "ui")
+					end
+				end
+			elseif index == "Tooltips" then
+				for i, v in pairs(tab) do
+					DarkMode:FindTexturesByName(v, "tt")
+				end
+			elseif type(tab) == "string" then
+				DarkMode:FindTexturesByName(tab, "ui")
+			elseif index == "UnitFrames" then
+				for i, v in pairs(tab) do
+					DarkMode:FindTexturesByName(v, "uf")
+				end
+			else
+				print("Missing Ui index:", index, tab)
+			end
 		end
 	end
 
@@ -912,6 +919,20 @@ function DarkMode:SearchUi()
 		DarkMode:UpdateColor(border, "ui")
 	end
 end
+
+local rf = CreateFrame("FRAME")
+rf:RegisterEvent("RAID_ROSTER_UPDATE")
+rf:SetScript(
+	"OnEvent",
+	function(self, event, name, ...)
+		C_Timer.After(
+			0.1,
+			function()
+				DarkMode:SearchUi("raid")
+			end
+		)
+	end
+)
 
 local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
