@@ -921,7 +921,7 @@ function DarkMode:SearchUi(from)
 end
 
 local rf = CreateFrame("FRAME")
-rf:RegisterEvent("RAID_ROSTER_UPDATE")
+rf:RegisterEvent("GROUP_ROSTER_UPDATE")
 rf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
