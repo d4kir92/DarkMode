@@ -222,8 +222,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.4.20")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.4.20"))
+	D4:SetVersion(AddonName, 136122, "0.4.21")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.4.21"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
