@@ -788,7 +788,7 @@ function DarkMode:SearchUi(from)
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
 				local mbtn = _G[name]
-				if mbtn then
+				if mbtn and _G[name .. "DMBorder"] == nil then
 					local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
 					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 					border:SetAllPoints(mbtn)
@@ -798,7 +798,7 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if KeyRingButton then
+	if KeyRingButton and _G["KeyRingButton" .. "DMBorder"] == nil then
 		local border = KeyRingButton:CreateTexture("KeyRingButton" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\krbtn_border")
 		border:SetAllPoints(KeyRingButton)
@@ -807,7 +807,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MinimapZoomIn and MinimapZoomOut then
+	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. "DMBorder"] == nil then
 		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
 		border:SetAllPoints(MinimapZoomIn)
@@ -820,7 +820,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border2, "ui")
 	end
 
-	if MiniMapTrackingFrame then
+	if MiniMapTrackingFrame and _G["MiniMapTrackingFrame" .. "DMBorder"] == nil then
 		-- Classic Era
 		local border = MiniMapTrackingFrame:CreateTexture("MiniMapTrackingFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
@@ -829,7 +829,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapTrackingButton then
+	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. "DMBorder"] == nil then
 		-- Wrath
 		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
@@ -839,7 +839,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapWorldMapButton then
+	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. "DMBorder"] == nil then
 		-- Wrath
 		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
@@ -849,7 +849,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapMailFrame then
+	if MiniMapMailFrame and _G["MiniMapMailFrame" .. "DMBorder"] == nil then
 		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
@@ -858,7 +858,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" then
+	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
 		if DarkMode:GetWoWBuild() == "WRATH" then
@@ -878,7 +878,7 @@ function DarkMode:SearchUi(from)
 			if DMMMBTN then
 				for i, name in pairs(DMMMBTN:GetButtonList()) do
 					local btn = _G["LibDBIcon10_" .. name]
-					if btn then
+					if btn and _G[name .. "DMBorder"] == nil then
 						local border = btn:CreateTexture(name .. "DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
@@ -909,7 +909,7 @@ function DarkMode:SearchUi(from)
 	)
 
 	local btwQ = _G["BtWQuestsMinimapButton"]
-	if btwQ then
+	if btwQ and _G["BtWQuestsMinimapButton" .. "DMBorder"] == nil then
 		local border = btwQ:CreateTexture("BtWQuestsMinimapButton" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
