@@ -673,7 +673,7 @@ function DarkMode:SearchUi(from)
 
 					for x = 1, max do
 						local btnTexture = _G[name .. x .. "NormalTexture"]
-						if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil then
+						if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
 							local sw, sh = _G[name .. x]:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
