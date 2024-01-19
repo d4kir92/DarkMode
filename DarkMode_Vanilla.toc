@@ -1,5 +1,5 @@
 ## Interface: 11500
-## Version: 0.4.24
+## Version: 0.4.25
 ## Title: DarkMode |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR
