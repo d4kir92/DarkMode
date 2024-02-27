@@ -1,46 +1,4 @@
 local _, DarkMode = ...
--- TAINTFREE SLASH COMMANDS --
-local lastMessage = ""
-local cmds = {}
-hooksecurefunc(
-	"ChatEdit_ParseText",
-	function(editBox, send, parseIfNoSpace)
-		if send == 0 then
-			lastMessage = editBox:GetText()
-		end
-	end
-)
-
-hooksecurefunc(
-	"ChatFrame_DisplayHelpTextSimple",
-	function(frame)
-		if lastMessage and lastMessage ~= "" then
-			local cmd = string.upper(lastMessage)
-			cmd = strsplit(" ", cmd)
-			if cmds[cmd] ~= nil then
-				local count = 1
-				local numMessages = frame:GetNumMessages()
-				local function predicateFunction(entry)
-					if count == numMessages and entry == HELP_TEXT_SIMPLE then return true end
-					count = count + 1
-				end
-
-				frame:RemoveMessagesByPredicate(predicateFunction)
-				cmds[cmd]()
-			end
-		end
-	end
-)
-
-function DarkMode:InitSlash()
-	cmds["/DM"] = DarkMode.ToggleSettings
-	cmds["/DARK"] = DarkMode.ToggleSettings
-	cmds["/DARKMODE"] = DarkMode.ToggleSettings
-	cmds["/RL"] = C_UI.Reload
-	cmds["/REL"] = C_UI.Reload
-end
-
--- TAINTFREE SLASH COMMANDS --
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
 local DMTexturesUi = {}
@@ -1043,6 +1001,14 @@ function DarkMode:InitQuestFrame()
 	end
 end
 
+function DarkMode:InitSlash()
+	D4:AddSlash("dm", DarkMode.ToggleSettings)
+	D4:AddSlash("dark", DarkMode.ToggleSettings)
+	D4:AddSlash("darkmode", DarkMode.ToggleSettings)
+	D4:AddSlash("rl", C_UI.Reload)
+	D4:AddSlash("rel", C_UI.Reload)
+end
+
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
@@ -1324,75 +1290,77 @@ function DarkMode:Event(event, ...)
 				FriendsFramePortrait:Hide()
 			end
 
-			function DarkMode:UpdateMinimapButton()
-				if DMMMBTN then
-					if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-						DMMMBTN:Show("DarkModeMinimapIcon")
-					else
-						DMMMBTN:Hide("DarkModeMinimapIcon")
-					end
-				end
-			end
-
-			function DarkMode:ToggleMinimapButton()
-				DarkMode:SetEnabled("SHOWMINIMAPBUTTON", not DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true))
-				if DMMMBTN then
-					if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-						DMMMBTN:Show("DarkModeMinimapIcon")
-					else
-						DMMMBTN:Hide("DarkModeMinimapIcon")
-					end
-				end
-			end
-
-			function DarkMode:HideMinimapButton()
-				DarkMode:SetEnabled("SHOWMINIMAPBUTTON", false)
-				if DMMMBTN then
-					DMMMBTN:Hide("DarkModeMinimapIcon")
-				end
-			end
-
-			function DarkMode:ShowMinimapButton()
-				DarkMode:SetEnabled("SHOWMINIMAPBUTTON", true)
-				if DMMMBTN then
-					DMMMBTN:Show("DarkModeMinimapIcon")
-				end
-			end
-
-			local DarkModeMinimapIcon = LibStub("LibDataBroker-1.1"):NewDataObject(
-				"DarkModeMinimapIcon",
-				{
-					type = "data source",
-					text = "DarkModeMinimapIcon",
-					icon = 136122,
-					OnClick = function(sel, btn)
-						if btn == "LeftButton" then
-							DarkMode:ToggleSettings()
-						elseif btn == "RightButton" then
-							DarkMode:HideMinimapButton()
+			if UIParent.SetFixedFrameStrata then
+				function DarkMode:UpdateMinimapButton()
+					if DMMMBTN then
+						if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
+							DMMMBTN:Show("DarkModeMinimapIcon")
+						else
+							DMMMBTN:Hide("DarkModeMinimapIcon")
 						end
-					end,
-					OnTooltipShow = function(tooltip)
-						if not tooltip or not tooltip.AddLine then return end
-						tooltip:AddLine("DarkMode")
-						tooltip:AddLine(DarkMode:GT("MMBTNLEFT"))
-						tooltip:AddLine(DarkMode:GT("MMBTNRIGHT"))
-					end,
-				}
-			)
-
-			if DarkModeMinimapIcon then
-				DMMMBTN = LibStub("LibDBIcon-1.0", true)
-				if DMMMBTN then
-					DMMMBTN:Register("DarkModeMinimapIcon", DarkModeMinimapIcon, DarkMode:GetMinimapTable())
+					end
 				end
-			end
 
-			if DMMMBTN then
-				if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-					DMMMBTN:Show("DarkModeMinimapIcon")
-				else
-					DMMMBTN:Hide("DarkModeMinimapIcon")
+				function DarkMode:ToggleMinimapButton()
+					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", not DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true))
+					if DMMMBTN then
+						if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
+							DMMMBTN:Show("DarkModeMinimapIcon")
+						else
+							DMMMBTN:Hide("DarkModeMinimapIcon")
+						end
+					end
+				end
+
+				function DarkMode:HideMinimapButton()
+					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", false)
+					if DMMMBTN then
+						DMMMBTN:Hide("DarkModeMinimapIcon")
+					end
+				end
+
+				function DarkMode:ShowMinimapButton()
+					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", true)
+					if DMMMBTN then
+						DMMMBTN:Show("DarkModeMinimapIcon")
+					end
+				end
+
+				local DarkModeMinimapIcon = LibStub("LibDataBroker-1.1"):NewDataObject(
+					"DarkModeMinimapIcon",
+					{
+						type = "data source",
+						text = "DarkModeMinimapIcon",
+						icon = 136122,
+						OnClick = function(sel, btn)
+							if btn == "LeftButton" then
+								DarkMode:ToggleSettings()
+							elseif btn == "RightButton" then
+								DarkMode:HideMinimapButton()
+							end
+						end,
+						OnTooltipShow = function(tooltip)
+							if not tooltip or not tooltip.AddLine then return end
+							tooltip:AddLine("DarkMode")
+							tooltip:AddLine(DarkMode:GT("MMBTNLEFT"))
+							tooltip:AddLine(DarkMode:GT("MMBTNRIGHT"))
+						end,
+					}
+				)
+
+				if DarkModeMinimapIcon then
+					DMMMBTN = LibStub("LibDBIcon-1.0", true)
+					if DMMMBTN then
+						DMMMBTN:Register("DarkModeMinimapIcon", DarkModeMinimapIcon, DarkMode:GetMinimapTable())
+					end
+				end
+
+				if DMMMBTN then
+					if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
+						DMMMBTN:Show("DarkModeMinimapIcon")
+					else
+						DMMMBTN:Hide("DarkModeMinimapIcon")
+					end
 				end
 			end
 		end
