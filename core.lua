@@ -1,6 +1,13 @@
 local _, DarkMode = ...
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
+local debug = false
+function DarkMode:Debug(msg)
+	if debug then
+		print(msg)
+	end
+end
+
 local DMTexturesUi = {}
 local DMTexturesUF = {}
 local DMTexturesTT = {}
@@ -480,6 +487,7 @@ function DarkMode:InitGreetingPanel()
 				C_Timer.After(
 					0.05,
 					function()
+						DarkMode:Debug("#1")
 						DarkMode:UpdateGossipFrame()
 					end
 				)
@@ -494,6 +502,7 @@ function DarkMode:InitGreetingPanel()
 					C_Timer.After(
 						0.05,
 						function()
+							DarkMode:Debug("#2")
 							DarkMode:UpdateGossipFrame()
 						end
 					)
@@ -518,6 +527,7 @@ function DarkMode:InitQuestLogFrame()
 				C_Timer.After(
 					0.05,
 					function()
+						DarkMode:Debug("#3")
 						DarkMode:UpdateQuestLogFrame()
 					end
 				)
@@ -532,6 +542,7 @@ function DarkMode:InitQuestLogFrame()
 					C_Timer.After(
 						0.05,
 						function()
+							DarkMode:Debug("#4")
 							DarkMode:UpdateQuestLogFrame()
 						end
 					)
@@ -540,43 +551,16 @@ function DarkMode:InitQuestLogFrame()
 		end
 	end
 
-	local frame2 = DarkMode:GetFrame("QuestMapFrame")
 	function DarkMode:UpdateQuestMapFrame()
 		for index, name in pairs(DarkMode:GetFrameTextTable()) do
-			DarkMode:FindTextsByName(name)
-		end
-	end
-
-	if frame2 then
-		if QuestMapFrame and QuestMapFrame.DetailsFrame and QuestMapFrame.DetailsFrame.SealMaterialBG and QuestMapFrame.DetailsFrame.SealMaterialBG.SetVertexColor then
-			hooksecurefunc(
-				QuestMapFrame.DetailsFrame.SealMaterialBG,
-				"SetVertexColor",
-				function(sel, olr, olg, olb, ola)
-					if sel.dm_setvertexcolor then return end
-					sel.dm_setvertexcolor = true
-					local r, g, b, a = DarkMode:GetFrameColor()
-					if r ~= nil and g ~= nil and b ~= nil then
-						sel:SetVertexColor(r, g, b, a)
-					end
-
-					sel.dm_setvertexcolor = false
-				end
-			)
-
-			local r, g, b, a = DarkMode:GetFrameColor()
-			if r ~= nil and g ~= nil and b ~= nil then
-				QuestMapFrame.DetailsFrame.SealMaterialBG:SetVertexColor(r, g, b, a)
+			if _G[name] and debug then
+				DarkMode:FindTextsByName(name)
+				table.remove(DarkMode:GetFrameTextTable(), index)
 			end
 		end
-
-		function DarkMode:UpdateTextInQuestMapFrame()
-			DarkMode:UpdateQuestMapFrame()
-			C_Timer.After(0.1, DarkMode.UpdateTextInQuestMapFrame)
-		end
-
-		DarkMode:UpdateTextInQuestMapFrame()
 	end
+
+	DarkMode:UpdateQuestMapFrame()
 end
 
 function DarkMode:SearchFrames()
@@ -702,6 +686,10 @@ function DarkMode:SearchUi(from)
 							end
 						end
 					end
+
+					if _G[name] and debug then
+						table.remove(tab, i)
+					end
 				end
 			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
 				for ind, name in pairs(tab) do
@@ -719,22 +707,35 @@ function DarkMode:SearchUi(from)
 					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
 						DarkMode:FindTexturesByName(name, "ui")
 					end
+
+					if _G[name] and debug then
+						table.remove(tab, ind)
+					end
 				end
 			elseif index == "Gryphons" then
 				if DarkMode:IsEnabled("GRYPHONS", true) then
-					for i, v in pairs(tab) do
-						DarkMode:FindTexturesByName(v, "ui")
+					for i, name in pairs(tab) do
+						DarkMode:FindTexturesByName(name, "ui")
+						if _G[name] and debug then
+							table.remove(tab, i)
+						end
 					end
 				end
 			elseif index == "Tooltips" then
-				for i, v in pairs(tab) do
-					DarkMode:FindTexturesByName(v, "tt")
+				for i, name in pairs(tab) do
+					DarkMode:FindTexturesByName(name, "tt")
+					if _G[name] and debug then
+						table.remove(tab, i)
+					end
 				end
 			elseif type(tab) == "string" then
 				DarkMode:FindTexturesByName(tab, "ui")
 			elseif index == "UnitFrames" then
-				for i, v in pairs(tab) do
-					DarkMode:FindTexturesByName(v, "uf")
+				for i, name in pairs(tab) do
+					DarkMode:FindTexturesByName(name, "uf")
+					if _G[name] and debug then
+						table.remove(tab, i)
+					end
 				end
 			else
 				print("Missing Ui index:", index, tab)
@@ -833,6 +834,7 @@ function DarkMode:SearchUi(from)
 	C_Timer.After(
 		1.1,
 		function()
+			DarkMode:Debug("#6")
 			if DMMMBTN then
 				for i, name in pairs(DMMMBTN:GetButtonList()) do
 					local btn = _G["LibDBIcon10_" .. name]
@@ -886,6 +888,7 @@ rf:SetScript(
 		C_Timer.After(
 			0.1,
 			function()
+				DarkMode:Debug("#7")
 				DarkMode:SearchUi("raid")
 			end
 		)
@@ -901,6 +904,7 @@ npf:SetScript(
 		C_Timer.After(
 			0.1,
 			function()
+				DarkMode:Debug("#8")
 				DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
 			end
 		)
@@ -923,6 +927,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
+							DarkMode:Debug("#9")
 							searchQuestFrames = false
 						end
 					)
@@ -942,6 +947,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
+							DarkMode:Debug("#10")
 							searchQuestFrames = false
 						end
 					)
@@ -961,6 +967,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
+							DarkMode:Debug("#11")
 							searchQuestFrames = false
 						end
 					)
@@ -978,6 +985,7 @@ function DarkMode:InitQuestFrame()
 				C_Timer.After(
 					0.05,
 					function()
+						DarkMode:Debug("#12")
 						DarkMode:UpdateQuestFrameGreetingPanel()
 					end
 				)
@@ -992,6 +1000,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						0.05,
 						function()
+							DarkMode:Debug("#13")
 							DarkMode:UpdateQuestFrameGreetingPanel()
 						end
 					)
@@ -1023,6 +1032,7 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				1,
 				function()
+					DarkMode:Debug("#14")
 					DarkMode:GroupLootUpdate()
 				end
 			)
@@ -1094,6 +1104,7 @@ function DarkMode:Event(event, ...)
 				C_Timer.After(
 					2,
 					function()
+						DarkMode:Debug("#15")
 						for i, v in pairs(BAGS) do
 							local bagF = _G[v]
 							local NT = _G[v .. "NormalTexture"]
@@ -1248,7 +1259,8 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				0.1,
 				function()
-					DarkMode:SearchUi()
+					DarkMode:Debug("#16")
+					DarkMode:SearchUi("setup")
 					DarkMode:SearchFrames()
 					for index, name in pairs(DarkMode:GetFrameTextTable()) do
 						DarkMode:FindTextsByName(name)
@@ -1368,6 +1380,7 @@ function DarkMode:Event(event, ...)
 		C_Timer.After(
 			0.1,
 			function()
+				DarkMode:Debug("#17")
 				DarkMode:SearchAddons()
 				if PlayerTalentFrame then
 					for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
@@ -1408,6 +1421,7 @@ function DarkMode:Event(event, ...)
 		C_Timer.After(
 			0.1,
 			function()
+				DarkMode:Debug("#18")
 				DarkMode:GroupLootUpdate()
 			end
 		)
