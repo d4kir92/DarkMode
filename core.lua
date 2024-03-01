@@ -555,7 +555,6 @@ function DarkMode:InitQuestLogFrame()
 		for index, name in pairs(DarkMode:GetFrameTextTable()) do
 			if _G[name] and debug then
 				DarkMode:FindTextsByName(name)
-				table.remove(DarkMode:GetFrameTextTable(), index)
 			end
 		end
 	end
@@ -686,10 +685,6 @@ function DarkMode:SearchUi(from)
 							end
 						end
 					end
-
-					if _G[name] and debug then
-						table.remove(tab, i)
-					end
 				end
 			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
 				for ind, name in pairs(tab) do
@@ -707,35 +702,22 @@ function DarkMode:SearchUi(from)
 					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
 						DarkMode:FindTexturesByName(name, "ui")
 					end
-
-					if _G[name] and debug then
-						table.remove(tab, ind)
-					end
 				end
 			elseif index == "Gryphons" then
 				if DarkMode:IsEnabled("GRYPHONS", true) then
 					for i, name in pairs(tab) do
 						DarkMode:FindTexturesByName(name, "ui")
-						if _G[name] and debug then
-							table.remove(tab, i)
-						end
 					end
 				end
 			elseif index == "Tooltips" then
 				for i, name in pairs(tab) do
 					DarkMode:FindTexturesByName(name, "tt")
-					if _G[name] and debug then
-						table.remove(tab, i)
-					end
 				end
 			elseif type(tab) == "string" then
 				DarkMode:FindTexturesByName(tab, "ui")
 			elseif index == "UnitFrames" then
 				for i, name in pairs(tab) do
 					DarkMode:FindTexturesByName(name, "uf")
-					if _G[name] and debug then
-						table.remove(tab, i)
-					end
 				end
 			else
 				print("Missing Ui index:", index, tab)
@@ -794,7 +776,10 @@ function DarkMode:SearchUi(from)
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
-		border:SetScale(0.86)
+		if border.SetScale then
+			border:SetScale(0.86)
+		end
+
 		DarkMode:UpdateColor(border, "ui")
 	end
 
@@ -804,7 +789,10 @@ function DarkMode:SearchUi(from)
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
-		border:SetScale(0.8)
+		if border.SetScale then
+			border:SetScale(0.8)
+		end
+
 		DarkMode:UpdateColor(border, "ui")
 	end
 
@@ -813,7 +801,10 @@ function DarkMode:SearchUi(from)
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
-		border:SetScale(0.8)
+		if border.SetScale then
+			border:SetScale(0.8)
+		end
+
 		DarkMode:UpdateColor(border, "ui")
 	end
 
@@ -822,7 +813,9 @@ function DarkMode:SearchUi(from)
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
 		if DarkMode:GetWoWBuild() == "WRATH" then
 			border:SetPoint("TOPLEFT", -1, 1)
-			border:SetScale(0.82)
+			if border.SetScale then
+				border:SetScale(0.82)
+			end
 		else
 			border:SetPoint("TOPLEFT")
 		end
@@ -843,7 +836,10 @@ function DarkMode:SearchUi(from)
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
 						border:SetParent(btn)
-						border:SetScale(0.84)
+						if border.SetScale then
+							border:SetScale(0.84)
+						end
+
 						border:SetDrawLayer("OVERLAY", 3)
 						DarkMode:UpdateColor(border, "ui")
 					end
@@ -874,7 +870,10 @@ function DarkMode:SearchUi(from)
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetParent(btwQ)
-		border:SetScale(0.9)
+		if border.SetScale then
+			border:SetScale(0.9)
+		end
+
 		border:SetDrawLayer("OVERLAY", 3)
 		DarkMode:UpdateColor(border, "ui")
 	end
@@ -1014,8 +1013,13 @@ function DarkMode:InitSlash()
 	D4:AddSlash("dm", DarkMode.ToggleSettings)
 	D4:AddSlash("dark", DarkMode.ToggleSettings)
 	D4:AddSlash("darkmode", DarkMode.ToggleSettings)
-	D4:AddSlash("rl", C_UI.Reload)
-	D4:AddSlash("rel", C_UI.Reload)
+	if C_UI then
+		D4:AddSlash("rl", C_UI.Reload)
+		D4:AddSlash("rel", C_UI.Reload)
+	else
+		D4:AddSlash("rl", ReloadUI)
+		D4:AddSlash("rel", ReloadUI)
+	end
 end
 
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}

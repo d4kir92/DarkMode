@@ -85,19 +85,58 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 		sls[key] = CreateFrame("Slider", "sls[" .. key .. "]", DMSettings.SC, "OptionsSliderTemplate")
 		sls[key]:SetWidth(DMSettings.SC:GetWidth() - 30 - x)
 		sls[key]:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy)
-		if type(vmin) == "number" then
-			sls[key].Low:SetText(vmin)
-			sls[key].High:SetText(vmax)
-			sls[key]:SetMinMaxValues(vmin, vmax)
-			sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. DarkMode:GV(key, val))
-		else
-			sls[key].Low:SetText("")
-			sls[key].High:SetText("")
-			sls[key]:SetMinMaxValues(1, #vmin)
-			sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. vmin[DarkMode:GV(key, val)])
+		sls[key].SetText = function(self, text)
+			if sls[key].Text then
+				sls[key].Text:SetText(text)
+			else
+				_G["sls[" .. key .. "]" .. "Text"]:SetText(text)
+			end
 		end
 
-		sls[key]:SetObeyStepOnDrag(true)
+		if type(vmin) == "number" then
+			if sls[key].Low then
+				sls[key].Low:SetText(vmin)
+			else
+				_G["sls[" .. key .. "]" .. "Low"]:SetText(vmin)
+			end
+
+			if sls[key].High then
+				sls[key].High:SetText(vmax)
+			else
+				_G["sls[" .. key .. "]" .. "High"]:SetText(vmax)
+			end
+
+			sls[key]:SetMinMaxValues(vmin, vmax)
+			if sls[key].Text then
+				sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. DarkMode:GV(key, val))
+			else
+				_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:GT(key) .. ": " .. DarkMode:GV(key, val))
+			end
+		else
+			if sls[key].Low then
+				sls[key].Low:SetText("")
+			else
+				_G["sls[" .. key .. "]" .. "Low"]:SetText("")
+			end
+
+			if sls[key].High then
+				sls[key].High:SetText("")
+			else
+				_G["sls[" .. key .. "]" .. "High"]:SetText("")
+			end
+
+			sls[key]:SetMinMaxValues(1, #vmin)
+			if sls[key].Text then
+				sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. vmin[DarkMode:GV(key, val)])
+			else
+				_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:GT(key) .. ": " .. vmin[DarkMode:GV(key, val)])
+			end
+		end
+
+		if sls[key].SetObeyStepOnDrag then
+			sls[key]:SetObeyStepOnDrag(true)
+		end
+
 		if steps then
 			sls[key]:SetValueStep(steps)
 		end
@@ -114,10 +153,18 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 				if valu and valu ~= DarkMode:GV(key) then
 					if type(vmin) == "number" then
 						DarkMode:SV(key, valu)
-						sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. valu)
+						if sls[key].Text then
+							sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. valu)
+						else
+							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:GT(key) .. ": " .. valu)
+						end
 					else
 						DarkMode:SV(key, valu)
-						sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. vmin[valu])
+						if sls[key].Text then
+							sls[key].Text:SetText(DarkMode:GT(key) .. ": " .. vmin[valu])
+						else
+							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:GT(key) .. ": " .. vmin[valu])
+						end
 					end
 
 					if func then
@@ -197,11 +244,29 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
+	if not D4:IsOldWow() then
+		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
+	else
+		DMSettings = CreateFrame("Frame", "DMSettings", UIParent)
+		DMSettings.TitleText = DMSettings:CreateFontString(nil, nil, "GameFontNormal")
+		DMSettings.TitleText:SetPoint("TOP", DMSettings, "TOP", 0, 0)
+		DMSettings.CloseButton = CreateFrame("Button", "DMSettings.CloseButton", DMSettings, "UIPanelButtonTemplate")
+		DMSettings.CloseButton:SetPoint("TOPRIGHT", DMSettings, "TOPRIGHT", 0, 0)
+		DMSettings.CloseButton:SetSize(25, 25)
+		DMSettings.CloseButton:SetText("X")
+		DMSettings.bg = DMSettings:CreateTexture("DMSettings.bg", "ARTWORK")
+		DMSettings.bg:SetAllPoints(DMSettings)
+		if DMSettings.bg.SetColorTexture then
+			DMSettings.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
+		else
+			DMSettings.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
+		end
+	end
+
 	DMSettings:SetSize(550, 500)
 	DMSettings:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	DMSettings:SetFrameStrata("HIGH")
-	DMSettings:SetFrameLevel(999)
+	DMSettings:SetFrameLevel(99)
 	DMSettings:SetClampedToScreen(true)
 	DMSettings:SetMovable(true)
 	DMSettings:EnableMouse(true)
@@ -222,8 +287,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.4.32")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.4.32"))
+	D4:SetVersion(AddonName, 136122, "0.5.0")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.0"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -243,24 +308,24 @@ function DarkMode:InitDMSettings()
 			"COLORMODE",
 			DarkMode:GV("COLORMODE", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCM.Text:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODE", 1)])
+		sCM:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODE", 1)])
 		DarkMode:AddColorPicker("CUSTOMUIC", DMSettings.SC, 0, 0)
 		local sCMUF = AddSlider(
 			4,
 			"COLORMODEUF",
 			DarkMode:GV("COLORMODEUF", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMUF.Text:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 1)])
+		sCMUF:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 1)])
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
 		--TT
 		local sCMTT = AddSlider(
@@ -268,12 +333,12 @@ function DarkMode:InitDMSettings()
 			"COLORMODETT",
 			DarkMode:GV("COLORMODETT", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMTT.Text:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODETT", 1)])
+		sCMTT:SetText(DarkMode:GT("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODETT", 1)])
 		DarkMode:AddColorPicker("CUSTOMTTC", DMSettings.SC, 0, 0)
 		--AB
 		local sCMAB = AddSlider(
@@ -281,12 +346,12 @@ function DarkMode:InitDMSettings()
 			"COLORMODEAB",
 			DarkMode:GV("COLORMODEAB", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODEAB") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODEAB") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMAB.Text:SetText(DarkMode:GT("COLORMODEAB") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEAB", 1)])
+		sCMAB:SetText(DarkMode:GT("COLORMODEAB") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEAB", 1)])
 		DarkMode:AddColorPicker("CUSTOMABC", DMSettings.SC, 0, 0)
 		--BAD
 		local sCMBAD = AddSlider(
@@ -294,12 +359,12 @@ function DarkMode:InitDMSettings()
 			"COLORMODEBAD",
 			DarkMode:GV("COLORMODEBAD", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODEBAD") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODEBAD") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMBAD.Text:SetText(DarkMode:GT("COLORMODEBAD") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEBAD", 1)])
+		sCMBAD:SetText(DarkMode:GT("COLORMODEBAD") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEBAD", 1)])
 		DarkMode:AddColorPicker("CUSTOMBADC", DMSettings.SC, 0, 0)
 		--Frames
 		local sCMF = AddSlider(
@@ -307,12 +372,12 @@ function DarkMode:InitDMSettings()
 			"COLORMODEF",
 			DarkMode:GV("COLORMODEF", 1),
 			function(sel, val)
-				sel.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[val])
+				sel:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[val])
 				DarkMode:UpdateColors()
 			end, 1, getn(DarkMode:GetColorModes()), 1
 		)
 
-		sCMF.Text:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEF", 1)])
+		sCMF:SetText(DarkMode:GT("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEF", 1)])
 		DarkMode:AddColorPicker("CUSTOMFRC", DMSettings.SC, 0, 0)
 	end
 
@@ -337,7 +402,12 @@ function DarkMode:InitDMSettings()
 	DMSettings.SF:SetScrollChild(DMSettings.SC)
 	DMSettings.SF.bg = DMSettings.SF:CreateTexture("DMSettings.SF.bg", "ARTWORK")
 	DMSettings.SF.bg:SetAllPoints(DMSettings.SF)
-	DMSettings.SF.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
+	if DMSettings.SF.bg.SetColorTexture then
+		DMSettings.SF.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
+	else
+		DMSettings.SF.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
+	end
+
 	DMSettings.save = CreateFrame("BUTTON", "DMSettings" .. ".save", DMSettings, "UIPanelButtonTemplate")
 	DMSettings.save:SetSize(120, 24)
 	DMSettings.save:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 4, -DMSettings:GetHeight() + 24 + 4)
@@ -345,7 +415,11 @@ function DarkMode:InitDMSettings()
 	DMSettings.save:SetScript(
 		"OnClick",
 		function()
-			C_UI.Reload()
+			if C_UI then
+				C_UI.Reload()
+			else
+				ReloadUI()
+			end
 		end
 	)
 
@@ -353,11 +427,15 @@ function DarkMode:InitDMSettings()
 	DMSettings.reload = CreateFrame("BUTTON", "DMSettings" .. ".reload", DMSettings, "UIPanelButtonTemplate")
 	DMSettings.reload:SetSize(120, 24)
 	DMSettings.reload:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 4 + 120 + 4, -DMSettings:GetHeight() + 24 + 4)
-	DMSettings.reload:SetText(RELOADUI)
+	DMSettings.reload:SetText(RELOADUI or "RELOADUI")
 	DMSettings.reload:SetScript(
 		"OnClick",
 		function()
-			C_UI.Reload()
+			if C_UI then
+				C_UI.Reload()
+			else
+				ReloadUI()
+			end
 		end
 	)
 
@@ -370,7 +448,11 @@ function DarkMode:InitDMSettings()
 		function()
 			if GetCVar("ScriptErrors") == "0" then
 				SetCVar("ScriptErrors", 1)
-				C_UI.Reload()
+				if C_UI then
+					C_UI.Reload()
+				else
+					ReloadUI()
+				end
 			end
 
 			DMSettings:UpdateShowErrors()

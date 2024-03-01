@@ -1,10 +1,8 @@
 local _, DarkMode = ...
-
 function DarkMode:MathC(val, vmin, vmax)
 	if val == nil then return 0 end
 	if vmin == nil then return 0 end
 	if vmax == nil then return 1 end
-
 	if val < vmin then
 		return vmin
 	elseif val > vmax then
@@ -23,7 +21,6 @@ end
 
 function DarkMode:FormatValue(val, dec)
 	dec = dec or 1
-
 	if val < 1000 then
 		return ("%." .. 0 .. "f"):format(val)
 	elseif val < 1000000 then
@@ -44,7 +41,6 @@ end
 function DarkMode:ReplaceStr(text, old, new)
 	if text == nil then return "" end
 	local b, e = text:find(old, 1, true)
-
 	if b == nil then
 		return text
 	else

@@ -1,7 +1,6 @@
 local _, DarkMode = ...
 local BuildNr = select(4, GetBuildInfo())
 local Build = "CLASSIC"
-
 if BuildNr >= 100000 then
 	Build = "RETAIL"
 elseif BuildNr > 29999 then
@@ -20,7 +19,6 @@ end
 
 local COL_R = "|cFFFF0000"
 local COL_Y = "|cFFFFFF00"
-
 function DarkMode:MSG(msg)
 	print("|cff3FC7EB" .. "[DarkMode |T136122:16:16:0:0|t]|r " .. COL_Y .. msg)
 end
@@ -85,7 +83,6 @@ function DarkMode:IsEnabled(element, value)
 	end
 
 	DarkMode:GetTab()["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
-
 	if DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"] == nil then
 		DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"] = value
 	end
@@ -111,7 +108,6 @@ function DarkMode:SetElePoint(key, p1, p2, p3, p4, p5)
 	DarkMode:GetTab()["ELES"]["POINTS"][key]["PX"] = p4
 	DarkMode:GetTab()["ELES"]["POINTS"][key]["PY"] = p5
 	local frame = _G[key]
-
 	if frame then
 		frame:ClearAllPoints()
 		frame:SetPoint(p1, UIParent, p3, p4, p5)
@@ -127,7 +123,6 @@ end
 function DarkMode:GV(name, value)
 	DMTAB = DMTAB or {}
 	DMTAB["VALUES"] = DMTAB["VALUES"] or {}
-
 	if DMTAB["VALUES"][name] == nil then
 		DarkMode:SV(name, value)
 	end

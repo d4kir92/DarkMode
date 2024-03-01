@@ -1,6 +1,5 @@
 local _, DarkMode = ...
 local ialang = {}
-
 function DarkMode:GetLangTab()
 	return ialang
 end
@@ -8,7 +7,6 @@ end
 function DarkMode:GT(str)
 	local tab = DarkMode:GetLangTab()
 	local result = tab[str]
-
 	if result ~= nil then
 		return result
 	else
@@ -20,7 +18,6 @@ end
 
 function DarkMode:UpdateLanguage()
 	DarkMode:Lang_enUS()
-
 	if GetLocale() == "deDE" then
 		DarkMode:Lang_deDE()
 	elseif GetLocale() == "zhCN" then
