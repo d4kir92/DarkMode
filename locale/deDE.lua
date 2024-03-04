@@ -21,6 +21,7 @@ function DarkMode:Lang_deDE()
 		["MASKACTIONBUTTONS"] = "Rand für Aktionsknöpfe hinzufügen",
 		["GRYPHONS"] = "Greifen maskieren",
 		["MASKBUFFSANDDEBUFFS"] = "Rand für Buffs und Debuffs hinzufügen",
+		["MASKMINIMAPBUTTONS"] = "Rand für Minimapknöpfe hinzufügen",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

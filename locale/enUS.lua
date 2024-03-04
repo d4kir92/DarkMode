@@ -28,6 +28,7 @@ function DarkMode:Lang_enUS()
 		["MASKACTIONBUTTONS"] = "Add Border to Actionbuttons",
 		["GRYPHONS"] = "Mask Gryphons",
 		["MASKBUFFSANDDEBUFFS"] = "Add Border to Buffs and Debuffs",
+		["MASKMINIMAPBUTTONS"] = "Add Border to Minimapbuttons",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

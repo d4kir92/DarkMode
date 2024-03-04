@@ -287,8 +287,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.5.0")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.0"))
+	D4:SetVersion(AddonName, 136122, "0.5.1")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.1"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -300,6 +300,7 @@ function DarkMode:InitDMSettings()
 		posy = -8
 		AddCategory("GENERAL")
 		AddCheckBox(4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton)
+		AddCheckBox(4, "MASKMINIMAPBUTTONS", true)
 		AddCheckBox(4, "MASKACTIONBUTTONS", true)
 		AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
 		AddCheckBox(4, "GRYPHONS", true)

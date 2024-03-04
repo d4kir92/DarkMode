@@ -831,7 +831,7 @@ function DarkMode:SearchUi(from)
 			if DMMMBTN then
 				for i, name in pairs(DMMMBTN:GetButtonList()) do
 					local btn = _G["LibDBIcon10_" .. name]
-					if btn and _G[name .. "DMBorder"] == nil then
+					if btn and _G[name .. "DMBorder"] == nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) then
 						local border = btn:CreateTexture(name .. "DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
