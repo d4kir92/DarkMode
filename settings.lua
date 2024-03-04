@@ -53,10 +53,10 @@ local function AddCheckBox(x, key, val, func)
 		cb:SetChecked(DarkMode:IsEnabled(key, val))
 		cb:SetScript(
 			"OnClick",
-			function(sel)
-				DarkMode:SetEnabled(key, sel:GetChecked())
+			function(sel, btn, value)
+				DarkMode:SetEnabled(key, sel:GetChecked() or false)
 				if func then
-					func(sel, sel:GetChecked())
+					func(sel, sel:GetChecked() or false)
 				end
 
 				if DMSettings.save then
@@ -287,8 +287,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.5.1")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.1"))
+	D4:SetVersion(AddonName, 136122, "0.5.2")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.2"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
