@@ -1,5 +1,5 @@
 ## Interface: 30403
-## Version: 0.5.3
+## Version: 0.5.4
 ## Title: DarkMode |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR
@@ -11,14 +11,14 @@
 
 libs\D4Lib\D4Lib.xml
 
-libs/math.lua
-libs/db.lua
+libs\math.lua
+libs\db.lua
 
-locale/enUS.lua
-locale/deDE.lua
-locale/zhCN.lua
-locale/zhTW.lua
-libs/lang.lua
+locale\enUS.lua
+locale\deDE.lua
+locale\zhCN.lua
+locale\zhTW.lua
+libs\lang.lua
 
 data.lua
 settings.lua
