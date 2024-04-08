@@ -114,7 +114,7 @@ local DMUi = {
 	["Castbar"] = {"CastingBarFrame.Border", "PlayerCastingBarFrame.Background", "PlayerCastingBarFrame.Border", "PlayerCastingBarFrame.TextBorder"}
 }
 
-if DarkMode:GetWoWBuild() == "RETAIL" then
+if D4:GetWoWBuild() == "RETAIL" then
 	local retail = {"TargetFrameSpellBar.Background", "TargetFrameSpellBar.Border", "TargetFrameSpellBar.TextBorder", "FocusFrameSpellBar.Background", "FocusFrameSpellBar.Border", "FocusFrameSpellBar.TextBorder"}
 	for i, v in pairs(retail) do
 		table.insert(DMUi["Castbar"], v)
@@ -182,7 +182,7 @@ DMTextureBlock["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMTextureBlock["Interface\\MailFrame\\Mail-Icon"] = true
 DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
 DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
-if DarkMode:GetWoWBuild() == "RETAIL" then
+if D4:GetWoWBuild() == "RETAIL" then
 	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
 	DMTextureBlock[136377] = true -- MacroFrame Portrai
 end
@@ -212,7 +212,7 @@ function DarkMode:GetTextureBlockTable()
 end
 
 local DMIgnoreFrames = {}
-if DarkMode:GetWoWBuild() ~= "RETAIL" then
+if D4:GetWoWBuild() ~= "RETAIL" then
 	DMIgnoreFrames["FriendsFrameIcon"] = true
 	DMIgnoreFrames["FriendsFramePortrait"] = true
 	DMIgnoreFrames["FriendsFramePortraitFrame"] = true

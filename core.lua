@@ -663,7 +663,7 @@ function DarkMode:SearchUi(from)
 							end
 						end
 
-						if DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
+						if D4:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
 							local icon = _G[name .. x .. "Icon"]
 							if icon then
 								local br = 0.01
@@ -699,7 +699,7 @@ function DarkMode:SearchUi(from)
 						end
 					end
 
-					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
+					if name ~= "MainMenuBarBackpackButtonNormalTexture" or D4:GetWoWBuild() ~= "RETAIL" then
 						DarkMode:FindTexturesByName(name, "ui")
 					end
 				end
@@ -725,7 +725,7 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
+	if MICRO_BUTTONS and D4:GetWoWBuild() ~= "RETAIL" then
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
 				local mbtn = _G[name]
@@ -808,10 +808,10 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
+	if GameTimeFrame and D4:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
-		if DarkMode:GetWoWBuild() == "WRATH" then
+		if D4:GetWoWBuild() == "WRATH" then
 			border:SetPoint("TOPLEFT", -1, 1)
 			if border.SetScale then
 				border:SetScale(0.82)
@@ -1103,7 +1103,7 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
-			if DarkMode:GetWoWBuild() ~= "RETAIL" then
+			if D4:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				C_Timer.After(
 					2,
@@ -1294,7 +1294,7 @@ function DarkMode:Event(event, ...)
 			)
 
 			--[[ SPECIALS ]]
-			if DarkMode:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
+			if D4:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
 				hooksecurefunc(
 					FriendsFramePortrait,
 					"Show",
