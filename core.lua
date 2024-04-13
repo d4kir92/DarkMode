@@ -1249,6 +1249,30 @@ function DarkMode:Event(event, ...)
 									_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
 									local border = _G[buttonName .. index .. "BorderDM"]
 									border:SetDrawLayer("OVERLAY", 3)
+									hooksecurefunc(
+										btn,
+										"SetSize",
+										function(sel, w, h)
+											border:SetSize(w * scale, h * scale)
+										end
+									)
+
+									hooksecurefunc(
+										btn,
+										"SetWidth",
+										function(sel, w)
+											border:SetWidth(w * scale)
+										end
+									)
+
+									hooksecurefunc(
+										btn,
+										"SetHeight",
+										function(sel, h)
+											border:SetHeight(h * scale)
+										end
+									)
+
 									border:SetSize(sw * scale, sh * scale)
 									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
