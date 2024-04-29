@@ -120,7 +120,7 @@ if D4:GetWoWBuild() == "RETAIL" then
 		table.insert(DMUi["Castbar"], v)
 	end
 else
-	local noneretail = {"TargetFrameSpellBar", "FocusFrameSpellBar"}
+	local noneretail = {"TargetFrameSpellBar.Border", "FocusFrameSpellBar.Border"}
 	for i, v in pairs(noneretail) do
 		table.insert(DMUi["Castbar"], v)
 	end
