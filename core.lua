@@ -1228,7 +1228,7 @@ function DarkMode:Event(event, ...)
 										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 									end
 								else
-									if DarkMode:IsEnabled("THINBORDERS", true) then
+									if DarkMode:IsEnabled("THINBORDERS", false) then
 										if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 											if btn.Icon then
 												local br = 0.075
@@ -1286,7 +1286,7 @@ function DarkMode:Event(event, ...)
 											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 										end
 									else
-										if DarkMode:IsEnabled("THINBORDERS", true) then
+										if DarkMode:IsEnabled("THINBORDERS", false) then
 											if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 												if _G[buttonName .. index .. "Icon"] then
 													local br = 0.075
@@ -1348,7 +1348,7 @@ function DarkMode:Event(event, ...)
 										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 									end
 								else
-									if DarkMode:IsEnabled("THINBORDERS", true) then
+									if DarkMode:IsEnabled("THINBORDERS", false) then
 										if btn and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 											if _G[buttonName .. index .. "Icon"] then
 												local br = 0.075
