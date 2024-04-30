@@ -729,7 +729,7 @@ function DarkMode:SearchUi(from)
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 									DarkMode:UpdateColor(border, "actionbuttons")
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+							elseif D4:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
