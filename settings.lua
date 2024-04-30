@@ -287,8 +287,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.5.20")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.20"))
+	D4:SetVersion(AddonName, 136122, "0.5.21")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.21"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -301,8 +301,12 @@ function DarkMode:InitDMSettings()
 		AddCategory("GENERAL")
 		AddCheckBox(4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton)
 		AddCheckBox(4, "MASKMINIMAPBUTTONS", true)
-		AddCheckBox(4, "MASKACTIONBUTTONS", true)
-		AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
+		if not MSQ then
+			AddCheckBox(4, "THINBORDERS", false)
+			AddCheckBox(4, "MASKACTIONBUTTONS", true)
+			AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
+		end
+
 		AddCheckBox(4, "GRYPHONS", true)
 		local sCM = AddSlider(
 			4,

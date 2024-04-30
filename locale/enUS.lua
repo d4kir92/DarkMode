@@ -25,10 +25,11 @@ function DarkMode:Lang_enUS()
 		["CUSTOMABC"] = "Custom Actionbuttons Color",
 		["CUSTOMBADC"] = "Custom Buffs and Debuffs Color",
 		["CUSTOMFRC"] = "Custom Windows Color",
-		["MASKACTIONBUTTONS"] = "Add Border to Actionbuttons",
+		["MASKACTIONBUTTONS"] = "Add additional Border to Actionbuttons",
 		["GRYPHONS"] = "Mask Gryphons",
-		["MASKBUFFSANDDEBUFFS"] = "Add Border to Buffs and Debuffs",
-		["MASKMINIMAPBUTTONS"] = "Add Border to Minimapbuttons",
+		["MASKBUFFSANDDEBUFFS"] = "Add additional Border to Buffs and Debuffs",
+		["MASKMINIMAPBUTTONS"] = "Add additional Border to Minimapbuttons",
+		["THINBORDERS"] = "Thin Borders",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

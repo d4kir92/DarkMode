@@ -613,18 +613,20 @@ function DarkMode:SearchUi(from)
 					end
 
 					for x = 1, max do
+						local btn = _G[name .. x]
 						local btnTexture = _G[name .. x .. "NormalTexture"]
-						if name == "BT4StanceButton" and _G[name .. x] and _G[name .. x .. "BorderFix"] == nil and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
-							local sw, sh = _G[name .. x]:GetSize()
+						local btnTexture2 = _G[name .. x .. "FloatingBG"]
+						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
 							local scale = 1.1
-							_G[name .. x .. "BorderFix"] = _G[name .. x]:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
+							_G[name .. x .. "BorderFix"] = btn:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
 							local border = _G[name .. x .. "BorderFix"]
 							border:SetDrawLayer("OVERLAY", 3)
 							border:SetSize(sw * scale, sh * scale)
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-							border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
+							border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 							DarkMode:UpdateColor(border, "actionbuttons")
 						elseif btnTexture then
 							DarkMode:UpdateColor(btnTexture, "actionbuttons")
@@ -632,7 +634,6 @@ function DarkMode:SearchUi(from)
 
 						local MSQ = LibStub("Masque", true)
 						if MSQ then
-							local btn = _G[name .. x]
 							if btn then
 								if btn.__MSQ_Mask then
 									DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
@@ -647,41 +648,107 @@ function DarkMode:SearchUi(from)
 								end
 							end
 						else
-							local btnTexture2 = _G[name .. x .. "FloatingBG"]
 							if btnTexture2 then
 								DarkMode:UpdateColor(btnTexture2, "actionbuttons")
 							end
 
-							if _G[name .. x] and _G[name .. x]["SlotBackground"] then
-								DarkMode:UpdateColor(_G[name .. x]["SlotBackground"], "actionbuttons")
+							if btn and btn["SlotBackground"] then
+								DarkMode:UpdateColor(btn["SlotBackground"], "actionbuttons")
 							end
 
-							if _G[name .. x] and _G[name .. x]["RightDivider"] then
-								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["TopEdge"], "actionbuttons")
-								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["Center"], "actionbuttons")
-								DarkMode:UpdateColor(_G[name .. x]["RightDivider"]["BottomEdge"], "actionbuttons")
+							if btn and btn["RightDivider"] then
+								DarkMode:UpdateColor(btn["RightDivider"]["TopEdge"], "actionbuttons")
+								DarkMode:UpdateColor(btn["RightDivider"]["Center"], "actionbuttons")
+								DarkMode:UpdateColor(btn["RightDivider"]["BottomEdge"], "actionbuttons")
 							end
 						end
 
-						if D4:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) then
-							local icon = _G[name .. x .. "Icon"]
-							if icon then
-								local br = 0.01
-								icon:SetTexCoord(br, 1 - br, br, 1 - br)
-							end
+						if not MSQ then
+							if DarkMode:IsEnabled("THINBORDERS", false) then
+								local icon = _G[name .. x .. "Icon"]
+								if icon then
+									local br = 0.075
+									icon:SetTexCoord(br, 1 - br, br, 1 - br)
+								end
 
-							if _G[name .. x] and _G[name .. x .. "BorderDM"] == nil then
-								local sw, sh = _G[name .. x]:GetSize()
-								sw = DarkMode:MathR(sw)
-								sh = DarkMode:MathR(sh)
-								local scale = 1.1
-								_G[name .. x .. "BorderDM"] = _G[name .. x]:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
-								local border = _G[name .. x .. "BorderDM"]
-								border:SetDrawLayer("OVERLAY", 3)
-								border:SetSize(sw * scale, sh * scale)
-								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
-								border:SetPoint("CENTER", _G[name .. x], "CENTER", 0, 0)
-								DarkMode:UpdateColor(border, "actionbuttons")
+								if btnTexture then
+									hooksecurefunc(
+										btnTexture,
+										"SetVertexColor",
+										function(sel, ...)
+											if sel.dm_setalpha then return end
+											sel.dm_setalpha = true
+											sel:SetAlpha(0)
+											sel.dm_setalpha = false
+										end
+									)
+
+									btnTexture:SetAlpha(0)
+								end
+
+								if btnTexture2 then
+									hooksecurefunc(
+										btnTexture2,
+										"SetVertexColor",
+										function(sel, ...)
+											if sel.dm_setalpha then return end
+											sel.dm_setalpha = true
+											print(sel:GetAlpha())
+											sel:SetAlpha(0.5)
+											sel.dm_setalpha = false
+										end
+									)
+
+									btnTexture2:SetAlpha(0.5)
+									hooksecurefunc(
+										btnTexture2,
+										"SetScale",
+										function(sel)
+											if sel.dm_setscale then return end
+											sel.dm_setscale = true
+											sel:SetScale(0.9)
+											sel.dm_setscale = false
+										end
+									)
+
+									btnTexture2:SetScale(0.9)
+									btnTexture2:ClearAllPoints()
+									btnTexture2:SetPoint("CENTER", btn, "CENTER", 0, 0)
+								end
+
+								if btn and _G[name .. x .. "BorderDM"] == nil then
+									local sw, sh = btn:GetSize()
+									sw = DarkMode:MathR(sw)
+									sh = DarkMode:MathR(sh)
+									local scale = 1
+									_G[name .. x .. "BorderDM"] = btn:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
+									local border = _G[name .. x .. "BorderDM"]
+									border:SetDrawLayer("OVERLAY", 3)
+									border:SetSize(sw * scale, sh * scale)
+									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+									DarkMode:UpdateColor(border, "actionbuttons")
+								end
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+								local icon = _G[name .. x .. "Icon"]
+								if icon then
+									local br = 0.012
+									icon:SetTexCoord(br, 1 - br, br, 1 - br)
+								end
+
+								if btn and _G[name .. x .. "BorderDM"] == nil then
+									local sw, sh = btn:GetSize()
+									sw = DarkMode:MathR(sw)
+									sh = DarkMode:MathR(sh)
+									local scale = 1.1
+									_G[name .. x .. "BorderDM"] = btn:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
+									local border = _G[name .. x .. "BorderDM"]
+									border:SetDrawLayer("OVERLAY", 3)
+									border:SetSize(sw * scale, sh * scale)
+									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
+									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+									DarkMode:UpdateColor(border, "actionbuttons")
+								end
 							end
 						end
 					end
@@ -1160,19 +1227,39 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_NewNormal then
 										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 									end
-								end
+								else
+									if DarkMode:IsEnabled("THINBORDERS", true) then
+										if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+											if btn.Icon then
+												local br = 0.075
+												btn.Icon:SetTexCoord(br, 1 - br, br, 1 - br)
+											end
 
-								if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-									local _, sh = btn.Icon:GetSize()
-									sh = DarkMode:MathR(sh)
-									local scale = 1
-									_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
-									local border = _G["Buff" .. index .. "BorderDM"]
-									border:SetDrawLayer("OVERLAY", 3)
-									border:SetSize(sh * scale, sh * scale)
-									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-									border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
-									DarkMode:UpdateColor(border, "buffsanddebuffs")
+											local _, sh = btn.Icon:GetSize()
+											sh = DarkMode:MathR(sh)
+											local scale = 1
+											_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
+											local border = _G["Buff" .. index .. "BorderDM"]
+											border:SetDrawLayer("OVERLAY", 3)
+											border:SetSize(sh * scale, sh * scale)
+											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+											border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
+											DarkMode:UpdateColor(border, "buffsanddebuffs")
+										end
+									else
+										if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+											local _, sh = btn.Icon:GetSize()
+											sh = DarkMode:MathR(sh)
+											local scale = 1
+											_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
+											local border = _G["Buff" .. index .. "BorderDM"]
+											border:SetDrawLayer("OVERLAY", 3)
+											border:SetSize(sh * scale, sh * scale)
+											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+											border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
+											DarkMode:UpdateColor(border, "buffsanddebuffs")
+										end
+									end
 								end
 							end
 						end
@@ -1198,20 +1285,41 @@ function DarkMode:Event(event, ...)
 										if btn.__MSQ_NewNormal then
 											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 										end
-									end
+									else
+										if DarkMode:IsEnabled("THINBORDERS", true) then
+											if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												if _G[buttonName .. index .. "Icon"] then
+													local br = 0.075
+													_G[buttonName .. index .. "Icon"]:SetTexCoord(br, 1 - br, br, 1 - br)
+												end
 
-									if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-										local sw, sh = btn:GetSize()
-										sw = DarkMode:MathR(sw)
-										sh = DarkMode:MathR(sh)
-										local scale = 1.1
-										_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
-										local border = _G[buttonName .. index .. "BorderDM"]
-										border:SetDrawLayer("OVERLAY", 3)
-										border:SetSize(sw * scale, sh * scale)
-										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-										border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-										DarkMode:UpdateColor(border, "buffsanddebuffs")
+												local sw, sh = btn:GetSize()
+												sw = DarkMode:MathR(sw)
+												sh = DarkMode:MathR(sh)
+												local scale = 1
+												_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+												local border = _G[buttonName .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												border:SetSize(sw * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+												border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
+										else
+											if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												local sw, sh = btn:GetSize()
+												sw = DarkMode:MathR(sw)
+												sh = DarkMode:MathR(sh)
+												local scale = 1.1
+												_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+												local border = _G[buttonName .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												border:SetSize(sw * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+												border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
+										end
 									end
 								end
 							end
@@ -1239,44 +1347,89 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_NewNormal then
 										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 									end
-								end
+								else
+									if DarkMode:IsEnabled("THINBORDERS", true) then
+										if btn and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+											if _G[buttonName .. index .. "Icon"] then
+												local br = 0.075
+												_G[buttonName .. index .. "Icon"]:SetTexCoord(br, 1 - br, br, 1 - br)
+											end
 
-								if btn and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-									local sw, sh = btn:GetSize()
-									sw = DarkMode:MathR(sw)
-									sh = DarkMode:MathR(sh)
-									local scale = 1.1
-									_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
-									local border = _G[buttonName .. index .. "BorderDM"]
-									border:SetDrawLayer("OVERLAY", 3)
-									hooksecurefunc(
-										btn,
-										"SetSize",
-										function(sel, w, h)
-											border:SetSize(w * scale, h * scale)
+											local sw, sh = btn:GetSize()
+											sw = DarkMode:MathR(sw)
+											sh = DarkMode:MathR(sh)
+											local scale = 1.1
+											_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+											local border = _G[buttonName .. index .. "BorderDM"]
+											border:SetDrawLayer("OVERLAY", 3)
+											hooksecurefunc(
+												btn,
+												"SetSize",
+												function(sel, w, h)
+													border:SetSize(w * scale, h * scale)
+												end
+											)
+
+											hooksecurefunc(
+												btn,
+												"SetWidth",
+												function(sel, w)
+													border:SetWidth(w * scale)
+												end
+											)
+
+											hooksecurefunc(
+												btn,
+												"SetHeight",
+												function(sel, h)
+													border:SetHeight(h * scale)
+												end
+											)
+
+											border:SetSize(sw * scale, sh * scale)
+											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+											border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+											DarkMode:UpdateColor(border, "buffsanddebuffs")
 										end
-									)
+									else
+										if btn and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+											local sw, sh = btn:GetSize()
+											sw = DarkMode:MathR(sw)
+											sh = DarkMode:MathR(sh)
+											local scale = 1.1
+											_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+											local border = _G[buttonName .. index .. "BorderDM"]
+											border:SetDrawLayer("OVERLAY", 3)
+											hooksecurefunc(
+												btn,
+												"SetSize",
+												function(sel, w, h)
+													border:SetSize(w * scale, h * scale)
+												end
+											)
 
-									hooksecurefunc(
-										btn,
-										"SetWidth",
-										function(sel, w)
-											border:SetWidth(w * scale)
+											hooksecurefunc(
+												btn,
+												"SetWidth",
+												function(sel, w)
+													border:SetWidth(w * scale)
+												end
+											)
+
+											hooksecurefunc(
+												btn,
+												"SetHeight",
+												function(sel, h)
+													border:SetHeight(h * scale)
+												end
+											)
+
+											border:SetSize(sw * scale, sh * scale)
+											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+											border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+											DarkMode:UpdateColor(border, "buffsanddebuffs")
 										end
-									)
-
-									hooksecurefunc(
-										btn,
-										"SetHeight",
-										function(sel, h)
-											border:SetHeight(h * scale)
-										end
-									)
-
-									border:SetSize(sw * scale, sh * scale)
-									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-									DarkMode:UpdateColor(border, "buffsanddebuffs")
+									end
 								end
 							end
 						end
