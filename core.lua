@@ -693,7 +693,6 @@ function DarkMode:SearchUi(from)
 										function(sel, ...)
 											if sel.dm_setalpha then return end
 											sel.dm_setalpha = true
-											print(sel:GetAlpha())
 											sel:SetAlpha(0.5)
 											sel.dm_setalpha = false
 										end
