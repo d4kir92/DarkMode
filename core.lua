@@ -1376,10 +1376,10 @@ function DarkMode:Event(event, ...)
 												btn,
 												"SetWidth",
 												function(sel, w)
-													if sel.dm_setwidth then return end
-													sel.dm_setwidth = true
+													if sel.dm_setsize then return end
+													sel.dm_setsize = true
 													border:SetWidth(w * scale)
-													sel.dm_setwidth = false
+													sel.dm_setsize = false
 												end
 											)
 
@@ -1387,10 +1387,10 @@ function DarkMode:Event(event, ...)
 												btn,
 												"SetHeight",
 												function(sel, h)
-													if sel.dm_setheight then return end
-													sel.dm_setheight = true
+													if sel.dm_setsize then return end
+													sel.dm_setsize = true
 													border:SetHeight(h * scale)
-													sel.dm_setheight = false
+													sel.dm_setsize = false
 												end
 											)
 
@@ -1423,10 +1423,10 @@ function DarkMode:Event(event, ...)
 												btn,
 												"SetWidth",
 												function(sel, w)
-													if sel.dm_setwidth then return end
-													sel.dm_setwidth = true
+													if sel.dm_setsize then return end
+													sel.dm_setsize = true
 													border:SetWidth(w * scale)
-													sel.dm_setwidth = false
+													sel.dm_setsize = false
 												end
 											)
 
@@ -1434,10 +1434,10 @@ function DarkMode:Event(event, ...)
 												btn,
 												"SetHeight",
 												function(sel, h)
-													if sel.dm_setheight then return end
-													sel.dm_setheight = true
+													if sel.dm_setsize then return end
+													sel.dm_setsize = true
 													border:SetHeight(h * scale)
-													sel.dm_setheight = false
+													sel.dm_setsize = false
 												end
 											)
 
