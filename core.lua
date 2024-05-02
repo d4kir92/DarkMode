@@ -877,7 +877,7 @@ function DarkMode:SearchUi(from)
 	if GameTimeFrame and D4:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
-		if D4:GetWoWBuild() == "WRATH" then
+		if D4:GetWoWBuild() == "WRATH" or D4:GetWoWBuild() == "CATA" then
 			border:SetPoint("TOPLEFT", -1, 1)
 			if border.SetScale then
 				border:SetScale(0.82)
