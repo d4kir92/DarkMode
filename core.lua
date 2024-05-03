@@ -1372,28 +1372,6 @@ function DarkMode:Event(event, ...)
 												end
 											)
 
-											hooksecurefunc(
-												btn,
-												"SetWidth",
-												function(sel, w)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetWidth(w * scale)
-													sel.dm_setsize = false
-												end
-											)
-
-											hooksecurefunc(
-												btn,
-												"SetHeight",
-												function(sel, h)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetHeight(h * scale)
-													sel.dm_setsize = false
-												end
-											)
-
 											border:SetSize(sw * scale, sh * scale)
 											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
 											border:SetPoint("CENTER", btn, "CENTER", 0, 0)
@@ -1415,28 +1393,6 @@ function DarkMode:Event(event, ...)
 													if sel.dm_setsize then return end
 													sel.dm_setsize = true
 													border:SetSize(w * scale, h * scale)
-													sel.dm_setsize = false
-												end
-											)
-
-											hooksecurefunc(
-												btn,
-												"SetWidth",
-												function(sel, w)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetWidth(w * scale)
-													sel.dm_setsize = false
-												end
-											)
-
-											hooksecurefunc(
-												btn,
-												"SetHeight",
-												function(sel, h)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetHeight(h * scale)
 													sel.dm_setsize = false
 												end
 											)
