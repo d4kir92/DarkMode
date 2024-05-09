@@ -945,21 +945,6 @@ function DarkMode:SearchUi(from)
 	end
 end
 
-local rf = CreateFrame("FRAME")
-rf:RegisterEvent("GROUP_ROSTER_UPDATE")
-rf:SetScript(
-	"OnEvent",
-	function(self, event, name, ...)
-		C_Timer.After(
-			0.1,
-			function()
-				DarkMode:Debug("#7")
-				DarkMode:SearchUi("raid")
-			end
-		)
-	end
-)
-
 local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 npf:SetScript(
