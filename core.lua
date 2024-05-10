@@ -1,10 +1,10 @@
 local _, DarkMode = ...
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
-local debug = false
-function DarkMode:Debug(msg)
-	if debug then
-		print(msg)
+local debug = 0
+function DarkMode:Debug(num, msg, ...)
+	if debug > 0 and debug == num then
+		print(msg, ...)
 	end
 end
 
@@ -17,9 +17,15 @@ local DMTexturesBuffsAndDebuffs = {}
 function DarkMode:UpdateColor(texture, typ, show)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
-		print("INVALID TEXTURE OBJECT")
+		print("[DarkMode] INVALID TEXTURE OBJECT")
 
 		return false
+	end
+
+	if texture.GetName then
+		DarkMode:Debug(10, "UpdateColor", texture:GetName())
+	else
+		DarkMode:Debug(10, "UpdateColor", texture)
 	end
 
 	local textureId = nil
@@ -439,6 +445,7 @@ function DarkMode:FindTextures(frame, typ)
 end
 
 function DarkMode:FindTexturesByName(name, typ)
+	DarkMode:Debug(10, "FindTexturesByName", name)
 	local frame = DarkMode:GetFrame(name)
 	if name and strfind(name, "Container", 1, true) and strfind(name, "TopSection", 1, true) then
 		show = true
@@ -487,7 +494,7 @@ function DarkMode:InitGreetingPanel()
 				C_Timer.After(
 					0.05,
 					function()
-						DarkMode:Debug("#1")
+						DarkMode:Debug(5, "#1")
 						DarkMode:UpdateGossipFrame()
 					end
 				)
@@ -502,7 +509,7 @@ function DarkMode:InitGreetingPanel()
 					C_Timer.After(
 						0.05,
 						function()
-							DarkMode:Debug("#2")
+							DarkMode:Debug(5, "#2")
 							DarkMode:UpdateGossipFrame()
 						end
 					)
@@ -527,7 +534,7 @@ function DarkMode:InitQuestLogFrame()
 				C_Timer.After(
 					0.05,
 					function()
-						DarkMode:Debug("#3")
+						DarkMode:Debug(5, "#3")
 						DarkMode:UpdateQuestLogFrame()
 					end
 				)
@@ -542,7 +549,7 @@ function DarkMode:InitQuestLogFrame()
 					C_Timer.After(
 						0.05,
 						function()
-							DarkMode:Debug("#4")
+							DarkMode:Debug(5, "#4")
 							DarkMode:UpdateQuestLogFrame()
 						end
 					)
@@ -786,7 +793,7 @@ function DarkMode:SearchUi(from)
 					DarkMode:FindTexturesByName(name, "uf")
 				end
 			else
-				print("Missing Ui index:", index, tab)
+				print("[DarkMode] Missing Ui index:", index, tab)
 			end
 		end
 	end
@@ -893,7 +900,7 @@ function DarkMode:SearchUi(from)
 	C_Timer.After(
 		1.1,
 		function()
-			DarkMode:Debug("#6")
+			DarkMode:Debug(5, "#6")
 			if DMMMBTN then
 				for i, name in pairs(DMMMBTN:GetButtonList()) do
 					local btn = _G["LibDBIcon10_" .. name]
@@ -945,19 +952,70 @@ function DarkMode:SearchUi(from)
 	end
 end
 
+local compactframes = {"CompactPartyFrameBorderFrame", "CompactRaidFrameContainerBorderFrame", "CompactRaidGroup1BorderFrame", "CompactRaidGroup2BorderFrame", "CompactRaidGroup3BorderFrame", "CompactRaidGroup4BorderFrame", "CompactRaidGroup5BorderFrame", "CompactRaidGroup6BorderFrame", "CompactRaidGroup7BorderFrame", "CompactRaidGroup8BorderFrame"}
+for i = 1, 40 do
+	table.insert(compactframes, "CompactRaidFrame" .. i .. "HorizDivider")
+	table.insert(compactframes, "CompactRaidFrame" .. i .. "HorizTopBorder")
+	table.insert(compactframes, "CompactRaidFrame" .. i .. "HorizBottomBorder")
+	table.insert(compactframes, "CompactRaidFrame" .. i .. "VertLeftBorder")
+	table.insert(compactframes, "CompactRaidFrame" .. i .. "VertRightBorder")
+end
+
+function DarkMode:CheckCompactFrames()
+	local newTab = {}
+	for i, v in pairs(compactframes) do
+		if _G[v] then
+			DarkMode:FindTexturesByName(v, "uf")
+		else
+			table.insert(newTab, v)
+		end
+	end
+
+	compactframes = newTab
+end
+
+local rf = CreateFrame("FRAME")
+rf:RegisterEvent("GROUP_ROSTER_UPDATE")
+rf:SetScript(
+	"OnEvent",
+	function(self, event, name, ...)
+		C_Timer.After(
+			0.1,
+			function()
+				DarkMode:Debug(5, "#7")
+				DarkMode:CheckCompactFrames()
+			end
+		)
+	end
+)
+
+C_Timer.After(
+	2,
+	function()
+		DarkMode:CheckCompactFrames()
+	end
+)
+
+local nameplateIds = {}
 local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 npf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
 		local id = string.sub(name, 10)
-		C_Timer.After(
-			0.1,
-			function()
-				DarkMode:Debug("#8")
-				DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
-			end
-		)
+		if nameplateIds[id] == nil then
+			C_Timer.After(
+				0.1,
+				function()
+					DarkMode:Debug(4, "#8 NAME_PLATE_UNIT_ADDED", name, id)
+					if nameplateIds[id] == nil then
+						nameplateIds[id] = true
+						DarkMode:Debug(4, "#8 added")
+						DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
+					end
+				end
+			)
+		end
 	end
 )
 
@@ -977,7 +1035,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
-							DarkMode:Debug("#9")
+							DarkMode:Debug(5, "#9")
 							searchQuestFrames = false
 						end
 					)
@@ -997,7 +1055,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
-							DarkMode:Debug("#10")
+							DarkMode:Debug(5, "#10")
 							searchQuestFrames = false
 						end
 					)
@@ -1017,7 +1075,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						1,
 						function()
-							DarkMode:Debug("#11")
+							DarkMode:Debug(5, "#11")
 							searchQuestFrames = false
 						end
 					)
@@ -1035,7 +1093,7 @@ function DarkMode:InitQuestFrame()
 				C_Timer.After(
 					0.05,
 					function()
-						DarkMode:Debug("#12")
+						DarkMode:Debug(5, "#12")
 						DarkMode:UpdateQuestFrameGreetingPanel()
 					end
 				)
@@ -1050,7 +1108,7 @@ function DarkMode:InitQuestFrame()
 					C_Timer.After(
 						0.05,
 						function()
-							DarkMode:Debug("#13")
+							DarkMode:Debug(5, "#13")
 							DarkMode:UpdateQuestFrameGreetingPanel()
 						end
 					)
@@ -1073,6 +1131,8 @@ function DarkMode:InitSlash()
 	end
 end
 
+local TargetBuffs = {}
+local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
@@ -1087,7 +1147,7 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				1,
 				function()
-					DarkMode:Debug("#14")
+					DarkMode:Debug(5, "#14")
 					DarkMode:GroupLootUpdate()
 				end
 			)
@@ -1159,7 +1219,7 @@ function DarkMode:Event(event, ...)
 				C_Timer.After(
 					2,
 					function()
-						DarkMode:Debug("#15")
+						DarkMode:Debug(5, "#15")
 						for i, v in pairs(BAGS) do
 							local bagF = _G[v]
 							local NT = _G[v .. "NormalTexture"]
@@ -1197,51 +1257,56 @@ function DarkMode:Event(event, ...)
 						AuraFrameMixin,
 						"Update",
 						function(sel)
+							DarkMode:Debug(3, "AuraFrameMixin Update")
 							for index, btn in pairs(sel.auraFrames) do
-								local MSQ = LibStub("Masque", true)
-								if MSQ and btn then
-									if btn.__MSQ_Mask then
-										DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
-									end
+								if btn and AuraFrames[btn] == nil then
+									AuraFrames[btn] = true
+									DarkMode:Debug(3, "AuraFrameMixin Added btn", btn)
+									local MSQ = LibStub("Masque", true)
+									if MSQ and btn then
+										if btn.__MSQ_Mask then
+											DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+										end
 
-									if btn.__MSQ_Normal then
-										DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
-									end
+										if btn.__MSQ_Normal then
+											DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+										end
 
-									if btn.__MSQ_NewNormal then
-										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
-									end
-								else
-									if DarkMode:IsEnabled("THINBORDERS", false) then
-										if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-											if btn.Icon then
-												local br = 0.075
-												btn.Icon:SetTexCoord(br, 1 - br, br, 1 - br)
-											end
-
-											local _, sh = btn.Icon:GetSize()
-											sh = DarkMode:MathR(sh)
-											local scale = 1
-											_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
-											local border = _G["Buff" .. index .. "BorderDM"]
-											border:SetDrawLayer("OVERLAY", 3)
-											border:SetSize(sh * scale, sh * scale)
-											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
-											border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
-											DarkMode:UpdateColor(border, "buffsanddebuffs")
+										if btn.__MSQ_NewNormal then
+											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 										end
 									else
-										if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-											local _, sh = btn.Icon:GetSize()
-											sh = DarkMode:MathR(sh)
-											local scale = 1
-											_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
-											local border = _G["Buff" .. index .. "BorderDM"]
-											border:SetDrawLayer("OVERLAY", 3)
-											border:SetSize(sh * scale, sh * scale)
-											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-											border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
-											DarkMode:UpdateColor(border, "buffsanddebuffs")
+										if DarkMode:IsEnabled("THINBORDERS", false) then
+											if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												if btn.Icon then
+													local br = 0.075
+													btn.Icon:SetTexCoord(br, 1 - br, br, 1 - br)
+												end
+
+												local _, sh = btn.Icon:GetSize()
+												sh = DarkMode:MathR(sh)
+												local scale = 1
+												_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
+												local border = _G["Buff" .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												border:SetSize(sh * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+												border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
+										else
+											if btn and _G["Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												local _, sh = btn.Icon:GetSize()
+												sh = DarkMode:MathR(sh)
+												local scale = 1
+												_G["Buff" .. index .. "BorderDM"] = btn:CreateTexture("Buff" .. index .. "BorderDM", "OVERLAY")
+												local border = _G["Buff" .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												border:SetSize(sh * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+												border:SetPoint("CENTER", btn.Icon, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
 										end
 									end
 								end
@@ -1252,10 +1317,13 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(
 						"BuffFrame_UpdateAllBuffAnchors",
 						function()
+							DarkMode:Debug(3, "BuffFrame_UpdateAllBuffAnchors")
 							local buttonName = "BuffButton"
 							for index = 1, BUFF_ACTUAL_DISPLAY do
 								local btn = _G[buttonName .. index]
-								if btn and _G[buttonName .. index .. "BorderDM"] == nil then
+								if btn and BuffFrameBuffs[index] == nil then
+									BuffFrameBuffs[index] = true
+									DarkMode:Debug(3, "BuffFrame_UpdateAllBuffAnchors Added index", index)
 									local MSQ = LibStub("Masque", true)
 									if MSQ then
 										if btn.__MSQ_Mask then
@@ -1315,77 +1383,82 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(
 						"TargetFrame_UpdateAuras",
 						function(frame)
+							DarkMode:Debug(3, "TargetFrame_UpdateAuras")
 							local buttonName = frame:GetName() .. "Buff"
-							for index = 1, BUFF_ACTUAL_DISPLAY do
+							for index = 1, 32 do
 								local btn = _G[buttonName .. index]
 								local MSQ = LibStub("Masque", true)
-								if MSQ and btn then
-									if btn.__MSQ_Mask then
-										DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
-									end
+								if btn and TargetBuffs[index] == nil then
+									TargetBuffs[index] = true
+									DarkMode:Debug(3, "TargetFrame_UpdateAuras Added index", index)
+									if MSQ and btn then
+										if btn.__MSQ_Mask then
+											DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+										end
 
-									if btn.__MSQ_Normal then
-										DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
-									end
+										if btn.__MSQ_Normal then
+											DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+										end
 
-									if btn.__MSQ_NewNormal then
-										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
-									end
-								else
-									if DarkMode:IsEnabled("THINBORDERS", false) then
-										if btn and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-											if _G[buttonName .. index .. "Icon"] then
-												local br = 0.075
-												_G[buttonName .. index .. "Icon"]:SetTexCoord(br, 1 - br, br, 1 - br)
-											end
-
-											local sw, sh = btn:GetSize()
-											sw = DarkMode:MathR(sw)
-											sh = DarkMode:MathR(sh)
-											local scale = 1.1
-											_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
-											local border = _G[buttonName .. index .. "BorderDM"]
-											border:SetDrawLayer("OVERLAY", 3)
-											hooksecurefunc(
-												btn,
-												"SetSize",
-												function(sel, w, h)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetSize(w * scale, h * scale)
-													sel.dm_setsize = false
-												end
-											)
-
-											border:SetSize(sw * scale, sh * scale)
-											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
-											border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-											DarkMode:UpdateColor(border, "buffsanddebuffs")
+										if btn.__MSQ_NewNormal then
+											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
 										end
 									else
-										if btn and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-											local sw, sh = btn:GetSize()
-											sw = DarkMode:MathR(sw)
-											sh = DarkMode:MathR(sh)
-											local scale = 1.1
-											_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
-											local border = _G[buttonName .. index .. "BorderDM"]
-											border:SetDrawLayer("OVERLAY", 3)
-											hooksecurefunc(
-												btn,
-												"SetSize",
-												function(sel, w, h)
-													if sel.dm_setsize then return end
-													sel.dm_setsize = true
-													border:SetSize(w * scale, h * scale)
-													sel.dm_setsize = false
+										if DarkMode:IsEnabled("THINBORDERS", false) then
+											if btn and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												if _G[buttonName .. index .. "Icon"] then
+													local br = 0.075
+													_G[buttonName .. index .. "Icon"]:SetTexCoord(br, 1 - br, br, 1 - br)
 												end
-											)
 
-											border:SetSize(sw * scale, sh * scale)
-											border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-											border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-											DarkMode:UpdateColor(border, "buffsanddebuffs")
+												local sw, sh = btn:GetSize()
+												sw = DarkMode:MathR(sw)
+												sh = DarkMode:MathR(sh)
+												local scale = 1.1
+												_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+												local border = _G[buttonName .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												hooksecurefunc(
+													btn,
+													"SetSize",
+													function(sel, w, h)
+														if sel.dm_setsize then return end
+														sel.dm_setsize = true
+														border:SetSize(w * scale, h * scale)
+														sel.dm_setsize = false
+													end
+												)
+
+												border:SetSize(sw * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+												border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
+										else
+											if btn and _G[buttonName .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+												local sw, sh = btn:GetSize()
+												sw = DarkMode:MathR(sw)
+												sh = DarkMode:MathR(sh)
+												local scale = 1.1
+												_G[buttonName .. index .. "BorderDM"] = btn:CreateTexture(buttonName .. index .. "BorderDM", "OVERLAY")
+												local border = _G[buttonName .. index .. "BorderDM"]
+												border:SetDrawLayer("OVERLAY", 3)
+												hooksecurefunc(
+													btn,
+													"SetSize",
+													function(sel, w, h)
+														if sel.dm_setsize then return end
+														sel.dm_setsize = true
+														border:SetSize(w * scale, h * scale)
+														sel.dm_setsize = false
+													end
+												)
+
+												border:SetSize(sw * scale, sh * scale)
+												border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+												border:SetPoint("CENTER", btn, "CENTER", 0, 0)
+												DarkMode:UpdateColor(border, "buffsanddebuffs")
+											end
 										end
 									end
 								end
@@ -1398,7 +1471,7 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				0.1,
 				function()
-					DarkMode:Debug("#16")
+					DarkMode:Debug(5, "#16")
 					DarkMode:SearchUi("setup")
 					DarkMode:SearchFrames()
 					for index, name in pairs(DarkMode:GetFrameTextTable()) do
@@ -1519,7 +1592,7 @@ function DarkMode:Event(event, ...)
 		C_Timer.After(
 			0.1,
 			function()
-				DarkMode:Debug("#17")
+				DarkMode:Debug(5, "#17")
 				DarkMode:SearchAddons()
 				if PlayerTalentFrame then
 					for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
@@ -1560,7 +1633,7 @@ function DarkMode:Event(event, ...)
 		C_Timer.After(
 			0.1,
 			function()
-				DarkMode:Debug("#18")
+				DarkMode:Debug(5, "#18")
 				DarkMode:GroupLootUpdate()
 			end
 		)
