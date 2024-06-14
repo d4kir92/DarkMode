@@ -570,6 +570,10 @@ function DarkMode:InitQuestLogFrame()
 end
 
 function DarkMode:SearchFrames()
+	for index, frame in pairs(DarkMode:GetFrameTableSpecial()) do
+		DarkMode:UpdateColor(frame, "frames")
+	end
+
 	for index, name in pairs(DarkMode:GetFrameTable()) do
 		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 			DarkMode:FindTexturesByName(name .. v, "frames")
