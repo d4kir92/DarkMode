@@ -625,8 +625,8 @@ function DarkMode:SearchUi(from)
 
 					for x = 1, max do
 						local btn = _G[name .. x]
-						local btnTexture = _G[name .. x .. "NormalTexture"]
-						local btnTexture2 = _G[name .. x .. "FloatingBG"]
+						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
+						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
 						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
@@ -639,8 +639,8 @@ function DarkMode:SearchUi(from)
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
 							border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 							DarkMode:UpdateColor(border, "actionbuttons")
-						elseif btnTexture then
-							DarkMode:UpdateColor(btnTexture, "actionbuttons")
+						elseif btnTextureNormalTexture then
+							DarkMode:UpdateColor(btnTextureNormalTexture, "actionbuttons")
 						end
 
 						local MSQ = LibStub("Masque", true)
@@ -659,8 +659,8 @@ function DarkMode:SearchUi(from)
 								end
 							end
 						else
-							if btnTexture2 then
-								DarkMode:UpdateColor(btnTexture2, "actionbuttons")
+							if btnTextureFloatingBG then
+								DarkMode:UpdateColor(btnTextureFloatingBG, "actionbuttons")
 							end
 
 							if btn and btn["SlotBackground"] then
@@ -679,12 +679,34 @@ function DarkMode:SearchUi(from)
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.075
+									if name == "PetActionButton" then
+										br = 0.038
+									end
+
 									icon:SetTexCoord(br, 1 - br, br, 1 - br)
 								end
 
-								if btnTexture then
+								if name == "PetActionButton" then
+									local border = _G[name .. x .. "NormalTexture2"]
+									if border then
+										hooksecurefunc(
+											border,
+											"SetAlpha",
+											function(sel, ...)
+												if sel.dm_setalpha then return end
+												sel.dm_setalpha = true
+												sel:SetAlpha(0)
+												sel.dm_setalpha = false
+											end
+										)
+
+										border:SetAlpha(0)
+									end
+								end
+
+								if btnTextureNormalTexture then
 									hooksecurefunc(
-										btnTexture,
+										btnTextureNormalTexture,
 										"SetVertexColor",
 										function(sel, ...)
 											if sel.dm_setalpha then return end
@@ -694,12 +716,12 @@ function DarkMode:SearchUi(from)
 										end
 									)
 
-									btnTexture:SetAlpha(0)
+									btnTextureNormalTexture:SetAlpha(0)
 								end
 
-								if btnTexture2 then
+								if btnTextureFloatingBG then
 									hooksecurefunc(
-										btnTexture2,
+										btnTextureFloatingBG,
 										"SetVertexColor",
 										function(sel, ...)
 											if sel.dm_setalpha then return end
@@ -709,9 +731,9 @@ function DarkMode:SearchUi(from)
 										end
 									)
 
-									btnTexture2:SetAlpha(0.5)
+									btnTextureFloatingBG:SetAlpha(0.5)
 									hooksecurefunc(
-										btnTexture2,
+										btnTextureFloatingBG,
 										"SetScale",
 										function(sel)
 											if sel.dm_setscale then return end
@@ -721,9 +743,9 @@ function DarkMode:SearchUi(from)
 										end
 									)
 
-									btnTexture2:SetScale(0.9)
-									btnTexture2:ClearAllPoints()
-									btnTexture2:SetPoint("CENTER", btn, "CENTER", 0, 0)
+									btnTextureFloatingBG:SetScale(0.9)
+									btnTextureFloatingBG:ClearAllPoints()
+									btnTextureFloatingBG:SetPoint("CENTER", btn, "CENTER", 0, 0)
 								end
 
 								if btn and _G[name .. x .. "BorderDM"] == nil then
@@ -731,11 +753,20 @@ function DarkMode:SearchUi(from)
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
 									local scale = 1
+									if name == "PetActionButton" then
+										scale = 1.2
+									end
+
 									_G[name .. x .. "BorderDM"] = btn:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
 									local border = _G[name .. x .. "BorderDM"]
 									border:SetDrawLayer("OVERLAY", 3)
 									border:SetSize(sw * scale, sh * scale)
-									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+									if name == "PetActionButton" then
+										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
+									else
+										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+									end
+
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 									DarkMode:UpdateColor(border, "actionbuttons")
 								end
