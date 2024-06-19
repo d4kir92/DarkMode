@@ -38,7 +38,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 	if texture:GetAlpha() == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
 		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor()
+			local r, g, b, a = DarkMode:GetUiColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -47,7 +47,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		elseif typ == "uf" then
-			local r, g, b, a = DarkMode:GetUFColor()
+			local r, g, b, a = DarkMode:GetUFColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -56,7 +56,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		elseif typ == "np" then
-			local r, g, b, a = DarkMode:GetNPColor()
+			local r, g, b, a = DarkMode:GetNPColort(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -65,7 +65,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		elseif typ == "tt" then
-			local r, g, b, a = DarkMode:GetTTColor()
+			local r, g, b, a = DarkMode:GetTTColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -74,7 +74,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		elseif typ == "actionbuttons" then
-			local r, g, b, a = DarkMode:GetActionButtonsColor()
+			local r, g, b, a = DarkMode:GetActionButtonsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -83,7 +83,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		elseif typ == "buffsanddebuffs" then
-			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor()
+			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -92,7 +92,7 @@ function DarkMode:UpdateColor(texture, typ, show)
 				texture:SetColorTexture(r, g, b, a)
 			end
 		else
-			local r, g, b, a = DarkMode:GetFrameColor()
+			local r, g, b, a = DarkMode:GetFrameColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -114,37 +114,37 @@ function DarkMode:UpdateColor(texture, typ, show)
 					if sel.dm_setvertexcolor then return end
 					sel.dm_setvertexcolor = true
 					if typ == "ui" then
-						local r, g, b, a = DarkMode:GetUiColor()
+						local r, g, b, a = DarkMode:GetUiColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "uf" then
-						local r, g, b, a = DarkMode:GetUFColor()
+						local r, g, b, a = DarkMode:GetUFColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "np" then
-						local r, g, b, a = DarkMode:GetNPColor()
+						local r, g, b, a = DarkMode:GetNPColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "tt" then
-						local r, g, b, a = DarkMode:GetTTColor()
+						local r, g, b, a = DarkMode:GetTTColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "actionbuttons" then
-						local r, g, b, a = DarkMode:GetActionButtonsColor()
+						local r, g, b, a = DarkMode:GetActionButtonsColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "buffsanddebuffs" then
-						local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor()
+						local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					else
-						local r, g, b, a = DarkMode:GetFrameColor()
+						local r, g, b, a = DarkMode:GetFrameColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
@@ -156,37 +156,37 @@ function DarkMode:UpdateColor(texture, typ, show)
 		end
 
 		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor()
+			local r, g, b, a = DarkMode:GetUiColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "uf" then
-			local r, g, b, a = DarkMode:GetUFColor()
+			local r, g, b, a = DarkMode:GetUFColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "np" then
-			local r, g, b, a = DarkMode:GetNPColor()
+			local r, g, b, a = DarkMode:GetNPColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "tt" then
-			local r, g, b, a = DarkMode:GetTTColor()
+			local r, g, b, a = DarkMode:GetTTColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "actionbuttons" then
-			local r, g, b, a = DarkMode:GetActionButtonsColor()
+			local r, g, b, a = DarkMode:GetActionButtonsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "buffsanddebuffs" then
-			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor()
+			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		else
-			local r, g, b, a = DarkMode:GetFrameColor()
+			local r, g, b, a = DarkMode:GetFrameColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
@@ -360,21 +360,21 @@ end
 
 function DarkMode:UpdateColors()
 	for i, v in pairs(DMTexturesUi) do
-		local r, g, b, a = DarkMode:GetUiColor()
+		local r, g, b, a = DarkMode:GetUiColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
 	end
 
 	for i, v in pairs(DMTexturesUF) do
-		local r, g, b, a = DarkMode:GetUFColor()
+		local r, g, b, a = DarkMode:GetUFColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
 	end
 
 	for i, v in pairs(DMTexturesTT) do
-		local r, g, b, a = DarkMode:GetTTColor()
+		local r, g, b, a = DarkMode:GetTTColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -382,14 +382,14 @@ function DarkMode:UpdateColors()
 
 	-- FONTSTRINGS
 	for i, v in pairs(DMFS) do
-		local r, g, b, a = DarkMode:GetFrameColor()
+		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
 	end
 
 	for i, v in pairs(DMTexturesFrames) do
-		local r, g, b, a = DarkMode:GetFrameColor()
+		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -1546,7 +1546,7 @@ function DarkMode:Event(event, ...)
 							function(sel, name, ...)
 								if sel.dm_settextcolor then return end
 								sel.dm_settextcolor = true
-								local r, g, b, a = DarkMode:GetFrameColor()
+								local r, g, b, a = DarkMode:GetFrameColor(sel)
 								local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
 								sel:SetTextColor(name, cr, cg, cb, ca)
 								sel.dm_settextcolor = false

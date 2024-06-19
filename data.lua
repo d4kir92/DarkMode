@@ -48,44 +48,58 @@ function DarkMode:SetCustomColor(name, r, g, b, a)
 	DarkMode:UpdateColors()
 end
 
-function DarkMode:GetUiColor()
+function DarkMode:GetBrighterColor(r, g, b, a, texture)
+	local name = D4:GetName(texture)
+	if name and DarkMode:IsBrighterFrame(name) then return D4:MClamp(r + 0.4, 0, 1), D4:MClamp(g + 0.4, 0, 1), D4:MClamp(b + 0.4, 0, 1), a end
+
+	return r, g, b, a
+end
+
+function DarkMode:GetUiColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODE", 1), "CUSTOMUIC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetUFColor()
+function DarkMode:GetUFColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 1), "CUSTOMUFC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetNPColor()
+function DarkMode:GetNPColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODENP", 1), "CUSTOMNPC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetTTColor()
+function DarkMode:GetTTColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODETT", 1), "CUSTOMTTC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetActionButtonsColor()
+function DarkMode:GetActionButtonsColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEAB", 1), "CUSTOMABC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetBuffsAndDebuffsColor()
+function DarkMode:GetBuffsAndDebuffsColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEBAD", 1), "CUSTOMBADC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
-function DarkMode:GetFrameColor()
+function DarkMode:GetFrameColor(texture)
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEF", 1), "CUSTOMFRC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
@@ -142,6 +156,19 @@ function DarkMode:GetUiAddonsTable()
 end
 
 local DMFrames = {"CharacterFrameInsetRight", "CharacterMainHandSlotFrame", "CharacterSecondaryHandSlotFrame", "CharacterRangedSlotFrame", "CharacterHandsSlotFrame", "CharacterWaistSlotFrame", "CharacterLegsSlotFrame", "CharacterFeetSlotFrame", "CharacterFinger0SlotFrame", "CharacterFinger1SlotFrame", "CharacterTrinket0SlotFrame", "CharacterTrinket1SlotFrame", "CharacterHeadSlotFrame", "CharacterNeckSlotFrame", "CharacterShoulderSlotFrame", "CharacterBackSlotFrame", "CharacterChestSlotFrame", "CharacterShirtSlotFrame", "CharacterTabardSlotFrame", "CharacterWristSlotFrame", "CharacterModelScene", "GroupLootHistoryFrame", "GroupLootHistoryFrame.ResizeButton", "ModelPreviewFrameCloseButton_LeftSeparator", "ModelPreviewFrame", "SideDressUpModelCloseButton", "SideDressUpFrame", "ArchaeologyFrame", "QuestLogDetailFrame", "QuestNPCModelTextFrame", "QuestModelScene", "MailItem1", "MailItem2", "MailItem3", "MailItem4", "MailItem5", "MailItem6", "MailItem7", "MailFrame", "InboxFrame", "GuildMemberDetailFrame", "TabardFrame", "TradeFrame", "TradeFrame.RecipientOverlay", "DressUpFrame", "LootFrame", "StaticPopup1", "StaticPopup2", "ItemTextFrame", "WorldStateScoreFrame", "WorldStateScoreFrameTab1", "WorldStateScoreFrameTab2", "WorldStateScoreFrameTab3", "SettingsPanel", "InspectPaperDollFrame", "PaperDollFrame", "CharacterFrame", "CharacterStatsPane", "CharacterFrameTab1", "CharacterFrameTab2", "CharacterFrameTab3", "CharacterFrameTab4", "CharacterFrameTab5", "nwtab5", "nwtab6", "ReputationFrame", "ReputationListScrollFrame", "SkillFrame", "SkillListScrollFrame", "SkillDetailScrollFrame", "HonorFrame", "PetPaperDollFrame", "PetPaperDollFrameTab1", "PetPaperDollFrameTab2", "PetPaperDollFrameTab3", "PetPaperDollFrameExpBar", "TokenFrame", "SpellBookFrame", "SpellBookSkillLineTab1", "SpellBookSkillLineTab2", "SpellBookSkillLineTab3", "SpellBookSkillLineTab4", "SpellBookSkillLineTab5", "SpellBookSkillLineTab6", "SpellBookSkillLineTab7", "WhatsTrainingFrame", "SpellBookFrameTabButton1", "SpellBookFrameTabButton2", "SpellBookFrameTabButton3", "SpellBookFrameTabButton4", "QuestLogFrame", "QuestLogCollapseAllButton", "QuestScrollFrame.ScrollBar", "FriendsFrame", "FriendsFrameFriendsScrollFrame", "FriendsFrameTab1", "FriendsFrameTab2", "FriendsFrameTab3", "FriendsFrameTab4", "FriendsFrameTab5", "WhoFrameList", "WorldMapFrame", "WorldMapFrame.BorderFrame", "WorldMapFrame.MiniBorderFrame", "LFGParentFrame", "LFGParentFrameTab1", "LFGParentFrameTab2", "LFMFrame", "LFGBrowseFrame", "LFGListingFrame", "PVEFrame", "PVEFrameTab1", "PVEFrameTab2", "PVEFrameTab3", "PVEFrameTab4", "PVPFrame", "PVPFrameTab1", "PVPFrameTab2", "PVPFrameTab3", "PVPFrameTab4", "ChallengesFrame", "GameMenuFrame", "GameMenuFrame.Border", "GameMenuFrame.Header", "QuestFrame", "QuestFrameDetailPanel", "QuestDetailScrollFrame", "QuestDetailScrollChildFrame", "GossipFrameGreetingPanel", "GossipGreetingScrollFrame", "QuestFrameGreetingPanel", "QuestGreetingScrollFrame", "QuestFrameProgressPanel", "QuestProgressScrollFrame", "QuestRewardScrollFrame", "QuestFrameRewardPanel", "QuestInfoRewardsFrame", "GossipFrame", "GossipFrame.GreetingPanel", "GossipFrame.GreetingPanel.ScrollBox", "GossipFrame.GreetingPanel.ScrollBar.Background", "MerchantFrame", "MerchantBuyBackItem", "MerchantFrameTab1", "MerchantFrameTab2", "MerchantItem1", "MerchantItem2", "MerchantItem3", "MerchantItem4", "MerchantItem5", "MerchantItem6", "MerchantItem7", "MerchantItem8", "MerchantItem9", "MerchantItem10", "MerchantItem11", "MerchantItem12", "MerchantMoney", "MerchantMoneyBg", "PetStableFrame", "AddonList", "AddonListDisableAllButton_RightSeparator", "AddonListEnableAllButton_RightSeparator", "AddonListOkayButton_LeftSeparator", "AddonListOkayButton_RightSeparator", "AddonListCancelButton_LeftSeparator", "HelpFrame", "VideoOptionsFrame", "InterfaceOptionsFrame", "TimeManagerFrame", "OpenMailFrame", "OpenMailScrollFrame", "MailFrameTab1", "MailFrameTab2", "SendMailFrame", "SendMailMoney", "SendMailMoneyBg", "SendMailMoneyFrame", "SendMail", "MailEditBoxScrollBar", "BankFrame", "BankFrameTab1", "BankFrameTab2", "BankFrameMoneyFrame", "BankFrameMoneyFrameBorder", "BackpackTokenFrame", "ContainerFrame1", "ContainerFrame2", "ContainerFrame3", "ContainerFrame4", "ContainerFrame5", "ContainerFrame6", "ContainerFrame7", "ContainerFrame8", "ContainerFrame9", "ContainerFrame10", "ContainerFrame11", "ContainerFrame12", "ContainerFrameCombinedBags", "PVPFrame", "PVPParentFrame", "PVPParentFrameTab1", "PVPParentFrameTab2", "BattlefieldFrame", "BattlefieldListScrollFrame", "BattlefieldFrameType", "TaxiFrame", "YourFrameName", "QuestMapFrame", "QuestMapFrame.DetailsFrame"}
+local DMFranesBrighter = {}
+for x = 1, 12 do
+	for i = 1, 32 do
+		local name = string.format("ContainerFrame%sItem%sNormalTexture", x, i)
+		tinsert(DMFrames, name)
+		DMFranesBrighter[name] = true
+	end
+end
+
+function DarkMode:IsBrighterFrame(name)
+	return DMFranesBrighter[name] or false
+end
+
 function DarkMode:GetFrameTable()
 	return DMFrames
 end
