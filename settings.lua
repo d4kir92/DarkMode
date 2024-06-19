@@ -186,7 +186,10 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 end
 
 function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
-	ColorPickerFrame.func, ColorPickerFrame.opacityFunc = changedCallback, changedCallback
+	print(ColorPickerFrame.swatchFunc)
+	ColorPickerFrame.func = changedCallback
+	ColorPickerFrame.opacityFunc = changedCallback
+	ColorPickerFrame.swatchFunc = changedCallback
 	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
 	ColorPickerFrame.previousValues = {r, g, b, a}
 	ColorPickerFrame:SetColorRGB(r, g, b)
@@ -287,8 +290,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.5.48")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.48"))
+	D4:SetVersion(AddonName, 136122, "0.5.49")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.49"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -319,6 +322,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCM:SetText(DarkMode:GT("COLORMODE") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODE", 1)])
+		--UF
 		DarkMode:AddColorPicker("CUSTOMUIC", DMSettings.SC, 0, 0)
 		local sCMUF = AddSlider(
 			4,
@@ -332,6 +336,19 @@ function DarkMode:InitDMSettings()
 
 		sCMUF:SetText(DarkMode:GT("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODEUF", 1)])
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
+		--NP
+		local sCMNP = AddSlider(
+			4,
+			"COLORMODENP",
+			DarkMode:GV("COLORMODENP", 1),
+			function(sel, val)
+				sel:SetText(DarkMode:GT("COLORMODENP") .. ": " .. DarkMode:GetColorModes()[val])
+				DarkMode:UpdateColors()
+			end, 1, getn(DarkMode:GetColorModes()), 1
+		)
+
+		sCMNP:SetText(DarkMode:GT("COLORMODENP") .. ": " .. DarkMode:GetColorModes()[DarkMode:GV("COLORMODENP", 1)])
+		DarkMode:AddColorPicker("CUSTOMNPC", DMSettings.SC, 0, 0)
 		--TT
 		local sCMTT = AddSlider(
 			4,

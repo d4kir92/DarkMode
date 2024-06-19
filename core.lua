@@ -10,6 +10,7 @@ end
 
 local DMTexturesUi = {}
 local DMTexturesUF = {}
+local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
 local DMTexturesActionButtons = {}
@@ -47,6 +48,15 @@ function DarkMode:UpdateColor(texture, typ, show)
 			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor()
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "np" then
+			local r, g, b, a = DarkMode:GetNPColor()
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -113,6 +123,11 @@ function DarkMode:UpdateColor(texture, typ, show)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
+					elseif typ == "np" then
+						local r, g, b, a = DarkMode:GetNPColor()
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
 					elseif typ == "tt" then
 						local r, g, b, a = DarkMode:GetTTColor()
 						if r ~= nil and g ~= nil and b ~= nil then
@@ -150,6 +165,11 @@ function DarkMode:UpdateColor(texture, typ, show)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
+		elseif typ == "np" then
+			local r, g, b, a = DarkMode:GetNPColor()
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		elseif typ == "tt" then
 			local r, g, b, a = DarkMode:GetTTColor()
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -179,6 +199,10 @@ function DarkMode:UpdateColor(texture, typ, show)
 		elseif typ == "uf" then
 			if not tContains(DMTexturesUF, texture) then
 				tinsert(DMTexturesUF, texture)
+			end
+		elseif typ == "np" then
+			if not tContains(DMTexturesNP, texture) then
+				tinsert(DMTexturesNP, texture)
 			end
 		elseif typ == "tt" then
 			if not tContains(DMTexturesTT, texture) then
@@ -1037,6 +1061,7 @@ npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 npf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
+		if DarkMode:GV("COLORMODENP", 1) == "Off" then return end
 		local id = string.sub(name, 10)
 		if nameplateIds[id] == nil then
 			C_Timer.After(
@@ -1046,7 +1071,7 @@ npf:SetScript(
 					if nameplateIds[id] == nil then
 						nameplateIds[id] = true
 						DarkMode:Debug(4, "#8 added")
-						DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "uf")
+						DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
 					end
 				end
 			)
@@ -1287,7 +1312,7 @@ function DarkMode:Event(event, ...)
 				)
 			end
 
-			if DarkMode:IsEnabled("MASKBUFFSANDEBUFFS", true) then
+			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 				if AuraFrameMixin and AuraFrameMixin.Update then
 					hooksecurefunc(
 						AuraFrameMixin,

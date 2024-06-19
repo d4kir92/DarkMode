@@ -60,6 +60,12 @@ function DarkMode:GetUFColor()
 	return r, g, b, a
 end
 
+function DarkMode:GetNPColor()
+	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODENP", 1), "CUSTOMNPC")
+
+	return r, g, b, a
+end
+
 function DarkMode:GetTTColor()
 	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODETT", 1), "CUSTOMTTC")
 

@@ -30,6 +30,8 @@ function DarkMode:Lang_enUS()
 		["MASKBUFFSANDDEBUFFS"] = "Add additional Border to Buffs and Debuffs",
 		["MASKMINIMAPBUTTONS"] = "Add additional Border to Minimapbuttons",
 		["THINBORDERS"] = "Thin Borders",
+		["COLORMODENP"] = "Color Mode Nameplates",
+		["CUSTOMNPC"] = "Custom Nameplates Color",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)

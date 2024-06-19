@@ -23,6 +23,8 @@ function DarkMode:Lang_deDE()
 		["MASKBUFFSANDDEBUFFS"] = "Zusätzlichen Rand für Buffs und Debuffs hinzufügen",
 		["MASKMINIMAPBUTTONS"] = "Zusätzlichen Rand für Minimapknöpfe hinzufügen",
 		["THINBORDERS"] = "Dünne Ränder",
+		["COLORMODENP"] = "Farbmodus Namensplaketten",
+		["CUSTOMNPC"] = "Benutzerdefinierte Namensplaketten Farbe",
 	}
 
 	DarkMode:UpdateLanguageTab(tab)
