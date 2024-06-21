@@ -43,13 +43,13 @@ end
 
 function DarkMode:IsEnabled(element, value)
 	if element == nil then
-		DarkMode:MSG_Error("[IsEnabled] Missing Name")
+		DarkMode:MSG("[IsEnabled] Missing Name")
 
 		return false
 	end
 
 	if value == nil then
-		DarkMode:MSG_Error("[IsEnabled] Missing Value")
+		DarkMode:MSG("[IsEnabled] Missing Value")
 
 		return false
 	end
