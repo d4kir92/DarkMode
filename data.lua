@@ -49,8 +49,8 @@ function DarkMode:SetCustomColor(name, r, g, b, a)
 end
 
 function DarkMode:GetBrighterColor(r, g, b, a, texture)
-	local name = D4:GetName(texture)
-	if name and DarkMode:IsBrighterFrame(name) then return D4:MClamp(r + 0.4, 0, 1), D4:MClamp(g + 0.4, 0, 1), D4:MClamp(b + 0.4, 0, 1), a end
+	local name = DarkMode:GetName(texture)
+	if name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
 
 	return r, g, b, a
 end
@@ -134,7 +134,7 @@ local DMUi = {
 	["Castbar"] = {"CastingBarFrame.Border", "PlayerCastingBarFrame.Background", "PlayerCastingBarFrame.Border", "PlayerCastingBarFrame.TextBorder"}
 }
 
-if D4:GetWoWBuild() == "RETAIL" then
+if DarkMode:GetWoWBuild() == "RETAIL" then
 	local retail = {"TargetFrameSpellBar.Background", "TargetFrameSpellBar.Border", "TargetFrameSpellBar.TextBorder", "FocusFrameSpellBar.Background", "FocusFrameSpellBar.Border", "FocusFrameSpellBar.TextBorder"}
 	for i, v in pairs(retail) do
 		table.insert(DMUi["Castbar"], v)
@@ -226,7 +226,7 @@ DMTextureBlock["Interface\\TargetingFrame\\UI-StatusBar"] = true
 DMTextureBlock["Interface\\MailFrame\\Mail-Icon"] = true
 DMTextureBlock["Interface\\ContainerFrame\\UI-Bag-1Slot"] = true
 DMTextureBlock["Interface\\SpellBook\\SpellBook-SkillLineTab-Glow"] = true
-if D4:GetWoWBuild() == "RETAIL" then
+if DarkMode:GetWoWBuild() == "RETAIL" then
 	DMTextureBlock[130724] = true -- Spellbook Tab Highlight Icon
 	DMTextureBlock[136377] = true -- MacroFrame Portrai
 end
@@ -262,7 +262,7 @@ function DarkMode:GetTextureBlockTable()
 end
 
 local DMIgnoreFrames = {}
-if D4:GetWoWBuild() ~= "RETAIL" then
+if DarkMode:GetWoWBuild() ~= "RETAIL" then
 	DMIgnoreFrames["FriendsFrameIcon"] = true
 	DMIgnoreFrames["FriendsFramePortrait"] = true
 	DMIgnoreFrames["FriendsFramePortraitFrame"] = true

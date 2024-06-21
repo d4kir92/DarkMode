@@ -1,4 +1,5 @@
 local _, DarkMode = ...
+DarkMode:SetAddonOutput("DarkMode", 136122)
 function DarkMode:MathC(val, vmin, vmax)
 	if val == nil then return 0 end
 	if vmin == nil then return 0 end

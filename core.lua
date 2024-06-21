@@ -1,6 +1,7 @@
 local _, DarkMode = ...
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
+local DMMMBTN = nil
 local debug = 0
 function DarkMode:Debug(num, msg, ...)
 	if debug > 0 and debug == num then
@@ -13,14 +14,9 @@ local DMTexturesUF = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
-local DMTexturesFrame = {}
 local DMTexturesActionButtons = {}
 local DMTexturesBuffsAndDebuffs = {}
-local DMTexturesChat = {}
-local DMTexturesAddons = {}
-local DMTexturesSpecial = {}
-local DMTexturesGreeting = {}
-function DarkMode:UpdateColor(texture, typ, show)
+function DarkMode:UpdateColor(texture, typ, bShow)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
 		print("[DarkMode] INVALID TEXTURE OBJECT")
@@ -412,7 +408,7 @@ end
 
 function DarkMode:FindTextures(frame, typ)
 	if frame ~= nil then
-		local show = false
+		local bShow = false
 		local ignoreId1 = nil
 		local ignoreId2 = nil
 		local ignoreId3 = nil
@@ -431,12 +427,12 @@ function DarkMode:FindTextures(frame, typ)
 			if DarkMode:GetIgnoreFrames(frame:GetName()) then
 				return
 			elseif strfind(frame:GetName(), findName) then
-				show = true
+				bShow = true
 			end
 		end
 
 		if frame.SetVertexColor then
-			if show and frame.GetTexture then
+			if bShow and frame.GetTexture then
 				print(">", frame:GetName(), frame:GetTextureFilePath(), frame:GetTexture(), "Size:", frame:GetSize())
 			end
 
@@ -447,7 +443,7 @@ function DarkMode:FindTextures(frame, typ)
 			for i, v in pairs({frame:GetRegions()}) do
 				local hasName = v.GetName ~= nil
 				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-					if show and v.GetTexture then
+					if bShow and v.GetTexture then
 						print(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
 
@@ -462,7 +458,7 @@ function DarkMode:FindTextures(frame, typ)
 			for i, v in pairs({frame:GetChildren()}) do
 				local hasName = v.GetName ~= nil
 				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-					if show and v.GetTexture then
+					if bShow and v.GetTexture then
 						print(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 					end
 
@@ -478,10 +474,6 @@ end
 function DarkMode:FindTexturesByName(name, typ)
 	DarkMode:Debug(10, "FindTexturesByName", name)
 	local frame = DarkMode:GetFrame(name)
-	if name and strfind(name, "Container", 1, true) and strfind(name, "TopSection", 1, true) then
-		show = true
-	end
-
 	if frame then
 		DarkMode:FindTextures(frame, typ)
 	end
@@ -801,7 +793,7 @@ function DarkMode:SearchUi(from)
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 									DarkMode:UpdateColor(border, "actionbuttons")
 								end
-							elseif D4:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
@@ -838,7 +830,7 @@ function DarkMode:SearchUi(from)
 						end
 					end
 
-					if name ~= "MainMenuBarBackpackButtonNormalTexture" or D4:GetWoWBuild() ~= "RETAIL" then
+					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then
 						DarkMode:FindTexturesByName(name, "ui")
 					end
 				end
@@ -864,7 +856,7 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if MICRO_BUTTONS and D4:GetWoWBuild() ~= "RETAIL" then
+	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
 				local mbtn = _G[name]
@@ -947,10 +939,10 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if GameTimeFrame and D4:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
+	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
-		if D4:GetWoWBuild() == "WRATH" or D4:GetWoWBuild() == "CATA" then
+		if DarkMode:GetWoWBuild() == "WRATH" or DarkMode:GetWoWBuild() == "CATA" then
 			border:SetPoint("TOPLEFT", -1, 1)
 			if border.SetScale then
 				border:SetScale(0.82)
@@ -1186,15 +1178,15 @@ function DarkMode:InitQuestFrame()
 end
 
 function DarkMode:InitSlash()
-	D4:AddSlash("dm", DarkMode.ToggleSettings)
-	D4:AddSlash("dark", DarkMode.ToggleSettings)
-	D4:AddSlash("darkmode", DarkMode.ToggleSettings)
+	DarkMode:AddSlash("dm", DarkMode.ToggleSettings)
+	DarkMode:AddSlash("dark", DarkMode.ToggleSettings)
+	DarkMode:AddSlash("darkmode", DarkMode.ToggleSettings)
 	if C_UI then
-		D4:AddSlash("rl", C_UI.Reload)
-		D4:AddSlash("rel", C_UI.Reload)
+		DarkMode:AddSlash("rl", C_UI.Reload)
+		DarkMode:AddSlash("rel", C_UI.Reload)
 	else
-		D4:AddSlash("rl", ReloadUI)
-		D4:AddSlash("rel", ReloadUI)
+		DarkMode:AddSlash("rl", ReloadUI)
+		DarkMode:AddSlash("rel", ReloadUI)
 	end
 end
 
@@ -1282,7 +1274,7 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
-			if D4:GetWoWBuild() ~= "RETAIL" then
+			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				C_Timer.After(
 					2,
@@ -1570,7 +1562,7 @@ function DarkMode:Event(event, ...)
 			)
 
 			--[[ SPECIALS ]]
-			if D4:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
+			if DarkMode:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
 				hooksecurefunc(
 					FriendsFramePortrait,
 					"Show",

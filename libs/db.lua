@@ -1,14 +1,4 @@
 local _, DarkMode = ...
-local COL_R = "|cFFFF0000"
-local COL_Y = "|cFFFFFF00"
-function DarkMode:MSG(msg)
-	print("|cff3FC7EB" .. "[DarkMode |T136122:16:16:0:0|t]|r " .. COL_Y .. msg)
-end
-
-function DarkMode:MSG_Error(msg)
-	print("|cff3FC7EB" .. "[DarkMode |T136122:16:16:0:0|t]|r " .. COL_R .. "[ERROR] |r" .. msg)
-end
-
 function DarkMode:GetCP()
 	DMTAB = DMTAB or {}
 	DMTAB["CURRENTPROFILE"] = DMTAB["CURRENTPROFILE"] or "DEFAULT"

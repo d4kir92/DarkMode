@@ -247,7 +247,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	if not D4:IsOldWow() then
+	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent)
@@ -290,8 +290,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	D4:SetVersion(AddonName, 136122, "0.5.54")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.54"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.55")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.55"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -299,7 +299,7 @@ function DarkMode:InitDMSettings()
 		end
 	)
 
-	function DMUpdateElementList()
+	function DarkMode:UpdateElementList()
 		posy = -8
 		AddCategory("GENERAL")
 		AddCheckBox(4, "SHOWMINIMAPBUTTON", true, DarkMode.UpdateMinimapButton)
@@ -411,7 +411,9 @@ function DarkMode:InitDMSettings()
 		"OnTextChanged",
 		function(sel, ...)
 			searchStr = DMSettings.Search:GetText()
-			DMUpdateElementList()
+			if DarkMode.UpdateElementList then
+				DarkMode:UpdateElementList()
+			end
 		end
 	)
 
