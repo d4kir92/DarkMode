@@ -13,8 +13,13 @@ local DMTexturesUF = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
+local DMTexturesFrame = {}
 local DMTexturesActionButtons = {}
 local DMTexturesBuffsAndDebuffs = {}
+local DMTexturesChat = {}
+local DMTexturesAddons = {}
+local DMTexturesSpecial = {}
+local DMTexturesGreeting = {}
 function DarkMode:UpdateColor(texture, typ, show)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
@@ -216,10 +221,32 @@ function DarkMode:UpdateColor(texture, typ, show)
 			if not tContains(DMTexturesBuffsAndDebuffs, texture) then
 				tinsert(DMTexturesBuffsAndDebuffs, texture)
 			end
-		else
+		elseif typ == "frame" then
+			if not tContains(DMTexturesFrame, texture) then
+				tinsert(DMTexturesFrame, texture)
+			end
+		elseif typ == "frames" then
 			if not tContains(DMTexturesFrames, texture) then
 				tinsert(DMTexturesFrames, texture)
 			end
+		elseif typ == "chat" then
+			if not tContains(DMTexturesChat, texture) then
+				tinsert(DMTexturesChat, texture)
+			end
+		elseif typ == "addons" then
+			if not tContains(DMTexturesAddons, texture) then
+				tinsert(DMTexturesAddons, texture)
+			end
+		elseif typ == "special" then
+			if not tContains(DMTexturesSpecial, texture) then
+				tinsert(DMTexturesSpecial, texture)
+			end
+		elseif typ == "greeting" then
+			if not tContains(DMTexturesGreeting, texture) then
+				tinsert(DMTexturesGreeting, texture)
+			end
+		else
+			print("[DarkMode] Missing Type:", typ)
 		end
 
 		return true
@@ -492,7 +519,7 @@ function DarkMode:InitGreetingPanel()
 
 		for index, name in pairs(frameTab) do
 			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "frames")
+				DarkMode:FindTexturesByName(name .. v, "greeting")
 			end
 		end
 	end
@@ -595,7 +622,7 @@ end
 
 function DarkMode:SearchFrames()
 	for index, frame in pairs(DarkMode:GetFrameTableSpecial()) do
-		DarkMode:UpdateColor(frame, "frames")
+		DarkMode:UpdateColor(frame, "special")
 	end
 
 	for index, name in pairs(DarkMode:GetFrameTable()) do
@@ -617,7 +644,7 @@ function DarkMode:SearchAddons()
 
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-			DarkMode:FindTexturesByName(name .. v, "frames")
+			DarkMode:FindTexturesByName(name .. v, "addons")
 		end
 	end
 
@@ -625,7 +652,7 @@ function DarkMode:SearchAddons()
 		for i, v in pairs({ExpansionLandingPage.Overlay:GetChildren()}) do
 			if v then
 				foundExpansion = true
-				DarkMode:FindTextures(v.NineSlice, "frames")
+				DarkMode:FindTextures(v.NineSlice, "addons")
 			end
 		end
 	end
@@ -1251,7 +1278,7 @@ function DarkMode:Event(event, ...)
 								end
 							)
 
-							DarkMode:UpdateColor(border, "frame")
+							DarkMode:UpdateColor(border, "chat")
 						end
 					end
 				end
@@ -1270,7 +1297,7 @@ function DarkMode:Event(event, ...)
 						border:SetSize(sh * scale, sh * scale)
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
 						border:SetPoint("CENTER", btn, "CENTER", px, py)
-						DarkMode:UpdateColor(border, "frame")
+						DarkMode:UpdateColor(border, "chat")
 					end
 				end
 			end
@@ -1661,7 +1688,7 @@ function DarkMode:Event(event, ...)
 						if tab then
 							for x, w in pairs({tab:GetRegions()}) do
 								if x == 1 then
-									DarkMode:UpdateColor(w, "frames")
+									DarkMode:UpdateColor(w, "addons")
 								end
 							end
 						end
@@ -1674,7 +1701,7 @@ function DarkMode:Event(event, ...)
 						local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
 						for i, v in pairs(tabs) do
 							for x, w in pairs({v:GetRegions()}) do
-								DarkMode:UpdateColor(w, "frames")
+								DarkMode:UpdateColor(w, "addons")
 							end
 						end
 					end
