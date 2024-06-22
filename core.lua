@@ -4,9 +4,73 @@ DMHIDDEN:Hide()
 local DMMMBTN = nil
 local debug = 0
 function DarkMode:Debug(num, msg, ...)
-	if debug > 0 and debug == num then
+	if debug > 0 and debug == num or debug == 11 then
 		print(msg, ...)
 	end
+end
+
+local addonsDelay = 0
+local addonsRetry = false
+function DarkMode:AddonsSearch()
+	if GetTime() < addonsDelay then
+		addonsRetry = true
+		addonsDelay = GetTime() + 1
+
+		return
+	end
+
+	addonsDelay = GetTime() + 1
+	addonsRetry = false
+	C_Timer.After(
+		0.1,
+		function()
+			DarkMode:Debug(5, "#17")
+			DarkMode:SearchAddons()
+			if PlayerTalentFrame then
+				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
+					local tab = _G[v]
+					if tab then
+						for x, w in pairs({tab:GetRegions()}) do
+							if x == 1 then
+								DarkMode:UpdateColor(w, "frames")
+							end
+						end
+					end
+				end
+			end
+
+			if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
+				ClassTalentFrame.dm_setup_talent = true
+				function ClassTalentFrame:UpdateColors()
+					local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
+					for i, v in pairs(tabs) do
+						for x, w in pairs({v:GetRegions()}) do
+							DarkMode:UpdateColor(w, "frames")
+						end
+					end
+				end
+
+				ClassTalentFrame:HookScript(
+					"OnShow",
+					function(sel)
+						ClassTalentFrame:UpdateColors()
+					end
+				)
+
+				ClassTalentFrame:UpdateColors()
+			end
+
+			C_Timer.After(
+				1,
+				function()
+					if addonsRetry then
+						addonsRetry = false
+						DarkMode:AddonsSearch()
+					end
+				end
+			)
+		end
+	)
 end
 
 local DMTexturesUi = {}
@@ -24,10 +88,12 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 		return false
 	end
 
-	if texture.GetName then
-		DarkMode:Debug(10, "UpdateColor", texture:GetName())
-	else
-		DarkMode:Debug(10, "UpdateColor", texture)
+	if debug == 10 then
+		if texture.GetName then
+			DarkMode:Debug(10, "UpdateColor", "name:", texture:GetName(), "typ:", typ)
+		else
+			DarkMode:Debug(10, "UpdateColor", "texture:", texture, "typ:", typ)
+		end
 	end
 
 	local textureId = nil
@@ -407,64 +473,51 @@ function DarkMode:IsValidTexture(obj)
 end
 
 function DarkMode:FindTextures(frame, typ)
-	if frame ~= nil then
-		local bShow = false
-		local ignoreId1 = nil
-		local ignoreId2 = nil
-		local ignoreId3 = nil
-		if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() ~= nil then
-			if string.find(frame:GetName(), "SkillLineTab") then
-				ignoreId1 = 2
-				ignoreId2 = 3
-				ignoreId3 = 4
-			elseif string.find(frame:GetName(), "XX") then
-				ignoreId1 = 2
-			end
+	if frame == nil then return end
+	local bShow = false
+	local ignoreId1 = nil
+	local ignoreId2 = nil
+	local ignoreId3 = nil
+	if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() ~= nil then
+		if string.find(frame:GetName(), "SkillLineTab") then
+			ignoreId1 = 2
+			ignoreId2 = 3
+			ignoreId3 = 4
+		elseif string.find(frame:GetName(), "XX") then
+			ignoreId1 = 2
 		end
+	end
 
-		local findName = "XX"
-		if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() then
-			if DarkMode:GetIgnoreFrames(frame:GetName()) then
-				return
-			elseif strfind(frame:GetName(), findName) then
-				bShow = true
-			end
-		end
+	if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() and DarkMode:GetIgnoreFrames(frame:GetName()) then return end
+	if frame.SetVertexColor then
+		DarkMode:UpdateColor(frame, typ)
+	end
 
-		if frame.SetVertexColor then
-			if bShow and frame.GetTexture then
-				print(">", frame:GetName(), frame:GetTextureFilePath(), frame:GetTexture(), "Size:", frame:GetSize())
-			end
+	if frame.GetRegions and getn({frame:GetRegions()}) > 0 then
+		for i, v in pairs({frame:GetRegions()}) do
+			local hasName = v.GetName ~= nil
+			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
+				if bShow and v.GetTexture then
+					print(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
+				end
 
-			DarkMode:UpdateColor(frame, typ)
-		end
-
-		if frame.GetRegions and getn({frame:GetRegions()}) > 0 then
-			for i, v in pairs({frame:GetRegions()}) do
-				local hasName = v.GetName ~= nil
-				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-					if bShow and v.GetTexture then
-						print(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
-					end
-
-					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
-						DarkMode:UpdateColor(v, typ)
-					end
+				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
+					DarkMode:UpdateColor(v, typ)
 				end
 			end
 		end
+	end
 
-		if frame.GetChildren and getn({frame:GetChildren()}) > 0 then
-			for i, v in pairs({frame:GetChildren()}) do
-				local hasName = v.GetName ~= nil
-				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-					if bShow and v.GetTexture then
-						print(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
-					end
+	if frame.GetChildren and getn({frame:GetChildren()}) > 0 then
+		for i, v in pairs({frame:GetChildren()}) do
+			local hasName = v.GetName ~= nil
+			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
+				if bShow and v.GetTexture then
+					print(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
+				end
 
-					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
-						DarkMode:UpdateColor(v, typ)
-					end
+				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
+					DarkMode:UpdateColor(v, typ)
 				end
 			end
 		end
@@ -1078,71 +1131,10 @@ npf:SetScript(
 	end
 )
 
-local searchQuestFrames = false
-function DarkMode:InitQuestFrame()
+function DarkMode:InitQuestFrameGreetingPanel()
 	local frame = DarkMode:GetFrame("QuestFrameGreetingPanel")
 	function DarkMode:UpdateQuestFrameGreetingPanel()
 		DarkMode:FindTextsByName("QuestFrameGreetingPanel")
-	end
-
-	if QuestFrame then
-		QuestFrame:HookScript(
-			"OnShow",
-			function(sel, ...)
-				if not searchQuestFrames then
-					searchQuestFrames = true
-					C_Timer.After(
-						1,
-						function()
-							DarkMode:Debug(5, "#9")
-							searchQuestFrames = false
-						end
-					)
-
-					DarkMode:SearchFrames()
-				end
-			end
-		)
-	end
-
-	if QuestFrameRewardPanel then
-		QuestFrameRewardPanel:HookScript(
-			"OnShow",
-			function(sel, ...)
-				if not searchQuestFrames then
-					searchQuestFrames = true
-					C_Timer.After(
-						1,
-						function()
-							DarkMode:Debug(5, "#10")
-							searchQuestFrames = false
-						end
-					)
-
-					DarkMode:SearchFrames()
-				end
-			end
-		)
-	end
-
-	if QuestFrameDetailPanel then
-		QuestFrameDetailPanel:HookScript(
-			"OnShow",
-			function(sel, ...)
-				if not searchQuestFrames then
-					searchQuestFrames = true
-					C_Timer.After(
-						1,
-						function()
-							DarkMode:Debug(5, "#11")
-							searchQuestFrames = false
-						end
-					)
-
-					DarkMode:SearchFrames()
-				end
-			end
-		)
 	end
 
 	if frame then
@@ -1203,7 +1195,7 @@ function DarkMode:Event(event, ...)
 			DarkMode:InitDMSettings()
 			DarkMode:InitGreetingPanel()
 			DarkMode:InitQuestLogFrame()
-			DarkMode:InitQuestFrame()
+			DarkMode:InitQuestFrameGreetingPanel()
 			C_Timer.After(
 				1,
 				function()
@@ -1376,7 +1368,7 @@ function DarkMode:Event(event, ...)
 				elseif BuffFrame_UpdateAllBuffAnchors then
 					hooksecurefunc(
 						"BuffFrame_UpdateAllBuffAnchors",
-						function()
+						function(sel, ...)
 							DarkMode:Debug(3, "BuffFrame_UpdateAllBuffAnchors")
 							local buttonName = "BuffButton"
 							for index = 1, BUFF_ACTUAL_DISPLAY do
@@ -1649,46 +1641,7 @@ function DarkMode:Event(event, ...)
 			end
 		end
 	elseif event == "ADDON_LOADED" then
-		C_Timer.After(
-			0.1,
-			function()
-				DarkMode:Debug(5, "#17")
-				DarkMode:SearchAddons()
-				if PlayerTalentFrame then
-					for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
-						local tab = _G[v]
-						if tab then
-							for x, w in pairs({tab:GetRegions()}) do
-								if x == 1 then
-									DarkMode:UpdateColor(w, "frames")
-								end
-							end
-						end
-					end
-				end
-
-				if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
-					ClassTalentFrame.dm_setup_talent = true
-					function ClassTalentFrame:UpdateColors()
-						local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
-						for i, v in pairs(tabs) do
-							for x, w in pairs({v:GetRegions()}) do
-								DarkMode:UpdateColor(w, "frames")
-							end
-						end
-					end
-
-					ClassTalentFrame:HookScript(
-						"OnShow",
-						function(sel)
-							ClassTalentFrame:UpdateColors()
-						end
-					)
-
-					ClassTalentFrame:UpdateColors()
-				end
-			end
-		)
+		DarkMode:AddonsSearch()
 	elseif event == "START_LOOT_ROLL" then
 		C_Timer.After(
 			0.1,

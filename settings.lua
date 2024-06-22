@@ -186,7 +186,6 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 end
 
 function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
-	print(ColorPickerFrame.swatchFunc)
 	ColorPickerFrame.func = changedCallback
 	ColorPickerFrame.opacityFunc = changedCallback
 	ColorPickerFrame.swatchFunc = changedCallback
@@ -290,8 +289,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.56")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.56"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.57")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.57"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
