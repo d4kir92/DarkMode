@@ -22,7 +22,7 @@ function DarkMode:AddonsSearch()
 	addonsDelay = GetTime() + 1
 	addonsRetry = false
 	C_Timer.After(
-		0.1,
+		0.02,
 		function()
 			DarkMode:Debug(5, "#17")
 			DarkMode:SearchAddons()
