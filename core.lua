@@ -703,7 +703,7 @@ function DarkMode:SearchUi(from)
 						local btn = _G[name .. x]
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
-						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
@@ -846,7 +846,7 @@ function DarkMode:SearchUi(from)
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 									DarkMode:UpdateColor(border, "actionbuttons")
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and DarkMode:IsEnabled("MASKACTIONBUTTONS", true) and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
