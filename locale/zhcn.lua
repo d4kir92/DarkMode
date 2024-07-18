@@ -1,21 +1,15 @@
 -- zhCN
 local _, DarkMode = ...
-function DarkMode:Lang_zhCN()
-	local tab = {
-		["MMBTNLEFT"] = "左键点击 => 菜单选项",
-		["MMBTNRIGHT"] = "右键点击 => 隐藏小地图按钮",
-		["GENERAL"] = "常规",
-		["SHOWMINIMAPBUTTON"] = "显示小地图按钮",
-		["COLORMODE"] = "界面染色",
-		["COLORMODEUF"] = "头像染色",
-		["COLORMODETT"] = "鼠标提示染色",
-		["COLORMODEF"] = "窗口染色",
-		["CUSTOMUIC"] = "指定界面颜色",
-		["CUSTOMUFC"] = "指定头像颜色",
-		["CUSTOMTTC"] = "指定鼠标提示颜色",
-		["CUSTOMFRC"] = "指定窗口颜色",
-		["GRYPHONS"] = "动作条狮鹫染色",
-	}
-
-	DarkMode:UpdateLanguageTab(tab)
-end
+DarkMode:AddTrans("zhCN", "MMBTNLEFT", "左键点击 => 菜单选项")
+DarkMode:AddTrans("zhCN", "MMBTNRIGHT", "右键点击 => 隐藏小地图按钮")
+DarkMode:AddTrans("zhCN", "GENERAL", "常规")
+DarkMode:AddTrans("zhCN", "SHOWMINIMAPBUTTON", "显示小地图按钮")
+DarkMode:AddTrans("zhCN", "COLORMODE", "界面染色")
+DarkMode:AddTrans("zhCN", "COLORMODEUF", "头像染色")
+DarkMode:AddTrans("zhCN", "COLORMODETT", "鼠标提示染色")
+DarkMode:AddTrans("zhCN", "COLORMODEF", "窗口染色")
+DarkMode:AddTrans("zhCN", "CUSTOMUIC", "指定界面颜色")
+DarkMode:AddTrans("zhCN", "CUSTOMUFC", "指定头像颜色")
+DarkMode:AddTrans("zhCN", "CUSTOMTTC", "指定鼠标提示颜色")
+DarkMode:AddTrans("zhCN", "CUSTOMFRC", "指定窗口颜色")
+DarkMode:AddTrans("zhCN", "GRYPHONS", "动作条狮鹫染色")

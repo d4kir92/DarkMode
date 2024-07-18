@@ -1,5 +1,5 @@
 ## Interface: 20504
-## Version: 0.5.69
+## Version: 0.5.70
 ## Title: DarkMode |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR
@@ -18,7 +18,6 @@ locale\enUS.lua
 locale\deDE.lua
 locale\zhCN.lua
 locale\zhTW.lua
-libs\lang.lua
 
 data.lua
 settings.lua

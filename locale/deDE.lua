@@ -1,31 +1,25 @@
 -- deDE German Deutsch
 local _, DarkMode = ...
-function DarkMode:Lang_deDE()
-	local tab = {
-		["MMBTNLEFT"] = "Linksklick => Optionen",
-		["MMBTNRIGHT"] = "Rechtsklick => Minimapknopf verstecken",
-		["GENERAL"] = "Allgemein",
-		["SHOWMINIMAPBUTTON"] = "Minimapknopf anzeigen",
-		["COLORMODE"] = "Farbmodus Ui",
-		["COLORMODEUF"] = "Farbmodus Einheitenfenster",
-		["COLORMODETT"] = "Farbmodus Tooltips",
-		["COLORMODEAB"] = "Farbmodus Aktionsknöpfe",
-		["COLORMODEBAD"] = "Farbmodus Buffs und Debuffs",
-		["COLORMODEF"] = "Farbmodus Fenster",
-		["CUSTOMUIC"] = "Benutzerdefinierte Ui Farbe",
-		["CUSTOMUFC"] = "Benutzerdefinierte Einheitenfenster Farbe",
-		["CUSTOMTTC"] = "Benutzerdefinierte Tooltip Farbe",
-		["CUSTOMABC"] = "Benutzerdefinierte Aktionsknöpfe Farbe",
-		["CUSTOMBADC"] = "Benutzerdefinierte Buffs und Debuffs Farbe",
-		["CUSTOMFRC"] = "Benutzerdefinierte Fenster Farbe",
-		["MASKACTIONBUTTONS"] = "Zusätzlichen Rand für Aktionsknöpfe hinzufügen",
-		["GRYPHONS"] = "Greifen maskieren",
-		["MASKBUFFSANDDEBUFFS"] = "Zusätzlichen Rand für Buffs und Debuffs hinzufügen",
-		["MASKMINIMAPBUTTONS"] = "Zusätzlichen Rand für Minimapknöpfe hinzufügen",
-		["THINBORDERS"] = "Dünne Ränder",
-		["COLORMODENP"] = "Farbmodus Namensplaketten",
-		["CUSTOMNPC"] = "Benutzerdefinierte Namensplaketten Farbe",
-	}
-
-	DarkMode:UpdateLanguageTab(tab)
-end
+DarkMode:AddTrans("deDE", "MMBTNLEFT", "Linksklick => Optionen")
+DarkMode:AddTrans("deDE", "MMBTNRIGHT", "Rechtsklick => Minimapknopf verstecken")
+DarkMode:AddTrans("deDE", "GENERAL", "Allgemein")
+DarkMode:AddTrans("deDE", "SHOWMINIMAPBUTTON", "Minimapknopf anzeigen")
+DarkMode:AddTrans("deDE", "COLORMODE", "Farbmodus Ui")
+DarkMode:AddTrans("deDE", "COLORMODEUF", "Farbmodus Einheitenfenster")
+DarkMode:AddTrans("deDE", "COLORMODETT", "Farbmodus Tooltips")
+DarkMode:AddTrans("deDE", "COLORMODEAB", "Farbmodus Aktionsknöpfe")
+DarkMode:AddTrans("deDE", "COLORMODEBAD", "Farbmodus Buffs und Debuffs")
+DarkMode:AddTrans("deDE", "COLORMODEF", "Farbmodus Fenster")
+DarkMode:AddTrans("deDE", "CUSTOMUIC", "Benutzerdefinierte Ui Farbe")
+DarkMode:AddTrans("deDE", "CUSTOMUFC", "Benutzerdefinierte Einheitenfenster Farbe")
+DarkMode:AddTrans("deDE", "CUSTOMTTC", "Benutzerdefinierte Tooltip Farbe")
+DarkMode:AddTrans("deDE", "CUSTOMABC", "Benutzerdefinierte Aktionsknöpfe Farbe")
+DarkMode:AddTrans("deDE", "CUSTOMBADC", "Benutzerdefinierte Buffs und Debuffs Farbe")
+DarkMode:AddTrans("deDE", "CUSTOMFRC", "Benutzerdefinierte Fenster Farbe")
+DarkMode:AddTrans("deDE", "MASKACTIONBUTTONS", "Zusätzlichen Rand für Aktionsknöpfe hinzufügen")
+DarkMode:AddTrans("deDE", "GRYPHONS", "Greifen maskieren")
+DarkMode:AddTrans("deDE", "MASKBUFFSANDDEBUFFS", "Zusätzlichen Rand für Buffs und Debuffs hinzufügen")
+DarkMode:AddTrans("deDE", "MASKMINIMAPBUTTONS", "Zusätzlichen Rand für Minimapknöpfe hinzufügen")
+DarkMode:AddTrans("deDE", "THINBORDERS", "Dünne Ränder")
+DarkMode:AddTrans("deDE", "COLORMODENP", "Farbmodus Namensplaketten")
+DarkMode:AddTrans("deDE", "CUSTOMNPC", "Benutzerdefinierte Namensplaketten Farbe")

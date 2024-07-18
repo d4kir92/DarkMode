@@ -1618,8 +1618,8 @@ function DarkMode:Event(event, ...)
 						OnTooltipShow = function(tooltip)
 							if not tooltip or not tooltip.AddLine then return end
 							tooltip:AddLine("DarkMode")
-							tooltip:AddLine(DarkMode:GT("MMBTNLEFT"))
-							tooltip:AddLine(DarkMode:GT("MMBTNRIGHT"))
+							tooltip:AddLine(DarkMode:Trans("MMBTNLEFT"))
+							tooltip:AddLine(DarkMode:Trans("MMBTNRIGHT"))
 						end,
 					}
 				)

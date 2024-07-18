@@ -1,38 +1,25 @@
 -- enUS English
 local _, DarkMode = ...
-function DarkMode:UpdateLanguageTab(tab)
-	local lang = DarkMode:GetLangTab()
-	for i, v in pairs(tab) do
-		lang[i] = v
-	end
-end
-
-function DarkMode:Lang_enUS()
-	local tab = {
-		["MMBTNLEFT"] = "Left Click => Options",
-		["MMBTNRIGHT"] = "Right Click => Hide Minimap Button",
-		["GENERAL"] = "General",
-		["SHOWMINIMAPBUTTON"] = "Show Minimap Button",
-		["COLORMODE"] = "Color Mode Ui",
-		["COLORMODEUF"] = "Color Mode UnitFrames",
-		["COLORMODETT"] = "Color Mode Tooltips",
-		["COLORMODEAB"] = "Color Mode Actionbuttons",
-		["COLORMODEBAD"] = "Color Mode Buffs and Debuffs",
-		["COLORMODEF"] = "Color Mode Windows",
-		["CUSTOMUIC"] = "Custom Ui Color",
-		["CUSTOMUFC"] = "Custom UnitFrames Color",
-		["CUSTOMTTC"] = "Custom Tooltip Color",
-		["CUSTOMABC"] = "Custom Actionbuttons Color",
-		["CUSTOMBADC"] = "Custom Buffs and Debuffs Color",
-		["CUSTOMFRC"] = "Custom Windows Color",
-		["MASKACTIONBUTTONS"] = "Add additional Border to Actionbuttons",
-		["GRYPHONS"] = "Mask Gryphons",
-		["MASKBUFFSANDDEBUFFS"] = "Add additional Border to Buffs and Debuffs",
-		["MASKMINIMAPBUTTONS"] = "Add additional Border to Minimapbuttons",
-		["THINBORDERS"] = "Thin Borders",
-		["COLORMODENP"] = "Color Mode Nameplates",
-		["CUSTOMNPC"] = "Custom Nameplates Color",
-	}
-
-	DarkMode:UpdateLanguageTab(tab)
-end
+DarkMode:AddTrans("enUS", "MMBTNLEFT", "Left Click => Options")
+DarkMode:AddTrans("enUS", "MMBTNRIGHT", "Right Click => Hide Minimap Button")
+DarkMode:AddTrans("enUS", "GENERAL", "General")
+DarkMode:AddTrans("enUS", "SHOWMINIMAPBUTTON", "Show Minimap Button")
+DarkMode:AddTrans("enUS", "COLORMODE", "Color Mode Ui")
+DarkMode:AddTrans("enUS", "COLORMODEUF", "Color Mode UnitFrames")
+DarkMode:AddTrans("enUS", "COLORMODETT", "Color Mode Tooltips")
+DarkMode:AddTrans("enUS", "COLORMODEAB", "Color Mode Actionbuttons")
+DarkMode:AddTrans("enUS", "COLORMODEBAD", "Color Mode Buffs and Debuffs")
+DarkMode:AddTrans("enUS", "COLORMODEF", "Color Mode Windows")
+DarkMode:AddTrans("enUS", "CUSTOMUIC", "Custom Ui Color")
+DarkMode:AddTrans("enUS", "CUSTOMUFC", "Custom UnitFrames Color")
+DarkMode:AddTrans("enUS", "CUSTOMTTC", "Custom Tooltip Color")
+DarkMode:AddTrans("enUS", "CUSTOMABC", "Custom Actionbuttons Color")
+DarkMode:AddTrans("enUS", "CUSTOMBADC", "Custom Buffs and Debuffs Color")
+DarkMode:AddTrans("enUS", "CUSTOMFRC", "Custom Windows Color")
+DarkMode:AddTrans("enUS", "MASKACTIONBUTTONS", "Add additional Border to Actionbuttons")
+DarkMode:AddTrans("enUS", "GRYPHONS", "Mask Gryphons")
+DarkMode:AddTrans("enUS", "MASKBUFFSANDDEBUFFS", "Add additional Border to Buffs and Debuffs")
+DarkMode:AddTrans("enUS", "MASKMINIMAPBUTTONS", "Add additional Border to Minimapbuttons")
+DarkMode:AddTrans("enUS", "THINBORDERS", "Thin Borders")
+DarkMode:AddTrans("enUS", "COLORMODENP", "Color Mode Nameplates")
+DarkMode:AddTrans("enUS", "CUSTOMNPC", "Custom Nameplates Color")
