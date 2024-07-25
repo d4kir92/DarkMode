@@ -914,10 +914,18 @@ function DarkMode:SearchUi(from)
 			if name then
 				local mbtn = _G[name]
 				if mbtn and _G[name .. "DMBorder"] == nil then
-					local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
-					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-					border:SetAllPoints(mbtn)
-					DarkMode:UpdateColor(border, "ui")
+					if mbtn.Background then
+						local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+						border:SetSize(32, 64)
+						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
+						DarkMode:UpdateColor(border, "ui")
+					else
+						local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+						border:SetAllPoints(mbtn)
+						DarkMode:UpdateColor(border, "ui")
+					end
 				end
 			end
 		end
