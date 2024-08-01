@@ -3,7 +3,7 @@ local _, DarkMode = ...
 DarkMode:AddTrans("enUS", "MMBTNLEFT", "Left Click => Options")
 DarkMode:AddTrans("enUS", "MMBTNRIGHT", "Right Click => Hide Minimap Button")
 DarkMode:AddTrans("enUS", "GENERAL", "General")
-DarkMode:AddTrans("enUS", "SHOWMINIMAPBUTTON", "Show Minimap Button")
+DarkMode:AddTrans("enUS", "MMBTN", "Show Minimap Button")
 DarkMode:AddTrans("enUS", "COLORMODE", "Color Mode Ui")
 DarkMode:AddTrans("enUS", "COLORMODEUF", "Color Mode UnitFrames")
 DarkMode:AddTrans("enUS", "COLORMODETT", "Color Mode Tooltips")

@@ -86,17 +86,17 @@ function DarkMode:SetElePoint(key, p1, p2, p3, p4, p5)
 	end
 end
 
-function DarkMode:SV(name, value)
+function DarkMode:DMSV(name, value)
 	DMTAB = DMTAB or {}
 	DMTAB["VALUES"] = DMTAB["VALUES"] or {}
 	DMTAB["VALUES"][name] = value
 end
 
-function DarkMode:GV(name, value)
+function DarkMode:DMGV(name, value)
 	DMTAB = DMTAB or {}
 	DMTAB["VALUES"] = DMTAB["VALUES"] or {}
 	if DMTAB["VALUES"][name] == nil then
-		DarkMode:SV(name, value)
+		DarkMode:DMSV(name, value)
 	end
 
 	return DMTAB["VALUES"][name] or value

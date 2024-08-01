@@ -56,49 +56,49 @@ function DarkMode:GetBrighterColor(r, g, b, a, texture)
 end
 
 function DarkMode:GetUiColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODE", 1), "CUSTOMUIC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODE", 1), "CUSTOMUIC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetUFColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEUF", 1), "CUSTOMUFC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEUF", 1), "CUSTOMUFC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetNPColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODENP", 1), "CUSTOMNPC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODENP", 1), "CUSTOMNPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetTTColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODETT", 1), "CUSTOMTTC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODETT", 1), "CUSTOMTTC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetActionButtonsColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEAB", 1), "CUSTOMABC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEAB", 1), "CUSTOMABC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetBuffsAndDebuffsColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEBAD", 1), "CUSTOMBADC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEBAD", 1), "CUSTOMBADC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
 end
 
 function DarkMode:GetFrameColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:GV("COLORMODEF", 1), "CUSTOMFRC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEF", 1), "CUSTOMFRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
@@ -192,7 +192,7 @@ function DarkMode:GetFrameTableSpecial()
 	return DMFramesSpecial
 end
 
-local DMFramesAddons = {"ReforgingFrameRestoreButton_RightSeparator", "ReforgingFrameRestoreButton_LeftSeparator", "ReforgingFrameButtonFrame", "ReforgingFrame", "WeeklyRewardsFrame", "ItemSocketingFrame", "ChannelFrameBg", "ChannelFrame.ChannelRoster.ScrollFrame.scrollBar", "ChannelFrame", "CommunitiesFrame.ChatTab", "CommunitiesFrame.RosterTab", "CommunitiesFrame.GuildBenefitsTab", "CommunitiesFrame.GuildInfoTab", "CommunitiesFrame.GuildMemberDetailFrame.Border", "WarGameStartButton_RightSeparator", "WarGamesFrame", "WarGamesFrameBGTex", "WarGamesFrameInfoScrollFrameScrollBar", "WarGamesFrameInfoScrollFrame.ScrollBar.Background", "WarGamesFrame.scrollBar", "PVPConquestFrame", "PVPFrameRightButton_LeftSeparator", "PVPHonorFrameBGTex", "PVPHonorFrameInfoScrollFrameScrollBar", "PVPHonorFrameInfoScrollFrame.ScrollBar.Background", "PVPHonorFrame.bgTypeScrollBar", "PVPTeamManagementFrame", "ProfessionsBookFrame", "PlayerSpellsFrame", "ScrappingMachineFrame", "ECS_StatsFrame", "TrinketMenu_MainFrame", "TrinketMenu_Trinket0.NormalTexture", "TrinketMenu_Trinket1.NormalTexture", "ProfessionsCustomerOrdersFrame", "VoidStorageBorderFrame", "VoidStorageFrame.Page1", "VoidStorageFrame.Page2", "VoidStorageFrame.Page3", "WardrobeFrame", "WardrobeCollectionFrame", "ProfessionsFrame", "ProfessionsFrame.CraftingPage", "ProfessionsFrame.TabSystem", "ItemInteractionFrame", "ItemInteractionFrame.ItemConversionFrame", "InspectTalentFrame", "InspectTalentFramePointsBar", "InspectPVPFrame", "InspectHonorFrame", "StaticPopup1", "StaticPopup2", "ItemUpgradeFrame", "InspectPaperDollFrame", "InspectFrameTab1", "InspectFrameTab2", "InspectFrameTab3", "EngravingFrame", "EngravingFrame.Border", "EngravingFrameSideInset", "WeakAurasOptions", "GenericTraitFrame.NineSlice", "EditModeManagerFrame.Border", "ClassTrainerFrame", "ClassTrainerListScrollFrame", "ClassTrainerExpandButtonFrame", "KeyBindingFrame", "KeyBindingFrame.header", "MacroFrame", "MacroFrameTab1", "MacroFrameTab2", "MacroFrameTextBackground", "MacroButtonScrollFrame", "MacroFrame.MacroSelector.ScrollBar.Background", "TradeSkillFrame", "CraftFrame", "TradeSkillList", "AuctionFrame", "AuctionFrameTab1", "AuctionFrameTab2", "AuctionFrameTab3", "AuctionFrameTab4", "AuctionFrameTab5", "AuctionFrameTab6", "AuctionFrameTab7", "AuctionFrameTab8", "AuctionFrameTab9", "AuctionFrameTab10", "AuctionFrameTab11", "AuctionFrameTab12", "BrowseBidButton", "BrowseBuyoutButton", "BrowseCloseButton", "BidBidButton", "BidBuyoutButton", "BidCloseButton", "AuctionHouseFrame", "AuctionHouseFrameBuyTab", "AuctionHouseFrameSellTab", "AuctionHouseFrameAuctionsTab", "PlayerTalentFrame", "PlayerTalentFramePointsBar", "PlayerTalentFrameTab1", "PlayerTalentFrameTab2", "PlayerTalentFrameTab3", "PlayerTalentFrameTab4", "PlayerTalentFrameTab5", "ClassTalentFrame", "ClassTalentFrame.TabSystem", "ClassTalentFrame.TalentsTab.BottomBar", "AchievementFrame", "AchievementFrame.Header", "AchievementFrameTab1", "AchievementFrameTab2", "AchievementFrameTab3", "AchievementFrameTab4", "AchievementFrameHeader", "AchievementFrameCategories", "AchievementFrameSummary", "CommunitiesFrame", "CommunitiesFrameCommunitiesList", "CommunitiesFrame.MemberList", "CommunitiesFrame.Chat.MessageFrame.ScrollBar", "CollectionsJournal", "CollectionsJournalTab1", "CollectionsJournalTab2", "CollectionsJournalTab3", "CollectionsJournalTab4", "CollectionsJournalTab5", "CollectionsJournalTab6", "WardrobeCollectionFrame", "WardrobeCollectionFrame.ItemsCollectionFrame", "ToyBox", "ToyBox.iconsFrame", "HeirloomsJournal", "HeirloomsJournal.iconsFrame", "EncounterJournal", "EncounterJournalMonthlyActivitiesTab", "EncounterJournalSuggestTab", "EncounterJournalDungeonTab", "EncounterJournalRaidTab", "EncounterJournalLootJournalTab", "EncounterJournalInstanceSelect", "CalendarFrame",}
+local DMFramesAddons = {"MacroPopupFrame.BorderBox", "ReforgingFrameRestoreButton_RightSeparator", "ReforgingFrameRestoreButton_LeftSeparator", "ReforgingFrameButtonFrame", "ReforgingFrame", "WeeklyRewardsFrame", "ItemSocketingFrame", "ChannelFrameBg", "ChannelFrame.ChannelRoster.ScrollFrame.scrollBar", "ChannelFrame", "CommunitiesFrame.ChatTab", "CommunitiesFrame.RosterTab", "CommunitiesFrame.GuildBenefitsTab", "CommunitiesFrame.GuildInfoTab", "CommunitiesFrame.GuildMemberDetailFrame.Border", "WarGameStartButton_RightSeparator", "WarGamesFrame", "WarGamesFrameBGTex", "WarGamesFrameInfoScrollFrameScrollBar", "WarGamesFrameInfoScrollFrame.ScrollBar.Background", "WarGamesFrame.scrollBar", "PVPConquestFrame", "PVPFrameRightButton_LeftSeparator", "PVPHonorFrameBGTex", "PVPHonorFrameInfoScrollFrameScrollBar", "PVPHonorFrameInfoScrollFrame.ScrollBar.Background", "PVPHonorFrame.bgTypeScrollBar", "PVPTeamManagementFrame", "ProfessionsBookFrame", "PlayerSpellsFrame", "ScrappingMachineFrame", "ECS_StatsFrame", "TrinketMenu_MainFrame", "TrinketMenu_Trinket0.NormalTexture", "TrinketMenu_Trinket1.NormalTexture", "ProfessionsCustomerOrdersFrame", "VoidStorageBorderFrame", "VoidStorageFrame.Page1", "VoidStorageFrame.Page2", "VoidStorageFrame.Page3", "WardrobeFrame", "WardrobeCollectionFrame", "ProfessionsFrame", "ProfessionsFrame.CraftingPage", "ProfessionsFrame.TabSystem", "ItemInteractionFrame", "ItemInteractionFrame.ItemConversionFrame", "InspectTalentFrame", "InspectTalentFramePointsBar", "InspectPVPFrame", "InspectHonorFrame", "StaticPopup1", "StaticPopup2", "ItemUpgradeFrame", "InspectPaperDollFrame", "InspectFrameTab1", "InspectFrameTab2", "InspectFrameTab3", "EngravingFrame", "EngravingFrame.Border", "EngravingFrameSideInset", "WeakAurasOptions", "GenericTraitFrame.NineSlice", "EditModeManagerFrame.Border", "ClassTrainerFrame", "ClassTrainerListScrollFrame", "ClassTrainerExpandButtonFrame", "KeyBindingFrame", "KeyBindingFrame.header", "MacroFrame", "MacroFrameTab1", "MacroFrameTab2", "MacroFrameTextBackground", "MacroButtonScrollFrame", "MacroFrame.MacroSelector.ScrollBar.Background", "TradeSkillFrame", "CraftFrame", "TradeSkillList", "AuctionFrame", "AuctionFrameTab1", "AuctionFrameTab2", "AuctionFrameTab3", "AuctionFrameTab4", "AuctionFrameTab5", "AuctionFrameTab6", "AuctionFrameTab7", "AuctionFrameTab8", "AuctionFrameTab9", "AuctionFrameTab10", "AuctionFrameTab11", "AuctionFrameTab12", "BrowseBidButton", "BrowseBuyoutButton", "BrowseCloseButton", "BidBidButton", "BidBuyoutButton", "BidCloseButton", "AuctionHouseFrame", "AuctionHouseFrameBuyTab", "AuctionHouseFrameSellTab", "AuctionHouseFrameAuctionsTab", "PlayerTalentFrame", "PlayerTalentFramePointsBar", "PlayerTalentFrameTab1", "PlayerTalentFrameTab2", "PlayerTalentFrameTab3", "PlayerTalentFrameTab4", "PlayerTalentFrameTab5", "ClassTalentFrame", "ClassTalentFrame.TabSystem", "ClassTalentFrame.TalentsTab.BottomBar", "AchievementFrame", "AchievementFrame.Header", "AchievementFrameTab1", "AchievementFrameTab2", "AchievementFrameTab3", "AchievementFrameTab4", "AchievementFrameHeader", "AchievementFrameCategories", "AchievementFrameSummary", "CommunitiesFrame", "CommunitiesFrameCommunitiesList", "CommunitiesFrame.MemberList", "CommunitiesFrame.Chat.MessageFrame.ScrollBar", "CollectionsJournal", "CollectionsJournalTab1", "CollectionsJournalTab2", "CollectionsJournalTab3", "CollectionsJournalTab4", "CollectionsJournalTab5", "CollectionsJournalTab6", "WardrobeCollectionFrame", "WardrobeCollectionFrame.ItemsCollectionFrame", "ToyBox", "ToyBox.iconsFrame", "HeirloomsJournal", "HeirloomsJournal.iconsFrame", "EncounterJournal", "EncounterJournalMonthlyActivitiesTab", "EncounterJournalSuggestTab", "EncounterJournalDungeonTab", "EncounterJournalRaidTab", "EncounterJournalLootJournalTab", "EncounterJournalInstanceSelect", "CalendarFrame",}
 function DarkMode:GetFrameAddonsTable()
 	return DMFramesAddons
 end

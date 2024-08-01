@@ -1,7 +1,6 @@
 local _, DarkMode = ...
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
-local DMMMBTN = nil
 local debug = 0
 function DarkMode:Debug(num, msg, ...)
 	if debug > 0 and debug == num or debug == 11 then
@@ -422,7 +421,7 @@ end
 
 function DarkMode:FindTextsByName(name)
 	local frame = DarkMode:GetFrame(name)
-	if frame and DarkMode:GV("COLORMODEF", 1) ~= 7 then
+	if frame and DarkMode:DMGV("COLORMODEF", 1) ~= 7 then
 		DarkMode:FindTexts(frame, name)
 	end
 end
@@ -703,7 +702,7 @@ function DarkMode:SearchUi(from)
 						local btn = _G[name .. x]
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
-						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
@@ -846,7 +845,7 @@ function DarkMode:SearchUi(from)
 									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
 									DarkMode:UpdateColor(border, "actionbuttons")
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:GV("COLORMODEAB", 1) ~= "Off" and DarkMode:GV("COLORMODEAB", 1) ~= "Default" then
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
@@ -1020,6 +1019,7 @@ function DarkMode:SearchUi(from)
 		1.1,
 		function()
 			DarkMode:Debug(5, "#6")
+			local DMMMBTN = LibStub("LibDBIcon-1.0", true)
 			if DMMMBTN then
 				for i, name in pairs(DMMMBTN:GetButtonList()) do
 					local btn = _G["LibDBIcon10_" .. name]
@@ -1121,7 +1121,7 @@ npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 npf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
-		if DarkMode:GV("COLORMODENP", 1) == "Off" then return end
+		if DarkMode:DMGV("COLORMODENP", 1) == "Off" then return end
 		local id = string.sub(name, 10)
 		if nameplateIds[id] == nil then
 			C_Timer.After(
@@ -1575,77 +1575,32 @@ function DarkMode:Event(event, ...)
 			end
 
 			if UIParent.SetFixedFrameStrata then
-				function DarkMode:UpdateMinimapButton()
-					if DMMMBTN then
-						if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-							DMMMBTN:Show("DarkModeMinimapIcon")
+				C_Timer.After(
+					1,
+					function()
+						DarkMode:CreateMinimapButton(
+							{
+								["name"] = "DarkMode",
+								["icon"] = 136122,
+								["dbtab"] = DMTAB,
+								["vTT"] = {"DarkMode", DarkMode:Trans("MMBTNLEFT"), DarkMode:Trans("MMBTNRIGHT")},
+								["funcL"] = function()
+									DarkMode:ToggleSettings()
+								end,
+								["funcR"] = function()
+									DarkMode:SV(DMTAB, "MMBTN", false)
+									DarkMode:HideMMBtn("DarkMode")
+								end,
+							}
+						)
+
+						if DarkMode:GV(DMTAB, "MMBTN", true) then
+							DarkMode:ShowMMBtn("DarkMode")
 						else
-							DMMMBTN:Hide("DarkModeMinimapIcon")
+							DarkMode:HideMMBtn("DarkMode")
 						end
 					end
-				end
-
-				function DarkMode:ToggleMinimapButton()
-					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", not DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true))
-					if DMMMBTN then
-						if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-							DMMMBTN:Show("DarkModeMinimapIcon")
-						else
-							DMMMBTN:Hide("DarkModeMinimapIcon")
-						end
-					end
-				end
-
-				function DarkMode:HideMinimapButton()
-					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", false)
-					if DMMMBTN then
-						DMMMBTN:Hide("DarkModeMinimapIcon")
-					end
-				end
-
-				function DarkMode:ShowMinimapButton()
-					DarkMode:SetEnabled("SHOWMINIMAPBUTTON", true)
-					if DMMMBTN then
-						DMMMBTN:Show("DarkModeMinimapIcon")
-					end
-				end
-
-				local DarkModeMinimapIcon = LibStub("LibDataBroker-1.1"):NewDataObject(
-					"DarkModeMinimapIcon",
-					{
-						type = "data source",
-						text = "DarkModeMinimapIcon",
-						icon = 136122,
-						OnClick = function(sel, btn)
-							if btn == "LeftButton" then
-								DarkMode:ToggleSettings()
-							elseif btn == "RightButton" then
-								DarkMode:HideMinimapButton()
-							end
-						end,
-						OnTooltipShow = function(tooltip)
-							if not tooltip or not tooltip.AddLine then return end
-							tooltip:AddLine("DarkMode")
-							tooltip:AddLine(DarkMode:Trans("MMBTNLEFT"))
-							tooltip:AddLine(DarkMode:Trans("MMBTNRIGHT"))
-						end,
-					}
 				)
-
-				if DarkModeMinimapIcon then
-					DMMMBTN = LibStub("LibDBIcon-1.0", true)
-					if DMMMBTN then
-						DMMMBTN:Register("DarkModeMinimapIcon", DarkModeMinimapIcon, DarkMode:GetMinimapTable())
-					end
-				end
-
-				if DMMMBTN then
-					if DarkMode:IsEnabled("SHOWMINIMAPBUTTON", true) then
-						DMMMBTN:Show("DarkModeMinimapIcon")
-					else
-						DMMMBTN:Hide("DarkModeMinimapIcon")
-					end
-				end
 			end
 		end
 	elseif event == "ADDON_LOADED" then

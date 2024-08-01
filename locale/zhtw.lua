@@ -3,7 +3,7 @@ local _, DarkMode = ...
 DarkMode:AddTrans("zhTW", "MMBTNLEFT", "左鍵點擊 => 選項設定")
 DarkMode:AddTrans("zhTW", "MMBTNRIGHT", "右鍵點擊 => 隱藏小地圖按鈕")
 DarkMode:AddTrans("zhTW", "GENERAL", "一般")
-DarkMode:AddTrans("zhTW", "SHOWMINIMAPBUTTON", "顯示小地圖按鈕")
+DarkMode:AddTrans("zhTW", "MMBTN", "顯示小地圖按鈕")
 DarkMode:AddTrans("zhTW", "COLORMODE", "介面著色")
 DarkMode:AddTrans("zhTW", "COLORMODEUF", "單位框架著色")
 DarkMode:AddTrans("zhTW", "COLORMODETT", "滑鼠提示著色")

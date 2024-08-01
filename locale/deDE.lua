@@ -3,7 +3,7 @@ local _, DarkMode = ...
 DarkMode:AddTrans("deDE", "MMBTNLEFT", "Linksklick => Optionen")
 DarkMode:AddTrans("deDE", "MMBTNRIGHT", "Rechtsklick => Minimapknopf verstecken")
 DarkMode:AddTrans("deDE", "GENERAL", "Allgemein")
-DarkMode:AddTrans("deDE", "SHOWMINIMAPBUTTON", "Minimapknopf anzeigen")
+DarkMode:AddTrans("deDE", "MMBTN", "Minimapknopf anzeigen")
 DarkMode:AddTrans("deDE", "COLORMODE", "Farbmodus Ui")
 DarkMode:AddTrans("deDE", "COLORMODEUF", "Farbmodus Einheitenfenster")
 DarkMode:AddTrans("deDE", "COLORMODETT", "Farbmodus Tooltips")
