@@ -1,7 +1,9 @@
 -- zhCN
 local _, DarkMode = ...
-DarkMode:AddTrans("zhCN", "MMBTNLEFT", "左键点击 => 菜单选项")
-DarkMode:AddTrans("zhCN", "MMBTNRIGHT", "右键点击 => 隐藏小地图按钮")
+DarkMode:AddTrans("zhCN", "LEFTCLICK", "左键点击")
+DarkMode:AddTrans("zhCN", "RIGHTCLICK", "右键点击")
+DarkMode:AddTrans("zhCN", "MMBTNLEFT", "菜单选项")
+DarkMode:AddTrans("zhCN", "MMBTNRIGHT", "隐藏小地图按钮")
 DarkMode:AddTrans("zhCN", "GENERAL", "常规")
 DarkMode:AddTrans("zhCN", "MMBTN", "显示小地图按钮")
 DarkMode:AddTrans("zhCN", "COLORMODE", "界面染色")
