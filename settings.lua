@@ -289,8 +289,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.75")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.75"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.76")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.76"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -305,8 +305,9 @@ function DarkMode:InitDMSettings()
 			4,
 			"MMBTN",
 			true,
-			function(val)
+			function(sel, val)
 				DarkMode:SV(DMTAB, "MMBTN", val)
+				print(DarkMode:GV(DMTAB, "MMBTN", true))
 				if DarkMode:GV(DMTAB, "MMBTN", val) then
 					DarkMode:ShowMMBtn("DarkMode")
 				else
