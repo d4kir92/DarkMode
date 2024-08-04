@@ -1583,7 +1583,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.76"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.77"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
@@ -1594,8 +1594,7 @@ function DarkMode:Event(event, ...)
 							}
 						)
 
-						print(DarkMode:GV(DMTAB, "MMBTN", true))
-						if DarkMode:GV(DMTAB, "MMBTN", true) then
+						if DarkMode:GV(DMTAB, "MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
 							DarkMode:ShowMMBtn("DarkMode")
 						else
 							DarkMode:HideMMBtn("DarkMode")
