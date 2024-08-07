@@ -152,7 +152,7 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 
 				if valu and valu ~= DarkMode:DMGV(key) then
 					if type(vmin) == "number" then
-						DarkMode:DMDMSV(key, valu)
+						DarkMode:DMSV(key, valu)
 						if sls[key].Text then
 							sls[key].Text:SetText(DarkMode:Trans(key) .. ": " .. valu)
 						else
@@ -289,8 +289,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.78")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.78"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.79")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.79"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
