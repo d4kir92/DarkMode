@@ -1540,17 +1540,14 @@ function DarkMode:Event(event, ...)
 				if spellbar then
 					local icon = spellbar.Icon
 					if icon then
-						local frame = CreateFrame("FRAME", v .. ".BorderDM", spellbar)
-						frame:SetFrameLevel(10)
 						local scale = 1.1
 						local sw, sh = icon:GetSize()
 						sw = DarkMode:MathR(sw)
 						sh = DarkMode:MathR(sh)
-						frame:SetSize(sw * scale, sh * scale)
-						frame:SetPoint("CENTER", icon, "CENTER", 0, 0)
-						_G[v .. "BorderDM"] = frame:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
+						_G[v .. "BorderDM"] = spellbar:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
 						local border = _G[v .. "BorderDM"]
-						border:SetAllPoints(frame)
+						border:SetSize(sw * scale, sh * scale)
+						border:SetPoint("CENTER", icon, "CENTER", 0, 0)
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
 						border:SetDrawLayer("OVERLAY", 7)
 						DarkMode:UpdateColor(border, "buffsanddebuffs")
@@ -1613,7 +1610,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.80"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.81"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
