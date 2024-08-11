@@ -1192,6 +1192,7 @@ end
 
 local AuraFrames = {}
 local TargetBuffs = {}
+local FocusBuffs = {}
 local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}
 function DarkMode:Event(event, ...)
@@ -1448,8 +1449,13 @@ function DarkMode:Event(event, ...)
 							for index = 1, 32 do
 								local btn = _G[buttonName .. index]
 								local MSQ = LibStub("Masque", true)
-								if btn and TargetBuffs[index] == nil then
-									TargetBuffs[index] = true
+								if btn and ((frame == TargetFrame and TargetBuffs[index] == nil) or (frame == FocusFrame and FocusBuffs[index] == nil)) then
+									if frame == TargetFrame then
+										TargetBuffs[index] = true
+									elseif frame == TargetFrame then
+										FocusBuffs[index] = true
+									end
+
 									DarkMode:Debug(3, "TargetFrame_UpdateAuras Added index", index)
 									if MSQ and btn then
 										if btn.__MSQ_Mask then
@@ -1528,6 +1534,30 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
+			local castbars = {"TargetFrameSpellBar", "FocusFrameSpellBar"}
+			for index, v in pairs(castbars) do
+				local spellbar = _G[v]
+				if spellbar then
+					local icon = spellbar.Icon
+					if icon then
+						local frame = CreateFrame("FRAME", v .. ".BorderDM", spellbar)
+						frame:SetFrameLevel(10)
+						local scale = 1.1
+						local sw, sh = icon:GetSize()
+						sw = DarkMode:MathR(sw)
+						sh = DarkMode:MathR(sh)
+						frame:SetSize(sw * scale, sh * scale)
+						frame:SetPoint("CENTER", icon, "CENTER", 0, 0)
+						_G[v .. "BorderDM"] = frame:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
+						local border = _G[v .. "BorderDM"]
+						border:SetAllPoints(frame)
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+						border:SetDrawLayer("OVERLAY", 7)
+						DarkMode:UpdateColor(border, "buffsanddebuffs")
+					end
+				end
+			end
+
 			C_Timer.After(
 				0.1,
 				function()
@@ -1583,7 +1613,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.79"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.80"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
