@@ -1510,13 +1510,15 @@ function DarkMode:Event(event, ...)
 												local border = _G[buttonName .. index .. "BorderDM"]
 												border:SetDrawLayer("OVERLAY", 3)
 												hooksecurefunc(
-													btn,
-													"SetSize",
-													function(sel, w, h)
-														if sel.dm_setsize then return end
-														sel.dm_setsize = true
+													"TargetFrame_UpdateAuras",
+													function()
+														local w, h = btn:GetSize()
+														w = DarkMode:MathR(w)
+														h = DarkMode:MathR(h)
+														if btn.dm_setsize then return end
+														btn.dm_setsize = true
 														border:SetSize(w * scale, h * scale)
-														sel.dm_setsize = false
+														btn.dm_setsize = false
 													end
 												)
 
@@ -1610,7 +1612,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.81"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.82"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
