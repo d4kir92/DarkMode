@@ -1132,6 +1132,7 @@ npf:SetScript(
 						nameplateIds[id] = true
 						DarkMode:Debug(4, "#8 added")
 						DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
+						DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
 					end
 				end
 			)
@@ -1220,8 +1221,10 @@ function DarkMode:Event(event, ...)
 			}
 
 			local chatSpecialButtons = {
-				["ChatFrameMenuButton"] = {0.77, 0, 0},
-				["ChatFrameChannelButton"] = {0.94, 0, 0}
+				["ChatFrameMenuButton"] = {0.8, 0.77, 0, 0},
+				["ChatFrameChannelButton"] = {0.94, 0.94, 0, 0},
+				["FriendsMicroButton"] = {0.76, 0.98, -1, 0},
+				["QuickJoinToastButton"] = {0.76, 0.98, -1, 0},
 			}
 
 			if ChatFrame1ButtonFrameBottomButton then
@@ -1255,23 +1258,25 @@ function DarkMode:Event(event, ...)
 						end
 					end
 				end
+			end
 
-				for btnName, btnTab in pairs(chatSpecialButtons) do
-					local btn = _G[btnName]
-					if btn then
-						local scale = btnTab[1]
-						local px = btnTab[2]
-						local py = btnTab[3]
-						local _, sh = btn:GetSize()
-						sh = DarkMode:MathR(sh)
-						btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
-						local border = btn.border
-						border:SetDrawLayer("OVERLAY", 3)
-						border:SetSize(sh * scale, sh * scale)
-						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-						border:SetPoint("CENTER", btn, "CENTER", px, py)
-						DarkMode:UpdateColor(border, "frames")
-					end
+			for btnName, btnTab in pairs(chatSpecialButtons) do
+				local btn = _G[btnName]
+				if btn then
+					local scalew = btnTab[1]
+					local scaleh = btnTab[2]
+					local px = btnTab[3]
+					local py = btnTab[4]
+					local sw, sh = btn:GetSize()
+					sw = DarkMode:MathR(sw)
+					sh = DarkMode:MathR(sh)
+					btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
+					local border = btn.border
+					border:SetDrawLayer("OVERLAY", 3)
+					border:SetSize(sw * scalew, sh * scaleh)
+					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
+					border:SetPoint("CENTER", btn, "CENTER", px, py)
+					DarkMode:UpdateColor(border, "frames")
 				end
 			end
 
@@ -1612,7 +1617,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.83"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.84"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
