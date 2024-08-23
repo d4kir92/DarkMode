@@ -50,7 +50,7 @@ end
 
 function DarkMode:GetBrighterColor(r, g, b, a, texture)
 	local name = DarkMode:GetName(texture)
-	if name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
+	if r and g and b and name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
 
 	return r, g, b, a
 end
