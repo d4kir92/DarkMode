@@ -1119,39 +1119,49 @@ local nameplateIds = {}
 local failedNameplateIds = {}
 local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
+function DarkMode:ColorNameplate(id)
+	if nameplateIds[id] == nil and _G["NamePlate" .. id] then
+		if _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["healthBar"] then
+			nameplateIds[id] = true
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
+		elseif _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] then
+			nameplateIds[id] = true
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer", "np")
+		end
+	end
+
+	return nameplateIds[id] ~= nil
+end
+
 npf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
 		if DarkMode:DMGV("COLORMODENP", 1) == "Off" then return end
 		local id = string.sub(name, 10)
-		if nameplateIds[id] == nil then
-			DarkMode:Debug(4, "#8 NAME_PLATE_UNIT_ADDED", name, id)
-			if nameplateIds[id] == nil then
-				if _G["NamePlate" .. id] and _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["healthBar"] then
-					nameplateIds[id] = true
-					DarkMode:Debug(4, "#8 added")
-					DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
-					DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
-				else
-					C_Timer.After(
-						0.25,
-						function()
-							DarkMode:Debug(4, "#9 NAME_PLATE_UNIT_ADDED", name, id)
-							if nameplateIds[id] == nil then
-								if _G["NamePlate" .. id] and _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["healthBar"] then
-									nameplateIds[id] = true
-									DarkMode:Debug(4, "#8 added")
-									DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
-									DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
-								elseif failedNameplateIds[id] == nil then
+		local worked = DarkMode:ColorNameplate(id)
+		if not worked then
+			print("NOT WORKED 1")
+			C_Timer.After(
+				0.15,
+				function()
+					worked = DarkMode:ColorNameplate(id)
+					if not worked then
+						print("NOT WORKED 2")
+						C_Timer.After(
+							0.25,
+							function()
+								worked = DarkMode:ColorNameplate(id)
+								print("NOT WORKED 3", worked)
+								if not worked and failedNameplateIds[id] == nil then
 									failedNameplateIds[id] = true
 									DarkMode:MSG("FAILED TO ADD DARKMODE ON NAMEPLATE", id)
 								end
 							end
-						end
-					)
+						)
+					end
 				end
-			end
+			)
 		end
 	end
 )
@@ -1633,7 +1643,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.87"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.88"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
