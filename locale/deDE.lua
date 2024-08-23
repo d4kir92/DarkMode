@@ -25,3 +25,4 @@ DarkMode:AddTrans("deDE", "MASKMINIMAPBUTTONS", "Zusätzlichen Rand für Minimap
 DarkMode:AddTrans("deDE", "THINBORDERS", "Dünne Ränder")
 DarkMode:AddTrans("deDE", "COLORMODENP", "Farbmodus Namensplaketten")
 DarkMode:AddTrans("deDE", "CUSTOMNPC", "Benutzerdefinierte Namensplaketten Farbe")
+DarkMode:AddTrans("deDE", "COLORMODEG", "Allgemeiner Farbmodus")

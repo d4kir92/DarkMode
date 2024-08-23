@@ -25,3 +25,4 @@ DarkMode:AddTrans("enUS", "MASKMINIMAPBUTTONS", "Add additional Border to Minima
 DarkMode:AddTrans("enUS", "THINBORDERS", "Thin Borders")
 DarkMode:AddTrans("enUS", "COLORMODENP", "Color Mode Nameplates")
 DarkMode:AddTrans("enUS", "CUSTOMNPC", "Custom Nameplates Color")
+DarkMode:AddTrans("enUS", "COLORMODEG", "General Color Mode")

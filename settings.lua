@@ -1,4 +1,5 @@
 local AddonName, DarkMode = ...
+local sliders = {}
 local searchStr = ""
 local posy = -4
 local cas = {}
@@ -80,11 +81,12 @@ local function AddCheckBox(x, key, val, func)
 	end
 end
 
-local function AddSlider(x, key, val, func, vmin, vmax, steps)
+local function AddSlider(x, key, val, func, vmin, vmax, steps, keys)
 	if sls[key] == nil then
 		sls[key] = CreateFrame("Slider", "sls[" .. key .. "]", DMSettings.SC, "OptionsSliderTemplate")
 		sls[key]:SetWidth(DMSettings.SC:GetWidth() - 30 - x)
 		sls[key]:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy)
+		sls[key].key = key
 		sls[key].SetText = function(self, text)
 			if sls[key].Text then
 				sls[key].Text:SetText(text)
@@ -153,17 +155,43 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps)
 				if valu and valu ~= DarkMode:DMGV(key) then
 					if type(vmin) == "number" then
 						DarkMode:DMSV(key, valu)
+						if keys then
+							for i, v in pairs(keys) do
+								DarkMode:DMSV(v, valu)
+							end
+						end
+
 						if sls[key].Text then
 							sls[key].Text:SetText(DarkMode:Trans(key) .. ": " .. valu)
 						else
 							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans(key) .. ": " .. valu)
 						end
+
+						if keys then
+							for i, v in pairs(sliders) do
+								v:SetValue(DarkMode:DMGV(v.key, valu))
+								v.Text:SetText(DarkMode:Trans(v.key) .. ": " .. DarkMode:GetColorModes()[valu])
+							end
+						end
 					else
 						DarkMode:DMSV(key, valu)
+						if keys then
+							for i, v in pairs(keys) do
+								DarkMode:DMSV(v, valu)
+							end
+						end
+
 						if sls[key].Text then
 							sls[key].Text:SetText(DarkMode:Trans(key) .. ": " .. vmin[valu])
 						else
 							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans(key) .. ": " .. vmin[valu])
+						end
+
+						if keys then
+							for i, v in pairs(sliders) do
+								v:SetValue(DarkMode:DMGV(v.key, valu))
+								v.Text:SetText(DarkMode:Trans(v.key) .. ": " .. vmin[valu])
+							end
 						end
 					end
 
@@ -289,8 +317,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.86")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.86"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.87")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.87"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
@@ -323,6 +351,17 @@ function DarkMode:InitDMSettings()
 		end
 
 		AddCheckBox(4, "GRYPHONS", true)
+		local gCM = AddSlider(
+			4,
+			"COLORMODEG",
+			DarkMode:DMGV("COLORMODEG", 1),
+			function(sel, val)
+				sel:SetText(DarkMode:Trans("COLORMODEG") .. ": " .. DarkMode:GetColorModes()[val])
+				DarkMode:UpdateColors()
+			end, 1, getn(DarkMode:GetColorModes()), 1, {"COLORMODE", "COLORMODEUF", "COLORMODENP", "COLORMODETT", "COLORMODEAB", "COLORMODEBAD", "COLORMODEF"}
+		)
+
+		gCM:SetText(DarkMode:Trans("COLORMODEG") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEG", 1)])
 		local sCM = AddSlider(
 			4,
 			"COLORMODE",
@@ -334,6 +373,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCM:SetText(DarkMode:Trans("COLORMODE") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODE", 1)])
+		tinsert(sliders, sCM)
 		--UF
 		DarkMode:AddColorPicker("CUSTOMUIC", DMSettings.SC, 0, 0)
 		local sCMUF = AddSlider(
@@ -347,6 +387,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMUF:SetText(DarkMode:Trans("COLORMODEUF") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEUF", 1)])
+		tinsert(sliders, sCMUF)
 		DarkMode:AddColorPicker("CUSTOMUFC", DMSettings.SC, 0, 0)
 		--NP
 		local sCMNP = AddSlider(
@@ -360,6 +401,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMNP:SetText(DarkMode:Trans("COLORMODENP") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODENP", 1)])
+		tinsert(sliders, sCMNP)
 		DarkMode:AddColorPicker("CUSTOMNPC", DMSettings.SC, 0, 0)
 		--TT
 		local sCMTT = AddSlider(
@@ -373,6 +415,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMTT:SetText(DarkMode:Trans("COLORMODETT") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODETT", 1)])
+		tinsert(sliders, sCMTT)
 		DarkMode:AddColorPicker("CUSTOMTTC", DMSettings.SC, 0, 0)
 		--AB
 		local sCMAB = AddSlider(
@@ -386,6 +429,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMAB:SetText(DarkMode:Trans("COLORMODEAB") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEAB", 1)])
+		tinsert(sliders, sCMAB)
 		DarkMode:AddColorPicker("CUSTOMABC", DMSettings.SC, 0, 0)
 		--BAD
 		local sCMBAD = AddSlider(
@@ -399,6 +443,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMBAD:SetText(DarkMode:Trans("COLORMODEBAD") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEBAD", 1)])
+		tinsert(sliders, sCMBAD)
 		DarkMode:AddColorPicker("CUSTOMBADC", DMSettings.SC, 0, 0)
 		--Frames
 		local sCMF = AddSlider(
@@ -412,6 +457,7 @@ function DarkMode:InitDMSettings()
 		)
 
 		sCMF:SetText(DarkMode:Trans("COLORMODEF") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEF", 1)])
+		tinsert(sliders, sCMF)
 		DarkMode:AddColorPicker("CUSTOMFRC", DMSettings.SC, 0, 0)
 	end
 
