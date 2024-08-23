@@ -1125,6 +1125,7 @@ function DarkMode:ColorNameplate(id)
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.healthBar.border", "np")
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.BorderShield", "np")
 		elseif _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] then
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer", "np")
@@ -1577,8 +1578,7 @@ function DarkMode:Event(event, ...)
 						local sw, sh = icon:GetSize()
 						sw = DarkMode:MathR(sw)
 						sh = DarkMode:MathR(sh)
-						_G[v .. "BorderDM"] = spellbar:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
-						local border = _G[v .. "BorderDM"]
+						local border = spellbar:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
 						border:SetSize(sw * scale, sh * scale)
 						border:SetPoint("CENTER", icon, "CENTER", 0, 0)
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
@@ -1643,7 +1643,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.88"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.89"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
