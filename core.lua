@@ -1142,18 +1142,15 @@ npf:SetScript(
 		local id = string.sub(name, 10)
 		local worked = DarkMode:ColorNameplate(id)
 		if not worked then
-			print("NOT WORKED 1")
 			C_Timer.After(
 				0.15,
 				function()
 					worked = DarkMode:ColorNameplate(id)
 					if not worked then
-						print("NOT WORKED 2")
 						C_Timer.After(
 							0.25,
 							function()
 								worked = DarkMode:ColorNameplate(id)
-								print("NOT WORKED 3", worked)
 								if not worked and failedNameplateIds[id] == nil then
 									failedNameplateIds[id] = true
 									DarkMode:MSG("FAILED TO ADD DARKMODE ON NAMEPLATE", id)
@@ -1643,7 +1640,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.91"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.93"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
