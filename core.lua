@@ -1138,7 +1138,7 @@ end
 npf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
-		if DarkMode:DMGV("COLORMODENP", 1) == "Off" then return end
+		if DarkMode:DMGV("COLORMODENP", 1) == 9 then return end
 		local id = string.sub(name, 10)
 		local worked = DarkMode:ColorNameplate(id)
 		if not worked then
@@ -1153,7 +1153,7 @@ npf:SetScript(
 								worked = DarkMode:ColorNameplate(id)
 								if not worked and failedNameplateIds[id] == nil then
 									failedNameplateIds[id] = true
-									DarkMode:MSG("FAILED TO ADD DARKMODE ON NAMEPLATE", id)
+									DarkMode:MSG("FAILED TO ADD DARKMODE ON NAMEPLATE", id, "If custom nameplates are installed, set Nameplates to 'Off' in DarkMode")
 								end
 							end
 						)
@@ -1640,7 +1640,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.94"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.95"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
