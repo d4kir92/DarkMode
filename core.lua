@@ -908,7 +908,7 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if QueueStatusButton and _G["QueueStatusButton" .. "DMBorder"] == nil then
+	--[[if QueueStatusButton and _G["QueueStatusButton" .. "DMBorder"] == nil then
 		local border = QueueStatusButton:CreateTexture("QueueStatusButton" .. "DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\eyeborder")
 		border:SetSize(QueueStatusButton:GetSize())
@@ -920,8 +920,7 @@ function DarkMode:SearchUi(from)
 		end
 
 		DarkMode:UpdateColor(border, "ui")
-	end
-
+	end]]
 	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
@@ -1654,7 +1653,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.98"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.99"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
