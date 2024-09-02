@@ -214,15 +214,43 @@ local function AddSlider(x, key, val, func, vmin, vmax, steps, keys)
 end
 
 function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
-	ColorPickerFrame.func = changedCallback
-	ColorPickerFrame.opacityFunc = changedCallback
-	ColorPickerFrame.swatchFunc = changedCallback
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-	ColorPickerFrame.previousValues = {r, g, b, a}
-	ColorPickerFrame:SetColorRGB(r, g, b)
-	ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
-	ColorPickerFrame:Hide() -- Need to run the OnShow handler.
-	ColorPickerFrame:Show()
+	if ColorPickerFrame.SetupColorPickerAndShow then
+		local info = {}
+		info.r = r
+		info.g = g
+		info.b = b
+		info.swatchFunc = changedCallback
+		info.hasOpacity = a ~= nil
+		info.opacityFunc = changedCallback
+		info.opacity = a
+		self.previousValues = {
+			r = info.r,
+			g = info.g,
+			b = info.b,
+			a = info.opacity
+		}
+
+		info.cancelFunc = nil
+		info.extraInfo = "TEST"
+		ColorPickerFrame:SetupColorPickerAndShow(info)
+	else
+		ColorPickerFrame.func = changedCallback
+		ColorPickerFrame.opacityFunc = changedCallback
+		ColorPickerFrame.swatchFunc = changedCallback
+		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
+		ColorPickerFrame.previousValues = {r, g, b, a}
+		if ColorPickerFrame.SetColorRGB then
+			ColorPickerFrame:SetColorRGB(r, g, b)
+		elseif ColorPickerFrame.Content.ColorSwatchCurrent.SetColorTexture then
+			ColorPickerFrame.Content.ColorSwatchCurrent:SetColorTexture(r, g, b)
+		else
+			DarkMode:MSG("Failed ColorPicker #1")
+		end
+
+		ColorPickerFrame.hasOpacity, ColorPickerFrame.opacity = a ~= nil, 1 - a
+		ColorPickerFrame:Hide() -- Need to run the OnShow handler.
+		ColorPickerFrame:Show()
+	end
 end
 
 function DarkMode:AddColorPicker(name, parent, x, y)
@@ -246,7 +274,13 @@ function DarkMode:AddColorPicker(name, parent, x, y)
 						if restore then
 							newR, newG, newB, newA = unpack(restore)
 						else
-							newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+							if OpacitySliderFrame then
+								newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+							elseif ColorPickerFrame.Content.ColorPicker.GetColorAlpha then
+								newA, newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorAlpha(), ColorPickerFrame:GetColorRGB()
+							else
+								DarkMode:MSG("Failed ColorPicker #2")
+							end
 						end
 
 						DarkMode:SetCustomColor(name, newR, newG, newB, newA)
@@ -317,8 +351,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.99")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.99"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.100")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.100"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
