@@ -320,6 +320,14 @@ function DarkMode:GetFrame(name)
 		end
 
 		if type(frame) == "table" then return frame end
+	elseif name:find("%[[0-9]+%]") then
+		local f = _G[name:gsub("%[[0-9]+%]", "")]
+		if f then
+			local regions = {f:GetRegions()}
+			local num = tonumber(name:match("[0-9]+"))
+
+			return regions[num]
+		end
 	end
 
 	return nil
@@ -1594,7 +1602,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.101"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.102"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
