@@ -1147,7 +1147,7 @@ function DarkMode:ColorAuraButton(btn, index, btnName, from)
 			local border = _G[name .. "Buff" .. index .. "BorderDM"]
 			border:SetDrawLayer("OVERLAY", 7)
 			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
-			border:SetPoint("CENTER", icon, "CENTER", 0, 0)
+			border:SetAllPoints(icon)
 			DarkMode:UpdateColor(border, "buffsanddebuffs")
 		end
 	else
@@ -1155,39 +1155,10 @@ function DarkMode:ColorAuraButton(btn, index, btnName, from)
 			_G[name .. "Buff" .. index .. "BorderDM"] = btn:CreateTexture(name .. "Buff" .. index .. "BorderDM", "OVERLAY")
 			local border = _G[name .. "Buff" .. index .. "BorderDM"]
 			border:SetDrawLayer("OVERLAY", 7)
-			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-			border:SetPoint("CENTER", icon, "CENTER", 0, 0)
+			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultbuff")
+			border:SetAllPoints(icon)
 			DarkMode:UpdateColor(border, "buffsanddebuffs")
 		end
-	end
-
-	local border = _G[name .. "Buff" .. index .. "BorderDM"]
-	if border then
-		local _, sh = icon:GetSize()
-		sh = DarkMode:MathR(sh)
-		local scale = 1.1
-		border:SetSize(sh * scale * icon:GetScale(), sh * scale * icon:GetScale())
-		hooksecurefunc(
-			btn,
-			"SetSize",
-			function(sel, w, h)
-				if sel.dm_setsize then return end
-				sel.dm_setsize = true
-				border:SetSize(sh * scale * icon:GetScale(), sh * scale * icon:GetScale())
-				sel.dm_setsize = false
-			end
-		)
-
-		hooksecurefunc(
-			btn,
-			"SetScale",
-			function(sel, w, h)
-				if sel.dm_setscale then return end
-				sel.dm_setscale = true
-				border:SetSize(sh * scale * btn.Icon:GetScale(), sh * scale * btn.Icon:GetScale())
-				sel.dm_setscale = false
-			end
-		)
 	end
 end
 
@@ -1623,7 +1594,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.100"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.101"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
