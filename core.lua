@@ -10,21 +10,35 @@ end
 
 local addonsDelay = 0
 local addonsRetry = false
-function DarkMode:AddonsSearch()
+function DarkMode:RetryAddonsSearch()
+	if addonsRetry and GetTime() > addonsDelay then
+		DarkMode:AddonsSearch("RETRY")
+	end
+
+	C_Timer.After(
+		0.1,
+		function()
+			DarkMode:RetryAddonsSearch()
+		end
+	)
+end
+
+DarkMode:RetryAddonsSearch()
+function DarkMode:AddonsSearch(from)
 	if GetTime() < addonsDelay then
 		addonsRetry = true
-		addonsDelay = GetTime() + 1
+		addonsDelay = GetTime() + 0.11
 
 		return
 	end
 
-	addonsDelay = GetTime() + 1
+	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
 	C_Timer.After(
-		0.07,
+		0.09,
 		function()
 			DarkMode:Debug(5, "#17")
-			DarkMode:SearchAddons()
+			DarkMode:SearchAddons(from)
 			if PlayerTalentFrame then
 				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
 					local tab = _G[v]
@@ -58,16 +72,6 @@ function DarkMode:AddonsSearch()
 
 				ClassTalentFrame:UpdateColors()
 			end
-
-			C_Timer.After(
-				1,
-				function()
-					if addonsRetry then
-						addonsRetry = false
-						DarkMode:AddonsSearch()
-					end
-				end
-			)
 		end
 	)
 end
@@ -666,7 +670,7 @@ end
 
 local foundAuctionator = false
 local foundExpansion = false
-function DarkMode:SearchAddons()
+function DarkMode:SearchAddons(from)
 	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
 		foundAuctionator = true
 		for i, v in pairs(AuctionatorAHTabsContainer.Tabs) do
@@ -1602,7 +1606,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.102"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.103"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
@@ -1623,7 +1627,8 @@ function DarkMode:Event(event, ...)
 			end
 		end
 	elseif event == "ADDON_LOADED" then
-		DarkMode:AddonsSearch()
+		local from = ...
+		DarkMode:AddonsSearch(from)
 	elseif event == "START_LOOT_ROLL" then
 		C_Timer.After(
 			0.1,
