@@ -1230,12 +1230,12 @@ npf:SetScript(
 		local worked = DarkMode:ColorNameplate(id)
 		if not worked then
 			C_Timer.After(
-				0.15,
+				0.16,
 				function()
 					worked = DarkMode:ColorNameplate(id)
 					if not worked then
 						C_Timer.After(
-							0.25,
+							0.31,
 							function()
 								worked = DarkMode:ColorNameplate(id)
 								if not worked and failedNameplateIds[id] == nil then
@@ -1606,7 +1606,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.106"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.107"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
