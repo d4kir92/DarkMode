@@ -662,8 +662,17 @@ function DarkMode:SearchFrames()
 	end
 
 	for index, name in pairs(DarkMode:GetFrameTable()) do
-		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-			DarkMode:FindTexturesByName(name .. v, "frames")
+		if name ~= "LootFrame" then
+			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+				DarkMode:FindTexturesByName(name .. v, "frames")
+			end
+		else
+			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+				-- BottomLeft and BottomRight Corner 
+				if v ~= ".Bg" and v ~= ".Background" then
+					DarkMode:FindTexturesByName(name .. v, "frames")
+				end
+			end
 		end
 	end
 end
@@ -691,6 +700,10 @@ function DarkMode:SearchAddons(from)
 				DarkMode:FindTextures(v.NineSlice, "frames")
 			end
 		end
+	end
+
+	for index, name in pairs(DarkMode:GetUiAddonsTable()) do
+		DarkMode:FindTexturesByName(name, "ui")
 	end
 end
 
@@ -1167,7 +1180,7 @@ function DarkMode:ColorAuraButton(btn, index, btnName, from)
 			_G[name .. "Buff" .. index .. "BorderDM"] = btn:CreateTexture(name .. "Buff" .. index .. "BorderDM", "OVERLAY")
 			local border = _G[name .. "Buff" .. index .. "BorderDM"]
 			border:SetDrawLayer("OVERLAY", 7)
-			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultbuff")
+			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultbuff2")
 			border:SetAllPoints(icon)
 			DarkMode:UpdateColor(border, "buffsanddebuffs")
 		end
@@ -1606,7 +1619,7 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.109"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.110"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
