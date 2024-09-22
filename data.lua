@@ -113,7 +113,12 @@ function DarkMode:GetTextColor(r, g, b, a)
 	return 1, 1, 1, 1
 end
 
-local DMRepeatingFrames = {"", ".Background", ".Bg", ".Bg.TopSection", ".Bg.BottomEdge", "Inset", "Inset.Bg", "Inset.NineSlice", "Inset.NineSlice.TopEdge", "Inset.NineSlice.RightEdge", "Inset.NineSlice.LeftEdge", "Inset.NineSlice.BottomEdge", "Inset.NineSlice.TopRightCorner", "Inset.NineSlice.TopLeftCorner", "Inset.NineSlice.BottomRightCorner", "Inset.NineSlice.BottomLeftCorner", ".NineSlice", ".NineSlice.TopEdge", ".NineSlice.RightEdge", ".NineSlice.LeftEdge", ".NineSlice.BottomEdge", ".NineSlice.TopRightCorner", ".NineSlice.TopLeftCorner", ".NineSlice.BottomRightCorner", ".NineSlice.BottomLeftCorner", "ScrollFrame", ".Begin", ".Middle", ".End", ".ScrollBar.Background",}
+local DMRepeatingFrames = {"", ".Bg.TopSection", ".Bg.BottomEdge", "Inset", "Inset.Bg", "Inset.NineSlice", "Inset.NineSlice.TopEdge", "Inset.NineSlice.RightEdge", "Inset.NineSlice.LeftEdge", "Inset.NineSlice.BottomEdge", "Inset.NineSlice.TopRightCorner", "Inset.NineSlice.TopLeftCorner", "Inset.NineSlice.BottomRightCorner", "Inset.NineSlice.BottomLeftCorner", ".NineSlice", ".NineSlice.TopEdge", ".NineSlice.RightEdge", ".NineSlice.LeftEdge", ".NineSlice.BottomEdge", ".NineSlice.TopRightCorner", ".NineSlice.TopLeftCorner", ".NineSlice.BottomRightCorner", ".NineSlice.BottomLeftCorner", "ScrollFrame", ".Begin", ".Middle", ".End", ".ScrollBar.Background",}
+if DarkMode:GetWoWBuild() ~= "RETAIL" then
+	table.insert(DMRepeatingFrames, ".Background")
+	table.insert(DMRepeatingFrames, ".Bg")
+end
+
 function DarkMode:GetDMRepeatingFrames()
 	return DMRepeatingFrames
 end
