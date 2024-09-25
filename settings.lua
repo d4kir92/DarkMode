@@ -83,9 +83,30 @@ end
 
 local function AddSlider(x, key, val, func, vmin, vmax, steps, keys)
 	if sls[key] == nil then
-		sls[key] = CreateFrame("Slider", "sls[" .. key .. "]", DMSettings.SC, "OptionsSliderTemplate")
-		sls[key]:SetWidth(DMSettings.SC:GetWidth() - 30 - x)
+		sls[key] = CreateFrame("Slider", "sls[" .. key .. "]", DMSettings.SC, "UISliderTemplate")
+		sls[key]:SetSize(DMSettings.SC:GetWidth() - 30 - x, 16)
 		sls[key]:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy)
+		if sls[key].Low == nil then
+			sls[key].Low = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
+			sls[key].Low:SetPoint("BOTTOMLEFT", sls[key], "BOTTOMLEFT", 0, -12)
+			sls[key].Low:SetFont(STANDARD_TEXT_FONT, 10, "THINOUTLINE")
+			sls[key].Low:SetTextColor(1, 1, 1)
+		end
+
+		if sls[key].High == nil then
+			sls[key].High = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
+			sls[key].High:SetPoint("BOTTOMRIGHT", sls[key], "BOTTOMRIGHT", 0, -12)
+			sls[key].High:SetFont(STANDARD_TEXT_FONT, 10, "THINOUTLINE")
+			sls[key].High:SetTextColor(1, 1, 1)
+		end
+
+		if sls[key].Text == nil then
+			sls[key].Text = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
+			sls[key].Text:SetPoint("TOP", sls[key], "TOP", 0, 16)
+			sls[key].Text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
+			sls[key].Text:SetTextColor(1, 1, 1)
+		end
+
 		sls[key].key = key
 		sls[key].SetText = function(self, text)
 			if sls[key].Text then
@@ -351,8 +372,8 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.5.111")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.111"))
+	DarkMode:SetVersion(AddonName, 136122, "0.5.112")
+	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.5.112"))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
