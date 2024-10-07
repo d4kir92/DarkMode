@@ -1057,11 +1057,10 @@ function DarkMode:SearchUi(from)
 		1.1,
 		function()
 			DarkMode:Debug(5, "#6")
-			local DMMMBTN = LibStub("LibDBIcon-1.0", true)
-			if DMMMBTN then
-				for i, name in pairs(DMMMBTN:GetButtonList()) do
-					local btn = _G["LibDBIcon10_" .. name]
-					if btn and _G[name .. "DMBorder"] == nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) then
+			for i, btn in pairs(_G) do
+				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "D4Lib_MMBTN_", 1, true)) and not strfind(i, "DMBorder", 1, true) then
+					local name = btn:GetName()
+					if btn and _G[name .. "DMBorder"] == nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.border == nil or btn.border == true) then
 						local border = btn:CreateTexture(name .. "DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
@@ -1619,18 +1618,18 @@ function DarkMode:Event(event, ...)
 								["name"] = "DarkMode",
 								["icon"] = 136122,
 								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.113"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.114"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 								["funcL"] = function()
 									DarkMode:ToggleSettings()
 								end,
 								["funcR"] = function()
-									DarkMode:SV(DMTAB, "MMBTN", false)
+									DarkMode:SetEnabled("MMBTN", false)
 									DarkMode:HideMMBtn("DarkMode")
 								end,
 							}
 						)
 
-						if DarkMode:GV(DMTAB, "MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
+						if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
 							DarkMode:ShowMMBtn("DarkMode")
 						else
 							DarkMode:HideMMBtn("DarkMode")
