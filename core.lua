@@ -1611,32 +1611,27 @@ function DarkMode:Event(event, ...)
 			end
 
 			if UIParent.SetFixedFrameStrata then
-				C_Timer.After(
-					1,
-					function()
-						DarkMode:CreateMinimapButton(
-							{
-								["name"] = "DarkMode",
-								["icon"] = 136122,
-								["dbtab"] = DMTAB,
-								["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.116"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
-								["funcL"] = function()
-									DarkMode:ToggleSettings()
-								end,
-								["funcR"] = function()
-									DarkMode:SetEnabled("MMBTN", false)
-									DarkMode:HideMMBtn("DarkMode")
-								end,
-							}
-						)
-
-						if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
-							DarkMode:ShowMMBtn("DarkMode")
-						else
+				DarkMode:CreateMinimapButton(
+					{
+						["name"] = "DarkMode",
+						["icon"] = 136122,
+						["dbtab"] = DMTAB,
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.117"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["funcL"] = function()
+							DarkMode:ToggleSettings()
+						end,
+						["funcR"] = function()
+							DarkMode:SetEnabled("MMBTN", false)
 							DarkMode:HideMMBtn("DarkMode")
-						end
-					end
+						end,
+					}
 				)
+
+				if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
+					DarkMode:ShowMMBtn("DarkMode")
+				else
+					DarkMode:HideMMBtn("DarkMode")
+				end
 			end
 		end
 	elseif event == "ADDON_LOADED" then
