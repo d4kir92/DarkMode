@@ -1616,7 +1616,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.117"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.118"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
@@ -1662,6 +1662,39 @@ function DarkMode:GroupLootUpdate()
 		end
 	end
 end
+
+local vigor = CreateFrame("Frame")
+vigor:RegisterEvent("PLAYER_MOUNT_DISPLAY_CHANGED")
+vigor:RegisterEvent("PLAYER_ENTERING_WORLD")
+vigor:SetScript(
+	"OnEvent",
+	function(sel, event)
+		C_Timer.After(
+			0.02,
+			function()
+				local childs = {UIWidgetPowerBarContainerFrame:GetChildren()}
+				for _, child in pairs(childs) do
+					if child.DecorLeft and child.DecorLeft.GetAtlas then
+						local atlas = child.DecorLeft:GetAtlas()
+						if atlas == "dragonriding_vigor_decor" then
+							DarkMode:UpdateColor(child.DecorLeft, "ui")
+							DarkMode:UpdateColor(child.DecorRight, "ui")
+						end
+					end
+
+					for _, cchild in ipairs({child:GetChildren()}) do
+						if cchild.Frame and cchild.Frame.GetAtlas then
+							local atlas = cchild.Frame:GetAtlas()
+							if atlas == "dragonriding_vigor_frame" then
+								DarkMode:UpdateColor(cchild.Frame, "ui")
+							end
+						end
+					end
+				end
+			end
+		)
+	end
+)
 
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", DarkMode.Event)
