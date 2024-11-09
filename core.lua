@@ -1,4 +1,5 @@
 local _, DarkMode = ...
+local MSQ = nil
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
 local debug = 0
@@ -743,7 +744,10 @@ function DarkMode:SearchUi(from)
 							DarkMode:UpdateColor(btnTextureNormalTexture, "actionbuttons")
 						end
 
-						local MSQ = LibStub("Masque", true)
+						if LibStub and MSQ == nil then
+							MSQ = LibStub("Masque", true)
+						end
+
 						if MSQ then
 							if btn then
 								if btn.__MSQ_Mask then
@@ -1422,7 +1426,10 @@ function DarkMode:Event(event, ...)
 								end
 							end
 
-							local MSQ = LibStub("Masque", true)
+							if LibStub and MSQ == nil then
+								MSQ = LibStub("Masque", true)
+							end
+
 							if MSQ and bagF and v ~= "BagToggle" then
 								if bagF.__MSQ_Mask then
 									DarkMode:UpdateColor(bagF.__MSQ_Mask, "actionbuttons")
@@ -1452,7 +1459,10 @@ function DarkMode:Event(event, ...)
 								if btn and AuraFrames[btn] == nil then
 									AuraFrames[btn] = true
 									DarkMode:Debug(3, "AuraFrameMixin Added btn", btn)
-									local MSQ = LibStub("Masque", true)
+									if LibStub and MSQ == nil then
+										MSQ = LibStub("Masque", true)
+									end
+
 									if MSQ and btn then
 										if btn.__MSQ_Mask then
 											DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
@@ -1483,7 +1493,10 @@ function DarkMode:Event(event, ...)
 								if btn and BuffFrameBuffs[index] == nil then
 									BuffFrameBuffs[index] = true
 									DarkMode:Debug(3, "BuffFrame_UpdateAllBuffAnchors Added index", index)
-									local MSQ = LibStub("Masque", true)
+									if LibStub and MSQ == nil then
+										MSQ = LibStub("Masque", true)
+									end
+
 									if MSQ then
 										if btn.__MSQ_Mask then
 											DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
@@ -1513,7 +1526,10 @@ function DarkMode:Event(event, ...)
 							local buttonName = frame:GetName() .. "Buff"
 							for index = 1, 32 do
 								local btn = _G[buttonName .. index]
-								local MSQ = LibStub("Masque", true)
+								if LibStub and MSQ == nil then
+									MSQ = LibStub("Masque", true)
+								end
+
 								if btn and ((frame == TargetFrame and TargetBuffs[index] == nil) or (frame == FocusFrame and FocusBuffs[index] == nil)) then
 									if frame == TargetFrame then
 										TargetBuffs[index] = true
@@ -1616,7 +1632,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.123"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.124"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
