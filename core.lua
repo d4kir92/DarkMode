@@ -9,72 +9,11 @@ function DarkMode:Debug(num, msg, ...)
 	end
 end
 
-local addonsDelay = 0
-local addonsRetry = false
-function DarkMode:RetryAddonsSearch()
-	if addonsRetry and GetTime() > addonsDelay then
-		DarkMode:AddonsSearch("RETRY")
-	end
+function DarkMode:IsValidTexture(obj)
+	if obj.GetTexture and obj:GetTexture() ~= nil then return true end
+	if obj.GetTextureFilePath and obj:GetTextureFilePath() ~= nil then return true end
 
-	C_Timer.After(
-		0.1,
-		function()
-			DarkMode:RetryAddonsSearch()
-		end
-	)
-end
-
-DarkMode:RetryAddonsSearch()
-function DarkMode:AddonsSearch(from)
-	if GetTime() < addonsDelay then
-		addonsRetry = true
-		addonsDelay = GetTime() + 0.11
-
-		return
-	end
-
-	addonsDelay = GetTime() + 0.11
-	addonsRetry = false
-	C_Timer.After(
-		0.09,
-		function()
-			DarkMode:Debug(5, "#17")
-			DarkMode:SearchAddons(from)
-			if PlayerTalentFrame then
-				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
-					local tab = _G[v]
-					if tab then
-						for x, w in pairs({tab:GetRegions()}) do
-							if x == 1 then
-								DarkMode:UpdateColor(w, "frames")
-							end
-						end
-					end
-				end
-			end
-
-			if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
-				ClassTalentFrame.dm_setup_talent = true
-				function ClassTalentFrame:UpdateColors()
-					local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
-					for i, v in pairs(tabs) do
-						for x, w in pairs({v:GetRegions()}) do
-							DarkMode:UpdateColor(w, "frames")
-						end
-					end
-				end
-
-				ClassTalentFrame:HookScript(
-					"OnShow",
-					function(sel)
-						ClassTalentFrame:UpdateColors()
-					end
-				)
-
-				ClassTalentFrame:UpdateColors()
-			end
-		end
-	)
+	return false
 end
 
 local DMTexturesUi = {}
@@ -338,6 +277,81 @@ function DarkMode:GetFrame(name)
 	return nil
 end
 
+local addonsDelay = 0
+local addonsRetry = false
+local foundMinimapTracking = false
+function DarkMode:RetryAddonsSearch()
+	if addonsRetry and GetTime() > addonsDelay then
+		DarkMode:AddonsSearch("RETRY")
+	end
+
+	if not foundMinimapTracking and MiniMapTrackingBorder then
+		foundMinimapTracking = true
+		MiniMapTracking:Show()
+		DarkMode:UpdateColor(MiniMapTrackingBorder, "frames")
+	end
+
+	C_Timer.After(
+		0.1,
+		function()
+			DarkMode:RetryAddonsSearch()
+		end
+	)
+end
+
+DarkMode:RetryAddonsSearch()
+function DarkMode:AddonsSearch(from)
+	if GetTime() < addonsDelay then
+		addonsRetry = true
+		addonsDelay = GetTime() + 0.11
+
+		return
+	end
+
+	addonsDelay = GetTime() + 0.11
+	addonsRetry = false
+	C_Timer.After(
+		0.09,
+		function()
+			DarkMode:Debug(5, "#17")
+			DarkMode:SearchAddons(from)
+			if PlayerTalentFrame then
+				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
+					local tab = _G[v]
+					if tab then
+						for x, w in pairs({tab:GetRegions()}) do
+							if x == 1 then
+								DarkMode:UpdateColor(w, "frames")
+							end
+						end
+					end
+				end
+			end
+
+			if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
+				ClassTalentFrame.dm_setup_talent = true
+				function ClassTalentFrame:UpdateColors()
+					local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
+					for i, v in pairs(tabs) do
+						for x, w in pairs({v:GetRegions()}) do
+							DarkMode:UpdateColor(w, "frames")
+						end
+					end
+				end
+
+				ClassTalentFrame:HookScript(
+					"OnShow",
+					function(sel)
+						ClassTalentFrame:UpdateColors()
+					end
+				)
+
+				ClassTalentFrame:UpdateColors()
+			end
+		end
+	)
+end
+
 local function RGBToHexC(r, g, b)
 	r = r <= 1 and r >= 0 and r or 0
 	g = g <= 1 and g >= 0 and g or 0
@@ -475,13 +489,6 @@ function DarkMode:UpdateColors()
 			v:SetVertexColor(r, g, b, a)
 		end
 	end
-end
-
-function DarkMode:IsValidTexture(obj)
-	if obj.GetTexture and obj:GetTexture() ~= nil then return true end
-	if obj.GetTextureFilePath and obj:GetTextureFilePath() ~= nil then return true end
-
-	return false
 end
 
 function DarkMode:FindTextures(frame, typ)
@@ -1632,7 +1639,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.128"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.129"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
