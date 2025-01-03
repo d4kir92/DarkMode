@@ -1452,6 +1452,33 @@ function DarkMode:Event(event, ...)
 						end
 					end
 				)
+
+				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
+					function string:dm_endswith(suffix)
+						return self:sub(-#suffix) == suffix
+					end
+
+					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
+					TargetFrameDragon:SetSize(256, 128)
+					TargetFrameDragon:SetPoint("TOPRIGHT", TargetFrameTextureFrame, "TOPRIGHT", 0, 0)
+					TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+					hooksecurefunc(
+						TargetFrameTextureFrameTexture,
+						"SetTexture",
+						function(sel, texture)
+							TargetFrameDragon:SetDrawLayer("BACKGROUND", 1)
+							if texture:dm_endswith("UI-TargetingFrame-Rare") then
+								TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+							elseif texture:dm_endswith("UI-TargetingFrame-Elite") then
+								TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
+							elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") then
+								TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+							else
+								TargetFrameDragon:SetTexture("")
+							end
+						end
+					)
+				end
 			end
 
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
@@ -1638,7 +1665,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.133"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.134"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
