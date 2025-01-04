@@ -1461,7 +1461,7 @@ function DarkMode:Event(event, ...)
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
 					TargetFrameDragon:SetSize(256, 128)
 					TargetFrameDragon:SetPoint("TOPRIGHT", TargetFrameTextureFrame, "TOPRIGHT", 0, 0)
-					TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+					TargetFrameDragon:SetTexture("")
 					hooksecurefunc(
 						TargetFrameTextureFrameTexture,
 						"SetTexture",
@@ -1487,7 +1487,7 @@ function DarkMode:Event(event, ...)
 						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
 						PlayerFrameDragon:SetSize(256, 128)
 						PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
-						PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+						PlayerFrameDragon:SetTexture("")
 						hooksecurefunc(
 							PlayerFrameTexture,
 							"SetTexture",
@@ -1698,7 +1698,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.135"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.136"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
