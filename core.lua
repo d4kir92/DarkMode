@@ -18,6 +18,7 @@ end
 
 local DMTexturesUi = {}
 local DMTexturesUF = {}
+local DMTexturesUFDR = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
@@ -58,6 +59,15 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "ufdr" then
+			local r, g, b, a = DarkMode:GetUFDRColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -133,6 +143,11 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
+					elseif typ == "ufdr" then
+						local r, g, b, a = DarkMode:GetUFDRColor(sel)
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
 					elseif typ == "np" then
 						local r, g, b, a = DarkMode:GetNPColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
@@ -175,6 +190,11 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
+		elseif typ == "ufdr" then
+			local r, g, b, a = DarkMode:GetUFDRColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		elseif typ == "np" then
 			local r, g, b, a = DarkMode:GetNPColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -209,6 +229,10 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 		elseif typ == "uf" then
 			if not tContains(DMTexturesUF, texture) then
 				tinsert(DMTexturesUF, texture)
+			end
+		elseif typ == "ufdr" then
+			if not tContains(DMTexturesUFDR, texture) then
+				tinsert(DMTexturesUFDR, texture)
 			end
 		elseif typ == "np" then
 			if not tContains(DMTexturesNP, texture) then
@@ -467,6 +491,13 @@ function DarkMode:UpdateColors()
 		end
 	end
 
+	for i, v in pairs(DMTexturesUFDR) do
+		local r, g, b, a = DarkMode:GetUFDRColor(v)
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
 	for i, v in pairs(DMTexturesTT) do
 		local r, g, b, a = DarkMode:GetTTColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
@@ -474,7 +505,6 @@ function DarkMode:UpdateColors()
 		end
 	end
 
-	-- FONTSTRINGS
 	for i, v in pairs(DMFS) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
@@ -725,7 +755,6 @@ function DarkMode:SearchUi(from)
 			if index == "ActionButtons" then
 				for i, name in pairs(tab) do
 					local max = 12
-					--[[ Bar Addons ]]
 					if name == "BT4Button" or name == "DominosActionButton" then
 						max = 200
 					end
@@ -943,19 +972,6 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	--[[if QueueStatusButton and _G["QueueStatusButton" .. "DMBorder"] == nil then
-		local border = QueueStatusButton:CreateTexture("QueueStatusButton" .. "DMBorder", "OVERLAY")
-		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\eyeborder")
-		border:SetSize(QueueStatusButton:GetSize())
-		border:SetPoint("CENTER", QueueStatusButton, "CENTER", 0, 1)
-		border:SetDrawLayer("OVERLAY", 3)
-		border:SetAlpha(0.1)
-		if border.SetScale then
-			border:SetScale(0.95)
-		end
-
-		DarkMode:UpdateColor(border, "ui")
-	end]]
 	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
@@ -1461,7 +1477,6 @@ function DarkMode:Event(event, ...)
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
 					TargetFrameDragon:SetSize(256, 128)
 					TargetFrameDragon:SetPoint("TOPRIGHT", TargetFrameTextureFrame, "TOPRIGHT", 0, 0)
-					TargetFrameDragon:SetTexture("")
 					hooksecurefunc(
 						TargetFrameTextureFrameTexture,
 						"SetTexture",
@@ -1478,6 +1493,10 @@ function DarkMode:Event(event, ...)
 							end
 						end
 					)
+
+					TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+					DarkMode:UpdateColor(TargetFrameDragon, "ufdr")
+					TargetFrameDragon:SetTexture("")
 				end
 
 				if PlayerFrame and PlayerFrameTexture then
@@ -1487,7 +1506,6 @@ function DarkMode:Event(event, ...)
 						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
 						PlayerFrameDragon:SetSize(256, 128)
 						PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
-						PlayerFrameDragon:SetTexture("")
 						hooksecurefunc(
 							PlayerFrameTexture,
 							"SetTexture",
@@ -1510,6 +1528,10 @@ function DarkMode:Event(event, ...)
 								end
 							end
 						)
+
+						PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+						DarkMode:UpdateColor(PlayerFrameDragon, "ufdr")
+						PlayerFrameDragon:SetTexture("")
 					end
 				end
 			end
@@ -1679,7 +1701,6 @@ function DarkMode:Event(event, ...)
 				end
 			)
 
-			--[[ SPECIALS ]]
 			if DarkMode:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
 				hooksecurefunc(
 					FriendsFramePortrait,
@@ -1698,7 +1719,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.136"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.137"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
