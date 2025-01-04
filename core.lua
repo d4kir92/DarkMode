@@ -1453,11 +1453,11 @@ function DarkMode:Event(event, ...)
 					end
 				)
 
-				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
-					function string:dm_endswith(suffix)
-						return self:sub(-#suffix) == suffix
-					end
+				function string:dm_endswith(suffix)
+					return self:sub(-#suffix) == suffix
+				end
 
+				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
 					TargetFrameDragon:SetSize(256, 128)
 					TargetFrameDragon:SetPoint("TOPRIGHT", TargetFrameTextureFrame, "TOPRIGHT", 0, 0)
@@ -1478,6 +1478,39 @@ function DarkMode:Event(event, ...)
 							end
 						end
 					)
+				end
+
+				if PlayerFrame and PlayerFrameTexture then
+					local parent = PlayerFrameTexture:GetParent()
+					if parent then
+						PlayerFrameDragon = parent:CreateTexture("PlayerFrameDragon", "BORDER")
+						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
+						PlayerFrameDragon:SetSize(256, 128)
+						PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+						PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+						hooksecurefunc(
+							PlayerFrameTexture,
+							"SetTexture",
+							function(sel, texture)
+								PlayerFrameDragon:SetDrawLayer("BORDER", 1)
+								if texture:dm_endswith("UI-TargetingFrame-Rare") or texture:dm_endswith("UI-TargetingFrame-Rare.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+								elseif texture:dm_endswith("UI-TargetingFrame-Elite") or texture:dm_endswith("UI-TargetingFrame-Elite.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
+								elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") or texture:dm_endswith("UI-TargetingFrame-Rare-Elite.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+								elseif texture:dm_endswith("Leatrix_Plus-Rare.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+								elseif texture:dm_endswith("Leatrix_Plus-Elite.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
+								elseif texture:dm_endswith("Leatrix_Plus.blp") then
+									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+								else
+									PlayerFrameDragon:SetTexture("")
+								end
+							end
+						)
+					end
 				end
 			end
 
@@ -1665,7 +1698,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.134"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.135"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
