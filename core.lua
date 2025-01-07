@@ -334,7 +334,7 @@ function DarkMode:AddonsSearch(from)
 	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
 	C_Timer.After(
-		0.09,
+		0.1,
 		function()
 			DarkMode:Debug(5, "#17")
 			DarkMode:SearchAddons(from)
@@ -616,7 +616,7 @@ function DarkMode:InitGreetingPanel()
 			"OnShow",
 			function(sel, ...)
 				C_Timer.After(
-					0.05,
+					0.15,
 					function()
 						DarkMode:Debug(5, "#1")
 						DarkMode:UpdateGossipFrame()
@@ -631,7 +631,7 @@ function DarkMode:InitGreetingPanel()
 				"OnEvent",
 				function()
 					C_Timer.After(
-						0.05,
+						0.15,
 						function()
 							DarkMode:Debug(5, "#2")
 							DarkMode:UpdateGossipFrame()
@@ -656,7 +656,7 @@ function DarkMode:InitQuestLogFrame()
 			"OnShow",
 			function(sel, ...)
 				C_Timer.After(
-					0.05,
+					0.15,
 					function()
 						DarkMode:Debug(5, "#3")
 						DarkMode:UpdateQuestLogFrame()
@@ -671,7 +671,7 @@ function DarkMode:InitQuestLogFrame()
 				"OnEvent",
 				function()
 					C_Timer.After(
-						0.05,
+						0.15,
 						function()
 							DarkMode:Debug(5, "#4")
 							DarkMode:UpdateQuestLogFrame()
@@ -1301,7 +1301,7 @@ function DarkMode:InitQuestFrameGreetingPanel()
 			"OnShow",
 			function(sel, ...)
 				C_Timer.After(
-					0.05,
+					0.15,
 					function()
 						DarkMode:Debug(5, "#12")
 						DarkMode:UpdateQuestFrameGreetingPanel()
@@ -1316,7 +1316,7 @@ function DarkMode:InitQuestFrameGreetingPanel()
 				"OnEvent",
 				function()
 					C_Timer.After(
-						0.05,
+						0.15,
 						function()
 							DarkMode:Debug(5, "#13")
 							DarkMode:UpdateQuestFrameGreetingPanel()
@@ -1719,7 +1719,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.138"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.139"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
