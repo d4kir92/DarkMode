@@ -284,12 +284,14 @@ if DarkMode:GetWoWBuild() ~= "RETAIL" then
 	DMIgnoreFrames["CollectionsJournalPortraitFrame"] = true
 end
 
+DMIgnoreFrames["HonorFramePvPIcon"] = true
 function DarkMode:GetIgnoreFrames(name)
 	return DMTextureBlock[name] or false
 end
 
 local DMIgnoreTextureNames = {}
 DMIgnoreTextureNames["ContainerFrame1Portrait"] = true
+DMIgnoreTextureNames["HonorFramePvPIcon"] = true
 function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
