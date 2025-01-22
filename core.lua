@@ -1720,7 +1720,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.5.142"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.6.0"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,

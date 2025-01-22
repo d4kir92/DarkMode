@@ -70,7 +70,7 @@ function DarkMode:GetUFColor(texture)
 end
 
 function DarkMode:GetUFDRColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEUNFRDR", 7), "CUSTOMUFDRC")
+	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEUNFRDRA", 7), "CUSTOMUFDRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 
 	return r, g, b, a
