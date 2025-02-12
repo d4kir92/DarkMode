@@ -1720,7 +1720,7 @@ function DarkMode:Event(event, ...)
 						["name"] = "DarkMode",
 						["icon"] = 136122,
 						["dbtab"] = DMTAB,
-						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.6.4"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
+						["vTT"] = {{"DarkMode |T136122:16:16:0:0|t", "v|cff3FC7EB0.6.5"}, {DarkMode:Trans("LEFTCLICK"), DarkMode:Trans("MMBTNLEFT")}, {DarkMode:Trans("RIGHTCLICK"), DarkMode:Trans("MMBTNRIGHT")}},
 						["funcL"] = function()
 							DarkMode:ToggleSettings()
 						end,
@@ -1728,14 +1728,9 @@ function DarkMode:Event(event, ...)
 							DarkMode:SetEnabled("MMBTN", false)
 							DarkMode:HideMMBtn("DarkMode")
 						end,
+						["dbkey"] = "MMBTN"
 					}
 				)
-
-				if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
-					DarkMode:ShowMMBtn("DarkMode")
-				else
-					DarkMode:HideMMBtn("DarkMode")
-				end
 			end
 		end
 	elseif event == "ADDON_LOADED" then
