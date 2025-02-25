@@ -1,9 +1,5 @@
 -- zhTW
 local _, DarkMode = ...
-DarkMode:AddTrans("zhTW", "LEFTCLICK", "左鍵點擊")
-DarkMode:AddTrans("zhTW", "RIGHTCLICK", "右鍵點擊")
-DarkMode:AddTrans("zhTW", "MMBTNLEFT", "選項設定")
-DarkMode:AddTrans("zhTW", "MMBTNRIGHT", "隱藏小地圖按鈕")
 DarkMode:AddTrans("zhTW", "GENERAL", "一般")
 DarkMode:AddTrans("zhTW", "MMBTN", "顯示小地圖按鈕")
 DarkMode:AddTrans("zhTW", "COLORMODE", "介面著色")

@@ -1,9 +1,5 @@
 -- deDE German Deutsch
 local _, DarkMode = ...
-DarkMode:AddTrans("deDE", "LEFTCLICK", "Linksklick")
-DarkMode:AddTrans("deDE", "RIGHTCLICK", "Rechtsklick")
-DarkMode:AddTrans("deDE", "MMBTNLEFT", "Optionen")
-DarkMode:AddTrans("deDE", "MMBTNRIGHT", "Minimapknopf verstecken")
 DarkMode:AddTrans("deDE", "GENERAL", "Allgemein")
 DarkMode:AddTrans("deDE", "MMBTN", "Minimapknopf anzeigen")
 DarkMode:AddTrans("deDE", "COLORMODE", "Farbmodus Ui")

@@ -1,9 +1,5 @@
 -- enUS English
 local _, DarkMode = ...
-DarkMode:AddTrans("enUS", "LEFTCLICK", "Leftclick")
-DarkMode:AddTrans("enUS", "RIGHTCLICK", "Rightclick")
-DarkMode:AddTrans("enUS", "MMBTNLEFT", "Options")
-DarkMode:AddTrans("enUS", "MMBTNRIGHT", "Hide Minimap Button")
 DarkMode:AddTrans("enUS", "GENERAL", "General")
 DarkMode:AddTrans("enUS", "MMBTN", "Show Minimap Button")
 DarkMode:AddTrans("enUS", "COLORMODE", "Color Mode Ui")
