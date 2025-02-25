@@ -1,13 +1,15 @@
 ## Interface: 30403
-## Version: 0.6.8
+## Version: 0.6.9
 ## Title: DarkMode |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t 
 ## Notes: Improve Any Ui or Frame
 ## Author: D4KiR
+## X-Category: D4KiR
 ## DefaultState: enabled
 ## SavedVariables: DMTAB
 ## SavedVariablesPerCharacter: DMTABPC
 ## X-Curse-Project-ID: 812982
 ## X-Wago-ID: VBNBDqKx
+## IconTexture: 136122
 
 libs\D4Lib\D4Lib.xml
 

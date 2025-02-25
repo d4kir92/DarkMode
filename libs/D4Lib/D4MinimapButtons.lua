@@ -18,10 +18,11 @@ local mmShapes = {
     ["TRICORNER-BOTTOMRIGHT"] = {true, true, true, false},
 }
 
+local pos = {}
 function D4:UpdatePosition(button, position, parent)
     parent = parent or Minimap
-    button.pos = position or 225
-    local angle = rad(button.pos)
+    pos[button] = position or 225
+    local angle = rad(pos[button])
     local x, y, q = cos(angle), sin(angle), 1
     if x < 0 then
         q = q + 1
@@ -174,16 +175,16 @@ function D4:CreateMinimapButton(params)
                     local px, py = GetCursorPosition()
                     local scale = Minimap:GetEffectiveScale()
                     px, py = px / scale, py / scale
-                    local pos = 0
+                    local posi = 0
                     if se.db then
-                        pos = deg(atan2(py - my, px - mx)) % 360
-                        se.db.minimapPos = pos
+                        posi = deg(atan2(py - my, px - mx)) % 360
+                        se.db.minimapPos = posi
                     else
-                        pos = deg(atan2(py - my, px - mx)) % 360
-                        se.minimapPos = pos
+                        posi = deg(atan2(py - my, px - mx)) % 360
+                        se.minimapPos = posi
                     end
 
-                    D4:UpdatePosition(se, pos)
+                    D4:UpdatePosition(se, posi)
                 end
             )
 
@@ -234,6 +235,43 @@ function D4:CreateMinimapButton(params)
                 end,
             }
         )
+    end
+
+    btn.fadeOut = btn:CreateAnimationGroup()
+    local animOut = btn.fadeOut:CreateAnimation("Alpha")
+    animOut:SetOrder(1)
+    animOut:SetDuration(0.2)
+    animOut:SetFromAlpha(1)
+    animOut:SetToAlpha(0)
+    animOut:SetStartDelay(1)
+    btn.fadeOut:SetToFinalAlpha(true)
+    Minimap:HookScript(
+        "OnEnter",
+        function()
+            if btn:GetParent() == Minimap then
+                btn.fadeOut:Stop()
+                btn:SetAlpha(1)
+            else
+                btn.fadeOut:Stop()
+                btn:SetAlpha(1)
+            end
+        end
+    )
+
+    Minimap:HookScript(
+        "OnLeave",
+        function()
+            if btn:GetParent() == Minimap then
+                btn.fadeOut:Play()
+            else
+                btn.fadeOut:Stop()
+                btn:SetAlpha(1)
+            end
+        end
+    )
+
+    if btn:GetParent() == Minimap then
+        btn.fadeOut:Play()
     end
 
     if params.dbkey and params.dbkey ~= "" then
@@ -289,7 +327,7 @@ function D4:UpdateLTP()
     local MinimapModder = LeaPlusDB and LeaPlusDB["MinimapModder"] and LeaPlusDB["MinimapModder"] == "On"
     if MinimapModder then
         local CombineAddonButtons = LeaPlusDB["CombineAddonButtons"] == "On"
-        local HideMiniAddonButtons = LeaPlusDB["HideMiniAddonButtons"] == "On"
+        --local HideMiniAddonButtons = LeaPlusDB["HideMiniAddonButtons"] == "On"
         local btnParent = _G["LeaPlusGlobalMinimapCombinedButtonFrame"]
         local childs = {Minimap:GetChildren()}
         for i, btn in pairs(childs) do
@@ -298,34 +336,9 @@ function D4:UpdateLTP()
                 if s1 and s1 > 1 and btn.ltp == nil then
                     btn.ltp = true
                     btn:SetScale(0.75)
-                    D4:UpdatePosition(btn, btn.pos)
+                    D4:UpdatePosition(btn, pos[btn])
                     if CombineAddonButtons and btnParent then
                         btn:SetParent(btnParent)
-                    elseif HideMiniAddonButtons then
-                        btn.fadeOut = btn:CreateAnimationGroup()
-                        local animOut = btn.fadeOut:CreateAnimation("Alpha")
-                        animOut:SetOrder(1)
-                        animOut:SetDuration(0.2)
-                        animOut:SetFromAlpha(1)
-                        animOut:SetToAlpha(0)
-                        animOut:SetStartDelay(1)
-                        btn.fadeOut:SetToFinalAlpha(true)
-                        Minimap:HookScript(
-                            "OnEnter",
-                            function()
-                                btn.fadeOut:Stop()
-                                btn:SetAlpha(1)
-                            end
-                        )
-
-                        Minimap:HookScript(
-                            "OnLeave",
-                            function()
-                                btn.fadeOut:Play()
-                            end
-                        )
-
-                        btn.fadeOut:Play()
                     end
                 end
             end
