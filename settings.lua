@@ -1,4 +1,4 @@
-local AddonName, DarkMode = ...
+local _, DarkMode = ...
 local sliders = {}
 local searchStr = ""
 local posy = -4
@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.6.11")
+	DarkMode:SetVersion(136122, "0.6.12")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -388,7 +388,7 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DMSettings.TitleText:SetText(format("|T136122:16:16:0:0|t DarkMode v|cff3FC7EB%s", DarkMode:GetVersion()))
+	DMSettings.TitleText:SetText(format("|T136122:16:16:0:0|t D|cff3FC7EBark|rM|cff3FC7EBode|r v|cff3FC7EB%s", DarkMode:GetVersion()))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
