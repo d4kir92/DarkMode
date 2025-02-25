@@ -344,6 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
+	DarkMode:SetVersion(136122, "0.6.10")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -387,8 +388,7 @@ function DarkMode:InitDMSettings()
 		DMSettings:Hide()
 	end
 
-	DarkMode:SetVersion(AddonName, 136122, "0.6.9")
-	DMSettings.TitleText:SetText(format("DarkMode |T136122:16:16:0:0|t v|cff3FC7EB%s", "0.6.9"))
+	DMSettings.TitleText:SetText(format("|T136122:16:16:0:0|t DarkMode v|cff3FC7EB%s", DarkMode:GetVersion()))
 	DMSettings.CloseButton:SetScript(
 		"OnClick",
 		function()
