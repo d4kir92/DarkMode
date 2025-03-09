@@ -27,7 +27,7 @@ local DMTexturesBuffsAndDebuffs = {}
 function DarkMode:UpdateColor(texture, typ, bShow)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
-		print("[DarkMode] INVALID TEXTURE OBJECT")
+		DarkMode:MSG("[UpdateColor] INVALID TEXTURE OBJECT")
 
 		return false
 	end
@@ -255,7 +255,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 				DMTexturesFrames[texture] = texture
 			end
 		else
-			print("[DarkMode] Missing Type:", typ)
+			DarkMode:MSF("[UpdateColor] Missing Type:", typ)
 		end
 
 		return true
@@ -299,6 +299,43 @@ function DarkMode:GetFrame(name)
 	end
 
 	return nil
+end
+
+function DarkMode:AddActionButtonBorder(btn, name, sizew, sizeh, px, py, typ, texture)
+	local icon = _G[name .. "Icon"]
+	if icon then
+		local br = 0.075
+		if string.find(name, "PetActionButton", 1, true) then
+			br = 0.038
+		elseif string.find(name, "StanceButton", 1, true) then
+			br = 0.075
+		end
+
+		icon:SetTexCoord(br, 1 - br, br, 1 - br)
+	end
+
+	if btn.border ~= nil then return end
+	px = px or 0
+	py = py or 0
+	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default"
+	btn.border = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+	local border = btn.border
+	border:SetDrawLayer("OVERLAY", 3)
+	border:SetSize(sizew, sizeh)
+	if typ == "actionbuttons" then
+		if DarkMode:IsEnabled("THINBORDERS", false) then
+			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
+		else
+			border:SetTexture(texture)
+		end
+	else
+		border:SetTexture(texture)
+	end
+
+	border:SetPoint("CENTER", btn, "CENTER", px, py)
+	DarkMode:UpdateColor(border, typ)
+
+	return border
 end
 
 local addonsDelay = 0
@@ -546,7 +583,7 @@ function DarkMode:FindTextures(frame, typ)
 			local hasName = v.GetName ~= nil
 			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
 				if bShow and v.GetTexture then
-					print(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
+					DarkMode:MSG(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 				end
 
 				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
@@ -561,7 +598,7 @@ function DarkMode:FindTextures(frame, typ)
 			local hasName = v.GetName ~= nil
 			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
 				if bShow and v.GetTexture then
-					print(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
+					DarkMode:MSG(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
 				end
 
 				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
@@ -769,13 +806,7 @@ function DarkMode:SearchUi(from)
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
 							local scale = 1.1
-							_G[name .. x .. "BorderFix"] = btn:CreateTexture(name .. x .. "BorderFix", "OVERLAY")
-							local border = _G[name .. x .. "BorderFix"]
-							border:SetDrawLayer("OVERLAY", 3)
-							border:SetSize(sw * scale, sh * scale)
-							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-							border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-							DarkMode:UpdateColor(border, "actionbuttons")
+							DarkMode:AddActionButtonBorder(btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons")
 						elseif btnTextureNormalTexture then
 							DarkMode:UpdateColor(btnTextureNormalTexture, "actionbuttons")
 						end
@@ -816,17 +847,23 @@ function DarkMode:SearchUi(from)
 
 						if not MSQ then
 							if DarkMode:IsEnabled("THINBORDERS", false) then
-								local icon = _G[name .. x .. "Icon"]
-								if icon then
-									local br = 0.075
-									if name == "PetActionButton" then
-										br = 0.038
-									end
-
-									icon:SetTexCoord(br, 1 - br, br, 1 - br)
-								end
-
 								if name == "PetActionButton" then
+									local border = _G[name .. x .. "NormalTexture2"]
+									if border then
+										hooksecurefunc(
+											border,
+											"SetAlpha",
+											function(sel, ...)
+												if sel.dm_setalpha then return end
+												sel.dm_setalpha = true
+												sel:SetAlpha(0)
+												sel.dm_setalpha = false
+											end
+										)
+
+										border:SetAlpha(0)
+									end
+								elseif name == "StanceButton" then
 									local border = _G[name .. x .. "NormalTexture2"]
 									if border then
 										hooksecurefunc(
@@ -888,7 +925,7 @@ function DarkMode:SearchUi(from)
 									btnTextureFloatingBG:SetPoint("CENTER", btn, "CENTER", 0, 0)
 								end
 
-								if btn and _G[name .. x .. "BorderDM"] == nil then
+								if btn and btn.border == nil then
 									local sw, sh = btn:GetSize()
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
@@ -897,18 +934,7 @@ function DarkMode:SearchUi(from)
 										scale = 1.2
 									end
 
-									_G[name .. x .. "BorderDM"] = btn:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
-									local border = _G[name .. x .. "BorderDM"]
-									border:SetDrawLayer("OVERLAY", 3)
-									border:SetSize(sw * scale, sh * scale)
-									if name == "PetActionButton" then
-										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
-									else
-										border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
-									end
-
-									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-									DarkMode:UpdateColor(border, "actionbuttons")
+									DarkMode:AddActionButtonBorder(btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
 								end
 							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
@@ -917,18 +943,12 @@ function DarkMode:SearchUi(from)
 									icon:SetTexCoord(br, 1 - br, br, 1 - br)
 								end
 
-								if btn and _G[name .. x .. "BorderDM"] == nil then
+								if btn and _G[name .. x .. ".DMBorder"] == nil then
 									local sw, sh = btn:GetSize()
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
 									local scale = 1.1
-									_G[name .. x .. "BorderDM"] = btn:CreateTexture(name .. x .. "BorderDM", "OVERLAY")
-									local border = _G[name .. x .. "BorderDM"]
-									border:SetDrawLayer("OVERLAY", 3)
-									border:SetSize(sw * scale, sh * scale)
-									border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultEER")
-									border:SetPoint("CENTER", btn, "CENTER", 0, 0)
-									DarkMode:UpdateColor(border, "actionbuttons")
+									DarkMode:AddActionButtonBorder(btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
 								end
 							end
 						end
@@ -968,7 +988,7 @@ function DarkMode:SearchUi(from)
 					DarkMode:FindTexturesByName(name, "uf")
 				end
 			else
-				print("[DarkMode] Missing Ui index:", index, tab)
+				DarkMode:MSG("[SearchUi] Missing Ui index:", index, tab)
 			end
 		end
 	end
@@ -977,15 +997,15 @@ function DarkMode:SearchUi(from)
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
 				local mbtn = _G[name]
-				if mbtn and _G[name .. "DMBorder"] == nil then
+				if mbtn and _G[name .. ".DMBorder"] == nil then
 					if mbtn.Background then
-						local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
+						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 						border:SetSize(32, 64)
 						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
 						DarkMode:UpdateColor(border, "ui")
 					else
-						local border = mbtn:CreateTexture(name .. "DMBorder", "OVERLAY")
+						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 						border:SetAllPoints(mbtn)
 						DarkMode:UpdateColor(border, "ui")
@@ -995,40 +1015,31 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if KeyRingButton and _G["KeyRingButton" .. "DMBorder"] == nil then
-		local border = KeyRingButton:CreateTexture("KeyRingButton" .. "DMBorder", "OVERLAY")
-		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\krbtn_border")
-		border:SetAllPoints(KeyRingButton)
-		border:SetTexCoord(0, 0.5625, 0, 0.609375)
-		border:SetDrawLayer("OVERLAY", 3)
-		DarkMode:UpdateColor(border, "ui")
-	end
-
-	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. "DMBorder"] == nil then
-		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. "DMBorder", "OVERLAY")
+	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. ".DMBorder"] == nil then
+		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
 		border:SetAllPoints(MinimapZoomIn)
 		border:SetDrawLayer("OVERLAY", 3)
 		DarkMode:UpdateColor(border, "ui")
-		local border2 = MinimapZoomOut:CreateTexture("MinimapZoomOut" .. "DMBorder", "OVERLAY")
+		local border2 = MinimapZoomOut:CreateTexture("MinimapZoomOut" .. ".DMBorder", "OVERLAY")
 		border2:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
 		border2:SetAllPoints(MinimapZoomOut)
 		border2:SetDrawLayer("OVERLAY", 3)
 		DarkMode:UpdateColor(border2, "ui")
 	end
 
-	if MiniMapTrackingFrame and _G["MiniMapTrackingFrame" .. "DMBorder"] == nil then
+	if MiniMapTrackingFrame and _G["MiniMapTrackingFrame" .. ".DMBorder"] == nil then
 		-- Classic Era
-		local border = MiniMapTrackingFrame:CreateTexture("MiniMapTrackingFrame" .. "DMBorder", "OVERLAY")
+		local border = MiniMapTrackingFrame:CreateTexture("MiniMapTrackingFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT")
 		border:SetDrawLayer("OVERLAY", 3)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. "DMBorder"] == nil then
+	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. ".DMBorder"] == nil then
 		-- Wrath
-		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. "DMBorder", "OVERLAY")
+		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
@@ -1039,9 +1050,9 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. "DMBorder"] == nil then
+	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. ".DMBorder"] == nil then
 		-- Wrath
-		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. "DMBorder", "OVERLAY")
+		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
@@ -1052,8 +1063,8 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapMailFrame and _G["MiniMapMailFrame" .. "DMBorder"] == nil then
-		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. "DMBorder", "OVERLAY")
+	if MiniMapMailFrame and _G["MiniMapMailFrame" .. ".DMBorder"] == nil then
+		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetDrawLayer("OVERLAY", 3)
@@ -1064,8 +1075,8 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. "DMBorder"] == nil then
-		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. "DMBorder", "OVERLAY")
+	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. ".DMBorder"] == nil then
+		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
 		if DarkMode:GetWoWBuild() == "WRATH" or DarkMode:GetWoWBuild() == "CATA" then
 			border:SetPoint("TOPLEFT", -1, 1)
@@ -1085,10 +1096,10 @@ function DarkMode:SearchUi(from)
 		function()
 			DarkMode:Debug(5, "#6")
 			for i, btn in pairs(_G) do
-				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, "DMBorder", 1, true) then
+				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, ".DMBorder", 1, true) then
 					local name = btn:GetName()
-					if btn and _G[name .. "DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.border == nil or btn.border == true) then
-						btn.border = btn:CreateTexture(name .. "DMBorder", "OVERLAY")
+					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.border == nil or btn.border == true) then
+						btn.border = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						local border = btn.border
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
@@ -1122,8 +1133,8 @@ function DarkMode:SearchUi(from)
 	)
 
 	local btwQ = _G["BtWQuestsMinimapButton"]
-	if btwQ and _G["BtWQuestsMinimapButton" .. "DMBorder"] == nil then
-		local border = btwQ:CreateTexture("BtWQuestsMinimapButton" .. "DMBorder", "OVERLAY")
+	if btwQ and _G["BtWQuestsMinimapButton" .. ".DMBorder"] == nil then
+		local border = btwQ:CreateTexture("BtWQuestsMinimapButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
 		border:SetParent(btwQ)
@@ -1346,7 +1357,7 @@ local AuraFrames = {}
 local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
-local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot"}
+local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton"}
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -1388,24 +1399,17 @@ function DarkMode:Event(event, ...)
 							local py = btnTab[3]
 							local _, sh = btn:GetSize()
 							sh = DarkMode:MathR(sh)
-							btn.border = btn:CreateTexture(format(btnName, i) .. ".border", "OVERLAY")
-							local border = btn.border
-							border:SetDrawLayer("OVERLAY", 3)
-							border:SetSize(sh * scale, sh * scale)
-							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-							border:SetPoint("CENTER", btn, "CENTER", px, py)
+							DarkMode:AddActionButtonBorder(btn, format(btnName, i), sh * scale, sh * scale, px, py, "frames")
 							hooksecurefunc(
 								btn,
 								"SetNormalTexture",
 								function(sel, texture)
 									-- Leatrix Plus fix...
 									if texture == "" then
-										border:SetAlpha(0)
+										btn.border:SetAlpha(0)
 									end
 								end
 							)
-
-							DarkMode:UpdateColor(border, "frames")
 						end
 					end
 				end
@@ -1421,13 +1425,7 @@ function DarkMode:Event(event, ...)
 					local sw, sh = btn:GetSize()
 					sw = DarkMode:MathR(sw)
 					sh = DarkMode:MathR(sh)
-					btn.border = btn:CreateTexture(btnName .. ".border", "OVERLAY")
-					local border = btn.border
-					border:SetDrawLayer("OVERLAY", 3)
-					border:SetSize(sw * scalew, sh * scaleh)
-					border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-					border:SetPoint("CENTER", btn, "CENTER", px, py)
-					DarkMode:UpdateColor(border, "frames")
+					DarkMode:AddActionButtonBorder(btn, btnName, sh * scalew, sh * scaleh, px, py, "frames")
 				end
 			end
 
@@ -1440,30 +1438,42 @@ function DarkMode:Event(event, ...)
 						for i, v in pairs(BAGS) do
 							local bagF = _G[v]
 							local NT = _G[v .. "NormalTexture"]
-							if NT and bagF and NT.scalesetup == nil then
-								NT.scalesetup = true
-								if NT:GetTexture() == 130841 then
-									local sw, sh = bagF:GetSize()
-									local scale = 1.66
-									NT:SetSize(sw * scale, sh * scale)
-								end
-							end
-
-							if LibStub and MSQ == nil then
-								MSQ = LibStub("Masque", true)
-							end
-
-							if MSQ and bagF and v ~= "BagToggle" then
-								if bagF.__MSQ_Mask then
-									DarkMode:UpdateColor(bagF.__MSQ_Mask, "actionbuttons")
+							if bagF then
+								local sw, sh = bagF:GetSize()
+								if NT and NT.scalesetup == nil then
+									NT.scalesetup = true
+									if NT:GetTexture() == 130841 then
+										local scale = 1.66
+										NT:SetSize(sw * scale, sh * scale)
+									end
 								end
 
-								if bagF.__MSQ_Normal then
-									DarkMode:UpdateColor(bagF.__MSQ_Normal, "actionbuttons")
+								local scale = 1.1
+								if v == "KeyRingButton" then
+									scale = 1
 								end
 
-								if bagF.__MSQ_NewNormal then
-									DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "actionbuttons")
+								if false then
+									scale = 1.18
+								end
+
+								DarkMode:AddActionButtonBorder(bagF, v, sw * scale, sh * scale, 0, 0, "ui")
+								if LibStub and MSQ == nil then
+									MSQ = LibStub("Masque", true)
+								end
+
+								if MSQ and bagF and v ~= "BagToggle" then
+									if bagF.__MSQ_Mask then
+										DarkMode:UpdateColor(bagF.__MSQ_Mask, "actionbuttons")
+									end
+
+									if bagF.__MSQ_Normal then
+										DarkMode:UpdateColor(bagF.__MSQ_Normal, "actionbuttons")
+									end
+
+									if bagF.__MSQ_NewNormal then
+										DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "actionbuttons")
+									end
 								end
 							end
 						end
@@ -1659,12 +1669,7 @@ function DarkMode:Event(event, ...)
 						local sw, sh = icon:GetSize()
 						sw = DarkMode:MathR(sw)
 						sh = DarkMode:MathR(sh)
-						local border = spellbar:CreateTexture(v .. ".BorderDM_T", "OVERLAY")
-						border:SetSize(sw * scale, sh * scale)
-						border:SetPoint("CENTER", icon, "CENTER", 0, 0)
-						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\default")
-						border:SetDrawLayer("OVERLAY", 7)
-						DarkMode:UpdateColor(border, "buffsanddebuffs")
+						DarkMode:AddActionButtonBorder(spellbar, v, sw * scale, sh * scale, 0, 0, "buffsanddebuffs")
 					end
 				end
 			end
