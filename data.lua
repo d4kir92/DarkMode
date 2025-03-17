@@ -187,17 +187,25 @@ end
 
 local DMFramesSpecial = {}
 if CharacterMainHandSlot then
-	local tab = {CharacterMainHandSlot:GetRegions()}
-	if tab[14] then
-		tinsert(DMFramesSpecial, tab[14])
-	end
+	DarkMode:ForeachRegions(
+		CharacterMainHandSlot,
+		function(region, x)
+			if x == 14 then
+				tinsert(DMFramesSpecial, region) -- CATA
+			end
+		end, "CharacterMainHandSlot"
+	)
 end
 
 if CharacterRangedSlot then
-	local tab = {CharacterRangedSlot:GetRegions()}
-	if tab[14] then
-		tinsert(DMFramesSpecial, tab[14])
-	end
+	DarkMode:ForeachRegions(
+		CharacterRangedSlot,
+		function(region, x)
+			if x == 14 then
+				tinsert(DMFramesSpecial, region) -- CATA
+			end
+		end, "CharacterRangedSlot"
+	)
 end
 
 function DarkMode:GetFrameTableSpecial()

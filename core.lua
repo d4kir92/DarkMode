@@ -379,11 +379,14 @@ function DarkMode:AddonsSearch(from)
 				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
 					local tab = _G[v]
 					if tab then
-						for x, w in pairs({tab:GetRegions()}) do
-							if x == 1 then
-								DarkMode:UpdateColor(w, "frames")
-							end
-						end
+						DarkMode:ForeachRegions(
+							tab,
+							function(region, x)
+								if x == 1 then
+									DarkMode:UpdateColor(region, "frames")
+								end
+							end, "AddonsSearch"
+						)
 					end
 				end
 			end
@@ -391,11 +394,18 @@ function DarkMode:AddonsSearch(from)
 			if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
 				ClassTalentFrame.dm_setup_talent = true
 				function ClassTalentFrame:UpdateColors()
-					local tabs = {ClassTalentFrame.TabSystem:GetChildren()}
-					for i, v in pairs(tabs) do
-						for x, w in pairs({v:GetRegions()}) do
-							DarkMode:UpdateColor(w, "frames")
-						end
+					if ClassTalentFrame.TabSystem then
+						DarkMode:ForeachChildren(
+							ClassTalentFrame.TabSystem,
+							function(child)
+								DarkMode:ForeachRegions(
+									child,
+									function(region)
+										DarkMode:UpdateColor(region, "frames")
+									end, "ClassTalentFrame.TabSystem regions"
+								)
+							end, "ClassTalentFrame.TabSystem childs"
+						)
 					end
 				end
 
@@ -479,28 +489,34 @@ function DarkMode:FindTexts(frame, name)
 		if frame.SetTextColor then
 			DarkMode:UpdateText(frame, name, 1)
 		else
-			if frame.GetRegions and getn({frame:GetRegions()}) > 0 then
-				for i, v in pairs({frame:GetRegions()}) do
-					if v.SetTextColor then
-						DarkMode:UpdateText(v, name, 2)
-					end
+			if frame.GetRegions then
+				DarkMode:ForeachRegions(
+					frame,
+					function(region, x)
+						if region.SetTextColor then
+							DarkMode:UpdateText(region, name, 2)
+						end
 
-					if type(v) == "table" then
-						DarkMode:FindTexts(v, name)
-					end
-				end
+						if type(region) == "table" then
+							DarkMode:FindTexts(region, name)
+						end
+					end, "FindTexts"
+				)
 			end
 
-			if frame.GetChildren and getn({frame:GetChildren()}) > 0 then
-				for i, v in pairs({frame:GetChildren()}) do
-					if v.SetTextColor then
-						DarkMode:UpdateText(v, name, 3)
-					end
+			if frame.GetChildren then
+				DarkMode:ForeachChildren(
+					frame,
+					function(child)
+						if child.SetTextColor then
+							DarkMode:UpdateText(child, name, 3)
+						end
 
-					if type(v) == "table" then
-						DarkMode:FindTexts(v, name)
-					end
-				end
+						if type(child) == "table" then
+							DarkMode:FindTexts(vchild, name)
+						end
+					end, "FindTexts"
+				)
 			end
 		end
 	end
@@ -578,34 +594,40 @@ function DarkMode:FindTextures(frame, typ)
 		DarkMode:UpdateColor(frame, typ)
 	end
 
-	if frame.GetRegions and getn({frame:GetRegions()}) > 0 then
-		for i, v in pairs({frame:GetRegions()}) do
-			local hasName = v.GetName ~= nil
-			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-				if bShow and v.GetTexture then
-					DarkMode:MSG(">>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
-				end
+	if frame.GetRegions then
+		DarkMode:ForeachRegions(
+			frame,
+			function(region, x)
+				local hasName = region.GetName ~= nil
+				if (ignoreId1 == nil or ignoreId1 ~= x) and (ignoreId2 == nil or ignoreId2 ~= x) and (ignoreId3 == nil or ignoreId3 ~= x) and ((hasName and not DarkMode:GetIgnoreFrames(region:GetName())) or (not hasName and region.SetVertexColor)) then
+					if bShow and region.GetTexture then
+						DarkMode:MSG(">>", frame:GetName(), region:GetName(), region:GetTextureFilePath(), region:GetTexture(), "Size:", region:GetSize())
+					end
 
-				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
-					DarkMode:UpdateColor(v, typ)
+					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(region:GetName())) then
+						DarkMode:UpdateColor(region, typ)
+					end
 				end
-			end
-		end
+			end, "FindTextures"
+		)
 	end
 
-	if frame.GetChildren and getn({frame:GetChildren()}) > 0 then
-		for i, v in pairs({frame:GetChildren()}) do
-			local hasName = v.GetName ~= nil
-			if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(v:GetName())) or (not hasName and v.SetVertexColor)) then
-				if bShow and v.GetTexture then
-					DarkMode:MSG(">>>", frame:GetName(), v:GetName(), v:GetTextureFilePath(), v:GetTexture(), "Size:", v:GetSize())
-				end
+	if frame.GetChildren then
+		DarkMode:ForeachChildren(
+			frame,
+			function(child, i)
+				local hasName = child.GetName ~= nil
+				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(child:GetName())) or (not hasName and child.SetVertexColor)) then
+					if bShow and child.GetTexture then
+						DarkMode:MSG(">>>", frame:GetName(), child:GetName(), child:GetTextureFilePath(), child:GetTexture(), "Size:", child:GetSize())
+					end
 
-				if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(v:GetName())) then
-					DarkMode:UpdateColor(v, typ)
+					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(child:GetName())) then
+						DarkMode:UpdateColor(child, typ)
+					end
 				end
-			end
-		end
+			end, "FindTextures"
+		)
 	end
 end
 
@@ -629,7 +651,7 @@ function DarkMode:InitGreetingPanel()
 		end
 
 		for index, name in pairs(frameTab) do
-			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 				DarkMode:FindTexturesByName(name .. v, "frames")
 			end
 		end
@@ -738,11 +760,11 @@ function DarkMode:SearchFrames()
 
 	for index, name in pairs(DarkMode:GetFrameTable()) do
 		if name ~= "LootFrame" then
-			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 				DarkMode:FindTexturesByName(name .. v, "frames")
 			end
 		else
-			for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 				-- BottomLeft and BottomRight Corner 
 				if v ~= ".Bg" and v ~= ".Background" then
 					DarkMode:FindTexturesByName(name .. v, "frames")
@@ -757,36 +779,37 @@ local foundExpansion = false
 function DarkMode:SearchAddons(from)
 	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
 		foundAuctionator = true
-		for i, v in pairs(AuctionatorAHTabsContainer.Tabs) do
+		for x, v in pairs(AuctionatorAHTabsContainer.Tabs) do
 			DarkMode:FindTextures(v, "frames")
 		end
 	end
 
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
-		for i, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 			DarkMode:FindTexturesByName(name .. v, "frames")
 		end
 	end
 
 	if not foundExpansion and ExpansionLandingPage and ExpansionLandingPage.Overlay then
-		for i, v in pairs({ExpansionLandingPage.Overlay:GetChildren()}) do
-			if v then
+		DarkMode:ForeachChildren(
+			ExpansionLandingPage.Overlay,
+			function(child)
 				foundExpansion = true
-				DarkMode:FindTextures(v.NineSlice, "frames")
-			end
-		end
+				DarkMode:FindTextures(child.NineSlice, "frames")
+			end, "SearchAddons"
+		)
 	end
+end
 
-	for index, name in pairs(DarkMode:GetUiAddonsTable()) do
-		DarkMode:FindTexturesByName(name, "ui")
-	end
+for index, name in pairs(DarkMode:GetUiAddonsTable()) do
+	DarkMode:FindTexturesByName(name, "ui")
 end
 
 function DarkMode:SearchUi(from)
 	local raidOnly = from == "raid"
 	for index, tab in pairs(DarkMode:GetUiTable()) do
 		if raidOnly and index == "UnitFrames" then
-			for i, v in pairs(tab) do
+			for x, v in pairs(tab) do
 				DarkMode:FindTexturesByName(v, "uf")
 			end
 		else
@@ -959,11 +982,14 @@ function DarkMode:SearchUi(from)
 					if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
 						local frame = DarkMode:GetFrame(name)
 						if frame then
-							for i, v in pairs({frame:GetChildren()}) do
-								if i == 1 then
-									DarkMode:FindTextures(v, "ui") -- Bartender Border in BlizzardArt
-								end
-							end
+							DarkMode:ForeachChildren(
+								ExpansionLandingPage.Overlay,
+								function(child, x)
+									if x == 1 then
+										DarkMode:FindTextures(child, "ui") -- Bartender Border in BlizzardArt
+									end
+								end, "Artworks"
+							)
 						end
 					end
 
@@ -1119,11 +1145,14 @@ function DarkMode:SearchUi(from)
 			end
 
 			if Lib_GPI_Minimap_LFGBulletinBoard then
-				for i, v in pairs({Lib_GPI_Minimap_LFGBulletinBoard:GetRegions()}) do
-					if i == 2 then
-						DarkMode:UpdateColor(v, "ui")
-					end
-				end
+				DarkMode:ForeachRegions(
+					Lib_GPI_Minimap_LFGBulletinBoard,
+					function(region, x)
+						if x == 2 then
+							DarkMode:UpdateColor(region, "ui")
+						end
+					end, "Lib_GPI_Minimap_LFGBulletinBoard"
+				)
 			end
 
 			if PeggledMinimapIcon and PeggledMinimapIcon.border then
@@ -1769,24 +1798,30 @@ end
 
 function DarkMode:UpdateVigor()
 	if UIWidgetPowerBarContainerFrame == nil then return end
-	for _, child in ipairs({UIWidgetPowerBarContainerFrame:GetChildren()}) do
-		if child.DecorLeft and child.DecorLeft.GetAtlas then
-			local atlas = child.DecorLeft:GetAtlas()
-			if atlas and string.find(atlas, "vigor", 1, true) then
-				DarkMode:UpdateColor(child.DecorLeft, "ui")
-				DarkMode:UpdateColor(child.DecorRight, "ui")
-			end
-		end
-
-		for _, cchild in ipairs({child:GetChildren()}) do
-			if cchild.Frame and cchild.Frame.GetAtlas then
-				local atlas = cchild.Frame:GetAtlas()
+	DarkMode:ForeachChildren(
+		UIWidgetPowerBarContainerFrame,
+		function(child)
+			if child.DecorLeft and child.DecorLeft.GetAtlas then
+				local atlas = child.DecorLeft:GetAtlas()
 				if atlas and string.find(atlas, "vigor", 1, true) then
-					DarkMode:UpdateColor(cchild.Frame, "ui")
+					DarkMode:UpdateColor(child.DecorLeft, "ui")
+					DarkMode:UpdateColor(child.DecorRight, "ui")
 				end
 			end
-		end
-	end
+
+			DarkMode:ForeachChildren(
+				child,
+				function(cchild)
+					if cchild.Frame and cchild.Frame.GetAtlas then
+						local atlas = cchild.Frame:GetAtlas()
+						if atlas and string.find(atlas, "vigor", 1, true) then
+							DarkMode:UpdateColor(cchild.Frame, "ui")
+						end
+					end
+				end, "UpdateVigor 2"
+			)
+		end, "UpdateVigor 1"
+	)
 end
 
 local vigor = CreateFrame("Frame")
