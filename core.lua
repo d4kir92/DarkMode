@@ -301,7 +301,7 @@ function DarkMode:GetFrame(name)
 	return nil
 end
 
-function DarkMode:AddActionButtonBorder(btn, name, sizew, sizeh, px, py, typ, texture)
+function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py, typ, texture)
 	local icon = _G[name .. "Icon"]
 	if icon then
 		local br = 0.075
@@ -314,12 +314,12 @@ function DarkMode:AddActionButtonBorder(btn, name, sizew, sizeh, px, py, typ, te
 		icon:SetTexCoord(br, 1 - br, br, 1 - br)
 	end
 
-	if btn.border ~= nil then return end
+	if parent.border ~= nil then return end
 	px = px or 0
 	py = py or 0
 	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default"
-	btn.border = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-	local border = btn.border
+	parent.border = parent:CreateTexture(name .. ".DMBorder", "OVERLAY")
+	local border = parent.border
 	border:SetDrawLayer("OVERLAY", 3)
 	border:SetSize(sizew, sizeh)
 	if typ == "actionbuttons" then
@@ -806,7 +806,7 @@ function DarkMode:SearchUi(from)
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
 							local scale = 1.1
-							DarkMode:AddActionButtonBorder(btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons")
+							DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons")
 						elseif btnTextureNormalTexture then
 							DarkMode:UpdateColor(btnTextureNormalTexture, "actionbuttons")
 						end
@@ -934,7 +934,7 @@ function DarkMode:SearchUi(from)
 										scale = 1.2
 									end
 
-									DarkMode:AddActionButtonBorder(btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
+									DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
 								end
 							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
 								local icon = _G[name .. x .. "Icon"]
@@ -948,7 +948,7 @@ function DarkMode:SearchUi(from)
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
 									local scale = 1.1
-									DarkMode:AddActionButtonBorder(btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
+									DarkMode:AddActionButtonBorder(btn, btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER")
 								end
 							end
 						end
@@ -1399,7 +1399,7 @@ function DarkMode:Event(event, ...)
 							local py = btnTab[3]
 							local _, sh = btn:GetSize()
 							sh = DarkMode:MathR(sh)
-							DarkMode:AddActionButtonBorder(btn, format(btnName, i), sh * scale, sh * scale, px, py, "frames")
+							DarkMode:AddActionButtonBorder(btn, btn, format(btnName, i), sh * scale, sh * scale, px, py, "frames")
 							hooksecurefunc(
 								btn,
 								"SetNormalTexture",
@@ -1425,7 +1425,7 @@ function DarkMode:Event(event, ...)
 					local sw, sh = btn:GetSize()
 					sw = DarkMode:MathR(sw)
 					sh = DarkMode:MathR(sh)
-					DarkMode:AddActionButtonBorder(btn, btnName, sh * scalew, sh * scaleh, px, py, "frames")
+					DarkMode:AddActionButtonBorder(btn, btn, btnName, sh * scalew, sh * scaleh, px, py, "frames")
 				end
 			end
 
@@ -1457,7 +1457,7 @@ function DarkMode:Event(event, ...)
 									scale = 1.18
 								end
 
-								DarkMode:AddActionButtonBorder(bagF, v, sw * scale, sh * scale, 0, 0, "ui")
+								DarkMode:AddActionButtonBorder(bagF, bagF, v, sw * scale, sh * scale, 0, 0, "ui")
 								if LibStub and MSQ == nil then
 									MSQ = LibStub("Masque", true)
 								end
@@ -1660,16 +1660,16 @@ function DarkMode:Event(event, ...)
 			end
 
 			local castbars = {"TargetFrameSpellBar", "FocusFrameSpellBar"}
-			for index, v in pairs(castbars) do
-				local spellbar = _G[v]
+			for index, name in pairs(castbars) do
+				local spellbar = _G[name]
 				if spellbar then
 					local icon = spellbar.Icon
 					if icon then
-						local scale = 1.1
+						local scale = 1
 						local sw, sh = icon:GetSize()
 						sw = DarkMode:MathR(sw)
 						sh = DarkMode:MathR(sh)
-						DarkMode:AddActionButtonBorder(spellbar, v, sw * scale, sh * scale, 0, 0, "buffsanddebuffs")
+						DarkMode:AddActionButtonBorder(spellbar, icon, name, sw * scale, sh * scale, 0, 0, "buffsanddebuffs")
 					end
 				end
 			end
