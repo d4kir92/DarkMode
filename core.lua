@@ -513,7 +513,7 @@ function DarkMode:FindTexts(frame, name)
 						end
 
 						if type(child) == "table" then
-							DarkMode:FindTexts(vchild, name)
+							DarkMode:FindTexts(child, name)
 						end
 					end, "FindTexts"
 				)
