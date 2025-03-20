@@ -266,36 +266,25 @@ end
 
 function DarkMode:GetFrame(name)
 	local frame = _G[name]
-	if frame ~= nil and type(frame) == "table" then
-		return frame
-	elseif strfind(name, ".", 1, true) then
-		for i, v in pairs({strsplit(".", name)}) do
-			if i == 1 then
-				if type(_G[v]) == "table" then
-					frame = _G[v]
-				elseif i > 1 then
-					return nil
-				end
-			elseif frame then
-				if type(frame[v]) == "table" then
-					frame = frame[v]
-				elseif i > 1 then
-					return nil
-				end
-			else
-				return nil
-			end
+	if type(frame) == "table" then return frame end
+	-- Überprüfung für verschachtelte Namen mit "."
+	if name:find("%.") then
+		local parts = {strsplit(".", name)}
+		frame = _G[parts[1]]
+		for i = 2, #parts do
+			if type(frame) ~= "table" then return nil end
+			frame = frame[parts[i]]
 		end
 
-		if type(frame) == "table" then return frame end
-	elseif name:find("%[[0-9]+%]") then
-		local f = _G[name:gsub("%[[0-9]+%]", "")]
-		if f then
-			local regions = {f:GetRegions()}
-			local num = tonumber(name:match("[0-9]+"))
+		return type(frame) == "table" and frame or nil
+	end
 
-			return regions[num]
-		end
+	-- Überprüfung für Namen mit "[index]"
+	local baseName, index = name:match("([^%[]+)%[(%d+)%]")
+	if baseName and index then
+		local f = _G[baseName]
+
+		return f and select(tonumber(index), f:GetRegions()) or nil
 	end
 
 	return nil
