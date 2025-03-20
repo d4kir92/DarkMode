@@ -264,30 +264,6 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 	return false
 end
 
-function DarkMode:GetFrame(name)
-	local frame = _G[name]
-	if type(frame) == "table" then return frame end
-	if name:find("%.") then
-		local parts = {strsplit(".", name)}
-		frame = _G[parts[1]]
-		for i = 2, #parts do
-			if type(frame) ~= "table" then return nil end
-			frame = frame[parts[i]]
-		end
-
-		return type(frame) == "table" and frame or nil
-	end
-
-	local baseName, index = name:match("([^%[]+)%[(%d+)%]")
-	if baseName and index then
-		local f = _G[baseName]
-
-		return f and select(tonumber(index), f:GetRegions()) or nil
-	end
-
-	return nil
-end
-
 function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py, typ, texture)
 	local icon = _G[name .. "Icon"]
 	if icon then
@@ -510,7 +486,7 @@ function DarkMode:FindTexts(frame, name)
 end
 
 function DarkMode:FindTextsByName(name)
-	local frame = DarkMode:GetFrame(name)
+	local frame = DarkMode:GetFrameByName(name)
 	if frame and DarkMode:DMGV("COLORMODEF", 1) ~= 7 then
 		DarkMode:FindTexts(frame, name)
 	end
@@ -620,7 +596,7 @@ end
 
 function DarkMode:FindTexturesByName(name, typ)
 	DarkMode:Debug(10, "FindTexturesByName", name)
-	local frame = DarkMode:GetFrame(name)
+	local frame = DarkMode:GetFrameByName(name)
 	if frame then
 		DarkMode:FindTextures(frame, typ)
 	end
@@ -628,7 +604,7 @@ end
 
 local questDelay = 0.2
 function DarkMode:InitGreetingPanel()
-	local frame = DarkMode:GetFrame("GossipFrame.GreetingPanel.ScrollBox.ScrollTarget")
+	local frame = DarkMode:GetFrameByName("GossipFrame.GreetingPanel.ScrollBox.ScrollTarget")
 	local frameTab = {"GossipFrame", "GossipFrame.GreetingPanel", "GossipFrame.GreetingPanel.ScrollBox", "GossipFrame.GreetingPanel.ScrollBar.Background",}
 	function DarkMode:UpdateGossipFrame()
 		if frame == GossipFrame then
@@ -645,7 +621,7 @@ function DarkMode:InitGreetingPanel()
 	end
 
 	if frame == nil then
-		frame = DarkMode:GetFrame("GossipFrame")
+		frame = DarkMode:GetFrameByName("GossipFrame")
 	end
 
 	if frame then
@@ -691,7 +667,7 @@ function DarkMode:InitGreetingPanel()
 end
 
 function DarkMode:InitQuestLogFrame()
-	local frame = DarkMode:GetFrame("QuestLogFrame")
+	local frame = DarkMode:GetFrameByName("QuestLogFrame")
 	function DarkMode:UpdateQuestLogFrame()
 		for index, name in pairs(DarkMode:GetFrameTextTable()) do
 			DarkMode:FindTextsByName(name)
@@ -967,7 +943,7 @@ function DarkMode:SearchUi(from)
 			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
 				for ind, name in pairs(tab) do
 					if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
-						local frame = DarkMode:GetFrame(name)
+						local frame = DarkMode:GetFrameByName(name)
 						if frame then
 							DarkMode:ForeachChildren(
 								ExpansionLandingPage.Overlay,
@@ -1319,7 +1295,7 @@ npf:SetScript(
 )
 
 function DarkMode:InitQuestFrameGreetingPanel()
-	local frame = DarkMode:GetFrame("QuestFrameGreetingPanel")
+	local frame = DarkMode:GetFrameByName("QuestFrameGreetingPanel")
 	function DarkMode:UpdateQuestFrameGreetingPanel()
 		DarkMode:FindTextsByName("QuestFrameGreetingPanel")
 	end
