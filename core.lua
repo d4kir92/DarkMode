@@ -267,7 +267,6 @@ end
 function DarkMode:GetFrame(name)
 	local frame = _G[name]
 	if type(frame) == "table" then return frame end
-	-- Überprüfung für verschachtelte Namen mit "."
 	if name:find("%.") then
 		local parts = {strsplit(".", name)}
 		frame = _G[parts[1]]
@@ -279,7 +278,6 @@ function DarkMode:GetFrame(name)
 		return type(frame) == "table" and frame or nil
 	end
 
-	-- Überprüfung für Namen mit "[index]"
 	local baseName, index = name:match("([^%[]+)%[(%d+)%]")
 	if baseName and index then
 		local f = _G[baseName]
