@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.6.22")
+	DarkMode:SetVersion(136122, "0.6.23")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
