@@ -24,6 +24,7 @@ local DMTexturesTT = {}
 local DMTexturesFrames = {}
 local DMTexturesActionButtons = {}
 local DMTexturesBuffsAndDebuffs = {}
+local MMBTNSETUP = {}
 function DarkMode:UpdateColor(texture, typ, bShow)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
@@ -982,12 +983,13 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if MICRO_BUTTONS and DarkMode:GetWoWBuild() ~= "RETAIL" then
+	if MICRO_BUTTONS then
 		for i, name in pairs(MICRO_BUTTONS) do
 			if name then
 				local mbtn = _G[name]
 				if mbtn and _G[name .. ".DMBorder"] == nil then
-					if mbtn.Background then
+					if mbtn.Background and MMBTNSETUP[mbtn.Background] == nil then
+						MMBTNSETUP[mbtn.Background] = true
 						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 						border:SetSize(32, 64)
