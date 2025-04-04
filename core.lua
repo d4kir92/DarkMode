@@ -270,7 +270,7 @@ function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py,
 	if icon then
 		local br = 0.075
 		if string.find(name, "PetActionButton", 1, true) then
-			br = 0.038
+			br = 0.052
 		elseif string.find(name, "StanceButton", 1, true) then
 			br = 0.075
 		end
@@ -286,6 +286,10 @@ function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py,
 	local border = parent.border
 	border:SetDrawLayer("OVERLAY", 3)
 	border:SetSize(sizew, sizeh)
+	if string.find(name, "PetActionButton", 1, true) and DarkMode:IsEnabled("THINBORDERS", false) then
+		border:SetScale(0.88)
+	end
+
 	if actionbuttons then
 		if DarkMode:IsEnabled("THINBORDERS", false) then
 			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
