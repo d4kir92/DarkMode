@@ -327,6 +327,24 @@ function DarkMode:RetryAddonsSearch()
 	)
 end
 
+local foundTrinket = false
+function DarkMode:TriggerTrinketMenu()
+	DarkMode:ForeachChildren(
+		TrinketMenu_MenuFrame,
+		function(child, c)
+			DarkMode:ForeachRegions(
+				child,
+				function(region, r)
+					local name = region:GetName()
+					if name and string.find(name, "NormalTexture", 1, true) then
+						DarkMode:UpdateColor(region, "frames")
+					end
+				end
+			)
+		end
+	)
+end
+
 DarkMode:RetryAddonsSearch()
 function DarkMode:AddonsSearch(from)
 	if GetTime() < addonsDelay then
@@ -338,6 +356,23 @@ function DarkMode:AddonsSearch(from)
 
 	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
+	if foundTrinket == false and TrinketMenu_MenuFrame then
+		foundTrinket = true
+		TrinketMenu_MenuFrame:HookScript(
+			"OnShow",
+			function()
+				DarkMode:TriggerTrinketMenu()
+			end
+		)
+
+		TrinketMenu_MenuFrame:HookScript(
+			"OnEnter",
+			function()
+				DarkMode:TriggerTrinketMenu()
+			end
+		)
+	end
+
 	C_Timer.After(
 		0.1,
 		function()
@@ -1816,6 +1851,34 @@ vigor:SetScript(
 		end
 	end
 )
+
+if GameMenuFrame then
+	GameMenuFrame:HookScript(
+		"OnShow",
+		function()
+			DarkMode:ForeachChildren(
+				GameMenuFrame,
+				function(child, x)
+					if child.Left then
+						DarkMode:UpdateColor(child.Left, "frames")
+					end
+
+					if child.Middle then
+						DarkMode:UpdateColor(child.Middle, "frames")
+					end
+
+					if child.Center then
+						DarkMode:UpdateColor(child.Center, "frames")
+					end
+
+					if child.Right then
+						DarkMode:UpdateColor(child.Right, "frames")
+					end
+				end
+			)
+		end
+	)
+end
 
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", DarkMode.Event)
