@@ -1589,16 +1589,16 @@ function DarkMode:Event(event, ...)
 							local NT = _G[v .. "NormalTexture"]
 							if bagF and NT then
 								if MainMenuBarBackpackButton ~= bagF then
+									NT:SetDesaturated(true)
 									DarkMode:UpdateColor(NT, "actionbuttons")
 								else
-									bagF.border = bagF:CreateTexture(v .. ".BagBorder1", "ARTWORK")
-									bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
-									bagF.border:SetAllPoints(bagF)
-									DarkMode:UpdateColor(bagF.border, "actionbuttons")
-									bagF.border2 = bagF:CreateTexture(v .. ".BagBorder2", "ARTWORK")
-									bagF.border2:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
-									bagF.border2:SetAllPoints(bagF)
-									DarkMode:UpdateColor(bagF.border2, "actionbuttons")
+									for x = 1, 3 do
+										bagF.border = bagF:CreateTexture(v .. ".BagBorder" .. x, "ARTWORK")
+										bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
+										bagF.border:SetAllPoints(bagF)
+										bagF.border:SetDesaturated(true)
+										DarkMode:UpdateColor(bagF.border, "actionbuttons")
+									end
 								end
 							end
 						end
