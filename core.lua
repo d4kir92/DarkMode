@@ -1390,7 +1390,7 @@ local AuraFrames = {}
 local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
-local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton"}
+local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton", "CharacterReagentBag0Slot"}
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -1578,6 +1578,32 @@ function DarkMode:Event(event, ...)
 						PlayerFrameDragon:SetTexture("")
 					end
 				end
+			else
+				-- delay for other addons changing
+				C_Timer.After(
+					1,
+					function()
+						DarkMode:Debug(5, "#16")
+						for i, v in pairs(BAGS) do
+							local bagF = _G[v]
+							local NT = _G[v .. "NormalTexture"]
+							if bagF and NT then
+								if MainMenuBarBackpackButton ~= bagF then
+									DarkMode:UpdateColor(NT, "actionbuttons")
+								else
+									bagF.border = bagF:CreateTexture(v .. ".BagBorder1", "ARTWORK")
+									bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
+									bagF.border:SetAllPoints(bagF)
+									DarkMode:UpdateColor(bagF.border, "actionbuttons")
+									bagF.border2 = bagF:CreateTexture(v .. ".BagBorder2", "ARTWORK")
+									bagF.border2:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
+									bagF.border2:SetAllPoints(bagF)
+									DarkMode:UpdateColor(bagF.border2, "actionbuttons")
+								end
+							end
+						end
+					end
+				)
 			end
 
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
