@@ -2,13 +2,13 @@ local _, DarkMode = ...
 function DarkMode:GetColor(id, name)
 	local colorMode = DarkMode:GetColorModes()[id]
 	if colorMode == "Dark" then
-		return 0.180, 0.180, 0.180, 1
+		return 0.220, 0.220, 0.220, 1
 	elseif colorMode == "Dark+" then
-		return 0.140, 0.140, 0.140, 1
+		return 0.200, 0.200, 0.200, 1
 	elseif colorMode == "Darker" then
-		return 0.100, 0.100, 0.100, 1
+		return 0.140, 0.140, 0.140, 1
 	elseif colorMode == "Darker+" then
-		return 0.060, 0.060, 0.060, 1
+		return 0.080, 0.080, 0.080, 1
 	elseif colorMode == "Black" then
 		return 0.000, 0.000, 0.000, 1
 	elseif colorMode == "ClassColor" then
@@ -56,57 +56,89 @@ function DarkMode:GetBrighterColor(r, g, b, a, texture)
 end
 
 function DarkMode:GetUiColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODE", 1), "CUSTOMUIC")
+	local mode = DarkMode:DMGV("COLORMODE", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUIC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetUFColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEUNFR", 1), "CUSTOMUFC")
+	local mode = DarkMode:DMGV("COLORMODEUNFR", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetUFDRColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEUNFRDRA", 7), "CUSTOMUFDRC")
+	local mode = DarkMode:DMGV("COLORMODEUNFRDRA", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFDRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetNPColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODENP", 1), "CUSTOMNPC")
+	local mode = DarkMode:DMGV("COLORMODENP", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMNPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetTTColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODETT", 1), "CUSTOMTTC")
+	local mode = DarkMode:DMGV("COLORMODETT", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMTTC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetActionButtonsColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEAB", 1), "CUSTOMABC")
+	local mode = DarkMode:DMGV("COLORMODEAB", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMABC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetBuffsAndDebuffsColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEBAD", 1), "CUSTOMBADC")
+	local mode = DarkMode:DMGV("COLORMODEBAD", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBADC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
 
 function DarkMode:GetFrameColor(texture)
-	local r, g, b, a = DarkMode:GetColor(DarkMode:DMGV("COLORMODEF", 1), "CUSTOMFRC")
+	local mode = DarkMode:DMGV("COLORMODEF", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and texture and texture.SetDesaturated then
+		texture:SetDesaturated(true)
+	end
 
 	return r, g, b, a
 end
