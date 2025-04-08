@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.0")
+	DarkMode:SetVersion(136122, "0.7.1")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -413,15 +413,15 @@ function DarkMode:InitDMSettings()
 			end
 		)
 
+		AddCheckBox(4, "GRYPHONS", true)
 		AddCheckBox(4, "MASKMINIMAPBUTTONS", true)
 		if not MSQ then
-			AddCheckBox(4, "THINBORDERS", false)
 			AddCheckBox(4, "MASKACTIONBUTTONS", true)
 			AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
+			AddCheckBox(4, "THINBORDERS", false)
 		end
 
 		AddCheckBox(4, "DESATURATE", true)
-		AddCheckBox(4, "GRYPHONS", true)
 		posy = posy - 10
 		--AddCategory("OVERALL")
 		local gCM = AddSlider(
