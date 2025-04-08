@@ -1,5 +1,5 @@
 local _, DarkMode = ...
-function DarkMode:GetCP()
+function DarkMode:GetCP(from)
 	DMTAB = DMTAB or {}
 	DMTAB["CURRENTPROFILE"] = DMTAB["CURRENTPROFILE"] or "DEFAULT"
 
@@ -32,13 +32,25 @@ function DarkMode:InitDB()
 	DarkMode:AddProfile("DEFAULT")
 end
 
-function DarkMode:GetTab()
-	return DMTAB["PROFILES"][DarkMode:GetCP()]
+function DarkMode:GetTab(from)
+	if DMTAB == nil or DMTAB["PROFILES"] == nil then
+		DarkMode:MSG("Get Tab to early", from)
+
+		return {}
+	end
+
+	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
+		DarkMode:MSG("Get Profile Tab to early", from)
+
+		return {}
+	end
+
+	return DMTAB["PROFILES"][DarkMode:GetCP(from)]
 end
 
 function DarkMode:SetEnabled(element, value)
-	DarkMode:GetTab()["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
-	DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"] = value
+	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
+	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element]["ENABLED"] = value
 end
 
 function DarkMode:IsEnabled(element, value)
@@ -54,31 +66,31 @@ function DarkMode:IsEnabled(element, value)
 		return false
 	end
 
-	DarkMode:GetTab()["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
-	if DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"] == nil then
-		DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"] = value
+	DarkMode:GetTab("IsEnabled")["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
+	if DarkMode:GetTab("IsEnabled")["ELES"]["OPTIONS"][element]["ENABLED"] == nil then
+		DarkMode:GetTab("IsEnabled")["ELES"]["OPTIONS"][element]["ENABLED"] = value
 	end
 
-	return DarkMode:GetTab()["ELES"]["OPTIONS"][element]["ENABLED"]
+	return DarkMode:GetTab("IsEnabled")["ELES"]["OPTIONS"][element]["ENABLED"]
 end
 
 function DarkMode:GetElePoint(key)
 	DarkMode:GetTab()["ELES"]["POINTS"][key] = DarkMode:GetTab()["ELES"]["POINTS"][key] or {}
-	local an = DarkMode:GetTab()["ELES"]["POINTS"][key]["AN"]
-	local pa = DarkMode:GetTab()["ELES"]["POINTS"][key]["PA"]
-	local re = DarkMode:GetTab()["ELES"]["POINTS"][key]["RE"]
-	local px = DarkMode:GetTab()["ELES"]["POINTS"][key]["PX"]
-	local py = DarkMode:GetTab()["ELES"]["POINTS"][key]["PY"]
+	local an = DarkMode:GetTab("GetElePoint")["ELES"]["POINTS"][key]["AN"]
+	local pa = DarkMode:GetTab("GetElePoint")["ELES"]["POINTS"][key]["PA"]
+	local re = DarkMode:GetTab("GetElePoint")["ELES"]["POINTS"][key]["RE"]
+	local px = DarkMode:GetTab("GetElePoint")["ELES"]["POINTS"][key]["PX"]
+	local py = DarkMode:GetTab("GetElePoint")["ELES"]["POINTS"][key]["PY"]
 
 	return an, pa, re, px, py
 end
 
 function DarkMode:SetElePoint(key, p1, p2, p3, p4, p5)
-	DarkMode:GetTab()["ELES"]["POINTS"][key]["AN"] = p1
-	DarkMode:GetTab()["ELES"]["POINTS"][key]["PA"] = p2
-	DarkMode:GetTab()["ELES"]["POINTS"][key]["RE"] = p3
-	DarkMode:GetTab()["ELES"]["POINTS"][key]["PX"] = p4
-	DarkMode:GetTab()["ELES"]["POINTS"][key]["PY"] = p5
+	DarkMode:GetTab("SetElePoint")["ELES"]["POINTS"][key]["AN"] = p1
+	DarkMode:GetTab("SetElePoint")["ELES"]["POINTS"][key]["PA"] = p2
+	DarkMode:GetTab("SetElePoint")["ELES"]["POINTS"][key]["RE"] = p3
+	DarkMode:GetTab("SetElePoint")["ELES"]["POINTS"][key]["PX"] = p4
+	DarkMode:GetTab("SetElePoint")["ELES"]["POINTS"][key]["PY"] = p5
 	local frame = _G[key]
 	if frame then
 		frame:ClearAllPoints()
@@ -104,7 +116,7 @@ end
 
 function DarkMode:GetMinimapTable()
 	DMTAB["PROFILES"] = DMTAB["PROFILES"] or {}
-	DarkMode:GetTab()["MMICON"] = DarkMode:GetTab()["MMICON"] or {}
+	DarkMode:GetTab("GetMinimapTable")["MMICON"] = DarkMode:GetTab()["MMICON"] or {}
 
-	return DarkMode:GetTab()["MMICON"]
+	return DarkMode:GetTab("GetMinimapTable")["MMICON"]
 end

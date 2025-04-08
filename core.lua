@@ -23,6 +23,8 @@ local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
 local DMTexturesActionButtons = {}
+local DMTexturesBags = {}
+local DMTexturesMicroMenu = {}
 local DMTexturesBuffsAndDebuffs = {}
 local MMBTNSETUP = {}
 function DarkMode:UpdateColor(texture, typ, bShow)
@@ -103,6 +105,24 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 
 				texture:SetColorTexture(r, g, b, a)
 			end
+		elseif typ == "bags" then
+			local r, g, b, a = DarkMode:GetBagsColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "micromenu" then
+			local r, g, b, a = DarkMode:GetMicroMenuColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
 		elseif typ == "buffsanddebuffs" then
 			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -164,6 +184,16 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
+					elseif typ == "bags" then
+						local r, g, b, a = DarkMode:GetBagsColor(sel)
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
+					elseif typ == "micromenu" then
+						local r, g, b, a = DarkMode:GetMicroMenuColor(sel)
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
 					elseif typ == "buffsanddebuffs" then
 						local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
@@ -211,6 +241,16 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
+		elseif typ == "bags" then
+			local r, g, b, a = DarkMode:GetBagsColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "micromenu" then
+			local r, g, b, a = DarkMode:GetMicroMenuColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		elseif typ == "buffsanddebuffs" then
 			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -247,6 +287,14 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 			if not tContains(DMTexturesActionButtons, texture) then
 				tinsert(DMTexturesActionButtons, texture)
 			end
+		elseif typ == "bags" then
+			if not tContains(DMTexturesBags, texture) then
+				tinsert(DMTexturesBags, texture)
+			end
+		elseif typ == "micromenu" then
+			if not tContains(DMTexturesMicroMenu, texture) then
+				tinsert(DMTexturesMicroMenu, texture)
+			end
 		elseif typ == "buffsanddebuffs" then
 			if not tContains(DMTexturesBuffsAndDebuffs, texture) then
 				tinsert(DMTexturesBuffsAndDebuffs, texture)
@@ -256,7 +304,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 				DMTexturesFrames[texture] = texture
 			end
 		else
-			DarkMode:MSF("[UpdateColor] Missing Type:", typ)
+			DarkMode:MSG("[UpdateColor] Missing Type:", typ)
 		end
 
 		return true
@@ -345,7 +393,6 @@ function DarkMode:TriggerTrinketMenu()
 	)
 end
 
-DarkMode:RetryAddonsSearch()
 function DarkMode:AddonsSearch(from)
 	if GetTime() < addonsDelay then
 		addonsRetry = true
@@ -1023,22 +1070,25 @@ function DarkMode:SearchUi(from)
 	end
 
 	if MICRO_BUTTONS then
-		for i, name in pairs(MICRO_BUTTONS) do
-			if name then
-				local mbtn = _G[name]
-				if mbtn and _G[name .. ".DMBorder"] == nil then
-					if mbtn.Background and MMBTNSETUP[mbtn.Background] == nil then
-						MMBTNSETUP[mbtn.Background] = true
-						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-						border:SetSize(32, 64)
-						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
-						DarkMode:UpdateColor(border, "actionbuttons")
-					else
-						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-						border:SetAllPoints(mbtn)
-						DarkMode:UpdateColor(border, "actionbuttons")
+		local mode = DarkMode:DMGV("COLORMODEMI", 1)
+		if mode ~= 7 and mode ~= 9 then
+			for i, name in pairs(MICRO_BUTTONS) do
+				if name then
+					local mbtn = _G[name]
+					if mbtn and _G[name .. ".DMBorder"] == nil then
+						if mbtn.Background and MMBTNSETUP[mbtn.Background] == nil then
+							MMBTNSETUP[mbtn.Background] = true
+							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+							border:SetSize(32, 64)
+							border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
+							DarkMode:UpdateColor(border, "micromenu")
+						else
+							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+							border:SetAllPoints(mbtn)
+							DarkMode:UpdateColor(border, "micromenu")
+						end
 					end
 				end
 			end
@@ -1468,44 +1518,47 @@ function DarkMode:Event(event, ...)
 					2,
 					function()
 						DarkMode:Debug(5, "#15")
-						for i, v in pairs(BAGS) do
-							local bagF = _G[v]
-							local NT = _G[v .. "NormalTexture"]
-							if bagF then
-								local sw, sh = bagF:GetSize()
-								if NT and NT.scalesetup == nil then
-									NT.scalesetup = true
-									if NT:GetTexture() == 130841 then
-										local scale = 1.66
-										NT:SetSize(sw * scale, sh * scale)
-									end
-								end
-
-								local scale = 1.1
-								if v == "KeyRingButton" then
-									scale = 1
-								end
-
-								if false then
-									scale = 1.18
-								end
-
-								DarkMode:AddActionButtonBorder(bagF, bagF, v, sw * scale, sh * scale, 0, 0, "actionbuttons", nil, false)
-								if LibStub and MSQ == nil then
-									MSQ = LibStub("Masque", true)
-								end
-
-								if MSQ and bagF and v ~= "BagToggle" then
-									if bagF.__MSQ_Mask then
-										DarkMode:UpdateColor(bagF.__MSQ_Mask, "actionbuttons")
+						local mode = DarkMode:DMGV("COLORMODEBA", 1)
+						if mode ~= 7 and mode ~= 9 then
+							for i, v in pairs(BAGS) do
+								local bagF = _G[v]
+								local NT = _G[v .. "NormalTexture"]
+								if bagF then
+									local sw, sh = bagF:GetSize()
+									if NT and NT.scalesetup == nil then
+										NT.scalesetup = true
+										if NT:GetTexture() == 130841 then
+											local scale = 1.66
+											NT:SetSize(sw * scale, sh * scale)
+										end
 									end
 
-									if bagF.__MSQ_Normal then
-										DarkMode:UpdateColor(bagF.__MSQ_Normal, "actionbuttons")
+									local scale = 1.1
+									if v == "KeyRingButton" then
+										scale = 1
 									end
 
-									if bagF.__MSQ_NewNormal then
-										DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "actionbuttons")
+									if false then
+										scale = 1.18
+									end
+
+									DarkMode:AddActionButtonBorder(bagF, bagF, v, sw * scale, sh * scale, 0, 0, "bags", nil, false)
+									if LibStub and MSQ == nil then
+										MSQ = LibStub("Masque", true)
+									end
+
+									if MSQ and bagF and v ~= "BagToggle" then
+										if bagF.__MSQ_Mask then
+											DarkMode:UpdateColor(bagF.__MSQ_Mask, "bags")
+										end
+
+										if bagF.__MSQ_Normal then
+											DarkMode:UpdateColor(bagF.__MSQ_Normal, "bags")
+										end
+
+										if bagF.__MSQ_NewNormal then
+											DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "bags")
+										end
 									end
 								end
 							end
@@ -1584,20 +1637,29 @@ function DarkMode:Event(event, ...)
 					1,
 					function()
 						DarkMode:Debug(5, "#16")
-						for i, v in pairs(BAGS) do
-							local bagF = _G[v]
-							local NT = _G[v .. "NormalTexture"]
-							if bagF and NT then
-								if MainMenuBarBackpackButton ~= bagF then
-									NT:SetDesaturated(true)
-									DarkMode:UpdateColor(NT, "actionbuttons")
-								else
-									for x = 1, 3 do
-										bagF.border = bagF:CreateTexture(v .. ".BagBorder" .. x, "ARTWORK")
-										bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
-										bagF.border:SetAllPoints(bagF)
-										bagF.border:SetDesaturated(true)
-										DarkMode:UpdateColor(bagF.border, "actionbuttons")
+						local mode = DarkMode:DMGV("COLORMODEBA", 1)
+						if mode ~= 7 and mode ~= 9 then
+							for i, v in pairs(BAGS) do
+								local bagF = _G[v]
+								local NT = _G[v .. "NormalTexture"]
+								if bagF and NT then
+									if MainMenuBarBackpackButton ~= bagF then
+										if DarkMode:IsEnabled("DESATURATE", true) then
+											NT:SetDesaturated(true)
+										end
+
+										DarkMode:UpdateColor(NT, "bags")
+									else
+										for x = 1, 3 do
+											bagF.border = bagF:CreateTexture(v .. ".BagBorder" .. x, "ARTWORK")
+											bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
+											bagF.border:SetAllPoints(bagF)
+											if DarkMode:IsEnabled("DESATURATE", true) then
+												bagF.border:SetDesaturated(true)
+											end
+
+											DarkMode:UpdateColor(bagF.border, "bags")
+										end
 									end
 								end
 							end
@@ -1796,6 +1858,8 @@ function DarkMode:Event(event, ...)
 					}
 				)
 			end
+
+			DarkMode:RetryAddonsSearch()
 		end
 	elseif event == "ADDON_LOADED" then
 		local from = ...

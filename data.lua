@@ -59,7 +59,7 @@ function DarkMode:GetUiColor(texture)
 	local mode = DarkMode:DMGV("COLORMODE", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUIC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -70,7 +70,7 @@ function DarkMode:GetUFColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEUNFR", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -81,7 +81,7 @@ function DarkMode:GetUFDRColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEUNFRDRA", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFDRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -92,7 +92,7 @@ function DarkMode:GetNPColor(texture)
 	local mode = DarkMode:DMGV("COLORMODENP", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMNPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -103,7 +103,7 @@ function DarkMode:GetTTColor(texture)
 	local mode = DarkMode:DMGV("COLORMODETT", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMTTC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -114,7 +114,29 @@ function DarkMode:GetActionButtonsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAB", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMABC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
+function DarkMode:GetBagsColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEBA", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBAC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
+function DarkMode:GetMicroMenuColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEMI", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMMIC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -125,7 +147,7 @@ function DarkMode:GetBuffsAndDebuffsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEBAD", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBADC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
@@ -136,7 +158,7 @@ function DarkMode:GetFrameColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEF", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated then
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)
 	end
 
