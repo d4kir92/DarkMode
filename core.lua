@@ -840,6 +840,14 @@ function DarkMode:SearchAddons(from)
 		end
 	end
 
+	if DarkMode:IsEnabled("COLORBUTTONS", true) then
+		for index, name in pairs({"RankerToggleButton", "RankerWhatIfButton"}) do
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+				DarkMode:FindTexturesByName(name .. v, "frames")
+			end
+		end
+	end
+
 	if not foundExpansion and ExpansionLandingPage and ExpansionLandingPage.Overlay then
 		DarkMode:ForeachChildren(
 			ExpansionLandingPage.Overlay,
@@ -1859,6 +1867,36 @@ function DarkMode:Event(event, ...)
 				)
 			end
 
+			if GameMenuFrame then
+				GameMenuFrame:HookScript(
+					"OnShow",
+					function()
+						if DarkMode:IsEnabled("COLORBUTTONS", true) then
+							DarkMode:ForeachChildren(
+								GameMenuFrame,
+								function(child, x)
+									if child.Left then
+										DarkMode:UpdateColor(child.Left, "frames")
+									end
+
+									if child.Middle then
+										DarkMode:UpdateColor(child.Middle, "frames")
+									end
+
+									if child.Center then
+										DarkMode:UpdateColor(child.Center, "frames")
+									end
+
+									if child.Right then
+										DarkMode:UpdateColor(child.Right, "frames")
+									end
+								end
+							)
+						end
+					end
+				)
+			end
+
 			DarkMode:RetryAddonsSearch()
 		end
 	elseif event == "ADDON_LOADED" then
@@ -1941,34 +1979,6 @@ vigor:SetScript(
 		end
 	end
 )
-
-if GameMenuFrame then
-	GameMenuFrame:HookScript(
-		"OnShow",
-		function()
-			DarkMode:ForeachChildren(
-				GameMenuFrame,
-				function(child, x)
-					if child.Left then
-						DarkMode:UpdateColor(child.Left, "frames")
-					end
-
-					if child.Middle then
-						DarkMode:UpdateColor(child.Middle, "frames")
-					end
-
-					if child.Center then
-						DarkMode:UpdateColor(child.Center, "frames")
-					end
-
-					if child.Right then
-						DarkMode:UpdateColor(child.Right, "frames")
-					end
-				end
-			)
-		end
-	)
-end
 
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", DarkMode.Event)

@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.1")
+	DarkMode:SetVersion(136122, "0.7.2")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -422,6 +422,7 @@ function DarkMode:InitDMSettings()
 		end
 
 		AddCheckBox(4, "DESATURATE", true)
+		AddCheckBox(4, "COLORBUTTONS", true)
 		posy = posy - 10
 		--AddCategory("OVERALL")
 		local gCM = AddSlider(
