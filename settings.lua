@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.7")
+	DarkMode:SetVersion(136122, "0.7.8")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -364,7 +364,7 @@ function DarkMode:InitDMSettings()
 		end
 	end
 
-	DMSettings:SetSize(550, 780)
+	DMSettings:SetSize(550, DarkMode:MClamp(640, 200, GetScreenHeight()))
 	DMSettings:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
 	DMSettings:SetFrameStrata("HIGH")
 	DMSettings:SetFrameLevel(99)
