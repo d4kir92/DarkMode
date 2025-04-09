@@ -1607,7 +1607,7 @@ function DarkMode:Event(event, ...)
 				end
 
 				if PlayerFrame and PlayerFrameTexture then
-					local parent = PlayerFrameTexture:GetParent()
+					local parent = DarkMode:GetParent(PlayerFrameTexture)
 					if parent then
 						PlayerFrameDragon = parent:CreateTexture("PlayerFrameDragon", "BORDER")
 						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
