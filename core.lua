@@ -36,8 +36,9 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 	end
 
 	if debug == 10 then
-		if texture.GetName then
-			DarkMode:Debug(10, "UpdateColor", "name:", texture:GetName(), "typ:", typ)
+		local name = DarkMode:GetName(texture)
+		if name then
+			DarkMode:Debug(10, "UpdateColor", "name:", name, "typ:", typ)
 		else
 			DarkMode:Debug(10, "UpdateColor", "texture:", texture, "typ:", typ)
 		end
@@ -383,7 +384,7 @@ function DarkMode:TriggerTrinketMenu()
 			DarkMode:ForeachRegions(
 				child,
 				function(region, r)
-					local name = region:GetName()
+					local name = DarkMode:GetName(region)
 					if name and string.find(name, "NormalTexture", 1, true) then
 						DarkMode:UpdateColor(region, "frames")
 					end
@@ -629,17 +630,18 @@ function DarkMode:FindTextures(frame, typ)
 	local ignoreId1 = nil
 	local ignoreId2 = nil
 	local ignoreId3 = nil
-	if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() ~= nil then
-		if string.find(frame:GetName(), "SkillLineTab") then
+	local name = DarkMode:GetName(frame)
+	if frame and frame ~= StoreFrame and name then
+		if string.find(name, "SkillLineTab") then
 			ignoreId1 = 2
 			ignoreId2 = 3
 			ignoreId3 = 4
-		elseif string.find(frame:GetName(), "XX") then
+		elseif string.find(name, "XX") then
 			ignoreId1 = 2
 		end
 	end
 
-	if frame and frame ~= StoreFrame and frame.GetName ~= nil and frame:GetName() and DarkMode:GetIgnoreFrames(frame:GetName()) then return end
+	if frame and frame ~= StoreFrame and name and DarkMode:GetIgnoreFrames(name) then return end
 	if frame.SetVertexColor then
 		DarkMode:UpdateColor(frame, typ)
 	end
@@ -648,13 +650,13 @@ function DarkMode:FindTextures(frame, typ)
 		DarkMode:ForeachRegions(
 			frame,
 			function(region, x)
-				local hasName = region.GetName ~= nil
-				if (ignoreId1 == nil or ignoreId1 ~= x) and (ignoreId2 == nil or ignoreId2 ~= x) and (ignoreId3 == nil or ignoreId3 ~= x) and ((hasName and not DarkMode:GetIgnoreFrames(region:GetName())) or (not hasName and region.SetVertexColor)) then
+				local regionName = DarkMode:GetName(frame)
+				if (ignoreId1 == nil or ignoreId1 ~= x) and (ignoreId2 == nil or ignoreId2 ~= x) and (ignoreId3 == nil or ignoreId3 ~= x) and ((regionName or not DarkMode:GetIgnoreFrames(regionName)) or (not regionName and region.SetVertexColor)) then
 					if bShow and region.GetTexture then
-						DarkMode:MSG(">>", frame:GetName(), region:GetName(), region:GetTextureFilePath(), region:GetTexture(), "Size:", region:GetSize())
+						DarkMode:MSG(">>", fname, regionName, region:GetTextureFilePath(), region:GetTexture(), "Size:", region:GetSize())
 					end
 
-					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(region:GetName())) then
+					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(regionName)) then
 						DarkMode:UpdateColor(region, typ)
 					end
 				end
@@ -666,13 +668,13 @@ function DarkMode:FindTextures(frame, typ)
 		DarkMode:ForeachChildren(
 			frame,
 			function(child, i)
-				local hasName = child.GetName ~= nil
-				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((hasName and not DarkMode:GetIgnoreFrames(child:GetName())) or (not hasName and child.SetVertexColor)) then
+				local childName = DarkMode:GetName(child)
+				if (ignoreId1 == nil or ignoreId1 ~= i) and (ignoreId2 == nil or ignoreId2 ~= i) and (ignoreId3 == nil or ignoreId3 ~= i) and ((C_Widget.IsWidget(child) and not DarkMode:GetIgnoreFrames(childName)) or (not C_Widget.IsWidget(child) and child.SetVertexColor)) then
 					if bShow and child.GetTexture then
-						DarkMode:MSG(">>>", frame:GetName(), child:GetName(), child:GetTextureFilePath(), child:GetTexture(), "Size:", child:GetSize())
+						DarkMode:MSG(">>>", name, childName, child:GetTextureFilePath(), child:GetTexture(), "Size:", child:GetSize())
 					end
 
-					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(child:GetName())) then
+					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(childName)) then
 						DarkMode:UpdateColor(child, typ)
 					end
 				end
@@ -1185,7 +1187,7 @@ function DarkMode:SearchUi(from)
 			DarkMode:Debug(5, "#6")
 			for i, btn in pairs(_G) do
 				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, ".DMBorder", 1, true) then
-					local name = btn:GetName()
+					local name = DarkMode:GetName(btn)
 					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.border == nil or btn.border == true) then
 						btn.border = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						local border = btn.border
@@ -1284,7 +1286,7 @@ C_Timer.After(
 
 function DarkMode:ColorAuraButton(btn, index, btnName, from)
 	if btn == nil then return end
-	local name = btn:GetName()
+	local name = DarkMode:GetName(btn)
 	if name == nil then
 		name = btnName
 	end
@@ -1751,7 +1753,9 @@ function DarkMode:Event(event, ...)
 						"TargetFrame_UpdateAuras",
 						function(frame)
 							DarkMode:Debug(3, "TargetFrame_UpdateAuras")
-							local buttonName = frame:GetName() .. "Buff"
+							local name = DarkMode:GetName(frame)
+							if name == nil then return end
+							local buttonName = name .. "Buff"
 							for index = 1, 32 do
 								local btn = _G[buttonName .. index]
 								if LibStub and MSQ == nil then
