@@ -1660,16 +1660,15 @@ function DarkMode:Event(event, ...)
 
 										DarkMode:UpdateColor(NT, "bags")
 									else
-										for x = 1, 3 do
-											bagF.border = bagF:CreateTexture(v .. ".BagBorder" .. x, "ARTWORK")
-											bagF.border:SetAtlas(bagF.SlotHighlightTexture:GetAtlas())
-											bagF.border:SetAllPoints(bagF)
-											if DarkMode:IsEnabled("DESATURATE", true) then
-												bagF.border:SetDesaturated(true)
-											end
-
-											DarkMode:UpdateColor(bagF.border, "bags")
+										bagF.border = bagF:CreateTexture(v .. ".BagBorder", "ARTWORK")
+										bagF.border:SetTexture("Interface\\AddOns\\DarkMode\\media\\bag-main-border")
+										bagF.border:SetSize(bagF:GetSize())
+										bagF.border:SetPoint("CENTER", bagF, "CENTER", -1, 1)
+										if DarkMode:IsEnabled("DESATURATE", true) then
+											bagF.border:SetDesaturated(true)
 										end
+
+										DarkMode:UpdateColor(bagF.border, "bags")
 									end
 								end
 							end
