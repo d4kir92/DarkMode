@@ -13,7 +13,7 @@ function DarkMode:GetColor(id, name)
 		return 0.000, 0.000, 0.000, 1
 	elseif colorMode == "ClassColor" then
 		local _, PlayerClassEng, _ = UnitClass("PLAYER")
-		local r, g, b, _ = GetClassColor(PlayerClassEng)
+		local r, g, b, _ = DarkMode:GetClassColor(PlayerClassEng)
 
 		return r, g, b, 1
 	elseif colorMode == "Default" then
