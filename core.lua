@@ -836,6 +836,34 @@ function DarkMode:SearchAddons(from)
 		end
 	end
 
+	if AuctionatorShoppingFrame then
+		if AuctionatorShoppingFrame.ListsContainer and AuctionatorShoppingFrame.ListsContainer.ScrollBar and AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background then
+			DarkMode:FindTextures(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background, "frames")
+		end
+
+		if AuctionatorShoppingFrame.ResultsListing and AuctionatorShoppingFrame.ResultsListing.ScrollArea and AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar and AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background then
+			DarkMode:FindTextures(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "frames")
+		end
+	end
+
+	if AuctionatorBuyFrame and AuctionatorBuyFrame.CurrentPrices and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background then
+		DarkMode:FindTextures(AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "frames")
+	end
+
+	if AuctionatorSellingFrame then
+		if AuctionatorSellingFrame.BagListing and AuctionatorSellingFrame.BagListing.View and AuctionatorSellingFrame.BagListing.View.ScrollBar and AuctionatorSellingFrame.BagListing.View.ScrollBar.Background then
+			DarkMode:FindTextures(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background, "frames")
+		end
+
+		if AuctionatorSellingFrame.BuyFrame and AuctionatorSellingFrame.BuyFrame.CurrentPrices and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background then
+			DarkMode:FindTextures(AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "frames")
+		end
+	end
+
+	if AuctionatorCancellingFrame and AuctionatorCancellingFrame.ResultsListing and AuctionatorCancellingFrame.ResultsListing.ScrollArea and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background then
+		DarkMode:FindTextures(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "frames")
+	end
+
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 			DarkMode:FindTexturesByName(name .. v, "frames")
@@ -1455,6 +1483,22 @@ function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
 			DarkMode.Setup = true
+			local foundBugSack = false
+			hooksecurefunc(
+				"CreateFrame",
+				function(typ)
+					if strlower(typ) == "frame" and BugSackFrame and foundBugSack == false then
+						foundBugSack = true
+						C_Timer.After(
+							0.02,
+							function()
+								DarkMode:FindTextures(BugSackFrame, "frames")
+							end
+						)
+					end
+				end
+			)
+
 			DarkMode:InitSlash()
 			DarkMode:InitDB()
 			DarkMode:InitDMSettings()
