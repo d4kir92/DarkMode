@@ -2,9 +2,9 @@
 ## Interface-BCC: 20504
 ## Interface-Wrath: 30403
 ## Interface-Cata: 40401, 40402
-## Interface: 110007, 110100, 110105
+## Interface: 110007, 110100, 110105, 110107
 
-## Version: 0.7.17
+## Version: 0.7.18
 ## Title: D|cff3FC7EBark|rM|cff3FC7EBode|r |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Improve Any Ui or Frame
 ## Author: D|cff3FC7EB4KiR |T132115:16:16:0:0|t
