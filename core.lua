@@ -1479,6 +1479,14 @@ local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton", "CharacterReagentBag0Slot"}
+local startSearch = false
+C_Timer.After(
+	4,
+	function()
+		startSearch = true
+	end
+)
+
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -1486,7 +1494,11 @@ function DarkMode:Event(event, ...)
 			local foundBugSack = false
 			hooksecurefunc(
 				"CreateFrame",
-				function(typ)
+				function(typ, name, parent, template)
+					if startSearch then
+						DarkMode:AddonsSearch("CreateFrame")
+					end
+
 					if strlower(typ) == "frame" and BugSackFrame and foundBugSack == false then
 						foundBugSack = true
 						C_Timer.After(
