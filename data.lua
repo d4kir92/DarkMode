@@ -154,6 +154,17 @@ function DarkMode:GetBuffsAndDebuffsColor(texture)
 	return r, g, b, a
 end
 
+function DarkMode:GetAddonsColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEFA", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRAC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
 function DarkMode:GetFrameColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEF", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRC")

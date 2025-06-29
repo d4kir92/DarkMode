@@ -22,6 +22,7 @@ local DMTexturesUFDR = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
+local DMTexturesFramesAddons = {}
 local DMTexturesActionButtons = {}
 local DMTexturesBags = {}
 local DMTexturesMicroMenu = {}
@@ -133,6 +134,15 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 
 				texture:SetColorTexture(r, g, b, a)
 			end
+		elseif typ == "addons" then
+			local r, g, b, a = DarkMode:GetAddonsColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
 		else
 			local r, g, b, a = DarkMode:GetFrameColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -200,6 +210,11 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
+					elseif typ == "addons" then
+						local r, g, b, a = DarkMode:GetAddonsColor(sel)
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
 					else
 						local r, g, b, a = DarkMode:GetFrameColor(sel)
 						if r ~= nil and g ~= nil and b ~= nil then
@@ -257,6 +272,11 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
+		elseif typ == "addons" then
+			local r, g, b, a = DarkMode:GetAddonsColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		else
 			local r, g, b, a = DarkMode:GetFrameColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
@@ -303,6 +323,10 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 		elseif typ == "frames" then
 			if DMTexturesFrames[texture] == nil then
 				DMTexturesFrames[texture] = texture
+			end
+		elseif typ == "addons" then
+			if DMTexturesFramesAddons[texture] == nil then
+				DMTexturesFramesAddons[texture] = texture
 			end
 		else
 			DarkMode:MSG("[UpdateColor] Missing Type:", typ)
@@ -365,7 +389,7 @@ function DarkMode:RetryAddonsSearch()
 
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
-		DarkMode:UpdateColor(MiniMapTrackingBorder, "frames")
+		DarkMode:UpdateColor(MiniMapTrackingBorder, "addons")
 	end
 
 	C_Timer.After(
@@ -386,7 +410,7 @@ function DarkMode:TriggerTrinketMenu()
 				function(region, r)
 					local name = DarkMode:GetName(region)
 					if name and string.find(name, "NormalTexture", 1, true) then
-						DarkMode:UpdateColor(region, "frames")
+						DarkMode:UpdateColor(region, "addons")
 					end
 				end
 			)
@@ -616,6 +640,13 @@ function DarkMode:UpdateColors()
 		end
 	end
 
+	for i, v in pairs(DMTexturesFramesAddons) do
+		local r, g, b, a = DarkMode:GetAddonsColor(v)
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
 	for i, v in pairs(DMTexturesFrames) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if r ~= nil and g ~= nil and b ~= nil then
@@ -832,48 +863,48 @@ function DarkMode:SearchAddons(from)
 	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
 		foundAuctionator = true
 		for x, v in pairs(AuctionatorAHTabsContainer.Tabs) do
-			DarkMode:FindTextures(v, "frames")
+			DarkMode:FindTextures(v, "addons")
 		end
 	end
 
 	if AuctionatorShoppingFrame then
 		if AuctionatorShoppingFrame.ListsContainer and AuctionatorShoppingFrame.ListsContainer.ScrollBar and AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background then
-			DarkMode:FindTextures(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background, "frames")
+			DarkMode:FindTextures(AuctionatorShoppingFrame.ListsContainer.ScrollBar.Background, "addons")
 		end
 
 		if AuctionatorShoppingFrame.ResultsListing and AuctionatorShoppingFrame.ResultsListing.ScrollArea and AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar and AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background then
-			DarkMode:FindTextures(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "frames")
+			DarkMode:FindTextures(AuctionatorShoppingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "addons")
 		end
 	end
 
 	if AuctionatorBuyFrame and AuctionatorBuyFrame.CurrentPrices and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar and AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background then
-		DarkMode:FindTextures(AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "frames")
+		DarkMode:FindTextures(AuctionatorBuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "addons")
 	end
 
 	if AuctionatorSellingFrame then
 		if AuctionatorSellingFrame.BagListing and AuctionatorSellingFrame.BagListing.View and AuctionatorSellingFrame.BagListing.View.ScrollBar and AuctionatorSellingFrame.BagListing.View.ScrollBar.Background then
-			DarkMode:FindTextures(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background, "frames")
+			DarkMode:FindTextures(AuctionatorSellingFrame.BagListing.View.ScrollBar.Background, "addons")
 		end
 
 		if AuctionatorSellingFrame.BuyFrame and AuctionatorSellingFrame.BuyFrame.CurrentPrices and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar and AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background then
-			DarkMode:FindTextures(AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "frames")
+			DarkMode:FindTextures(AuctionatorSellingFrame.BuyFrame.CurrentPrices.SearchResultsListing.ScrollArea.ScrollBar.Background, "addons")
 		end
 	end
 
 	if AuctionatorCancellingFrame and AuctionatorCancellingFrame.ResultsListing and AuctionatorCancellingFrame.ResultsListing.ScrollArea and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background then
-		DarkMode:FindTextures(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "frames")
+		DarkMode:FindTextures(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "addons")
 	end
 
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-			DarkMode:FindTexturesByName(name .. v, "frames")
+			DarkMode:FindTexturesByName(name .. v, "addons")
 		end
 	end
 
 	if DarkMode:IsEnabled("COLORBUTTONS", true) then
 		for index, name in pairs({"RankerToggleButton", "RankerWhatIfButton"}) do
 			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "frames")
+				DarkMode:FindTexturesByName(name .. v, "addons")
 			end
 		end
 	end
@@ -883,7 +914,7 @@ function DarkMode:SearchAddons(from)
 			ExpansionLandingPage.Overlay,
 			function(child)
 				foundExpansion = true
-				DarkMode:FindTextures(child.NineSlice, "frames")
+				DarkMode:FindTextures(child.NineSlice, "ui")
 			end, "SearchAddons"
 		)
 	end
@@ -1504,7 +1535,7 @@ function DarkMode:Event(event, ...)
 						C_Timer.After(
 							0.02,
 							function()
-								DarkMode:FindTextures(BugSackFrame, "frames")
+								DarkMode:FindTextures(BugSackFrame, "addons")
 							end
 						)
 					end
@@ -1548,7 +1579,7 @@ function DarkMode:Event(event, ...)
 							local py = btnTab[3]
 							local _, sh = btn:GetSize()
 							sh = DarkMode:MathR(sh)
-							DarkMode:AddActionButtonBorder(btn, btn, format(btnName, i), sh * scale, sh * scale, px, py, "frames", nil, false)
+							DarkMode:AddActionButtonBorder(btn, btn, format(btnName, i), sh * scale, sh * scale, px, py, "ui", nil, false)
 							hooksecurefunc(
 								btn,
 								"SetNormalTexture",
@@ -1574,7 +1605,7 @@ function DarkMode:Event(event, ...)
 					local sw, sh = btn:GetSize()
 					sw = DarkMode:MathR(sw)
 					sh = DarkMode:MathR(sh)
-					DarkMode:AddActionButtonBorder(btn, btn, btnName, sh * scalew, sh * scaleh, px, py, "frames", nil, false)
+					DarkMode:AddActionButtonBorder(btn, btn, btnName, sh * scalew, sh * scaleh, px, py, "ui", nil, false)
 				end
 			end
 
