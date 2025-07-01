@@ -339,6 +339,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 end
 
 function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py, typ, texture, actionbuttons)
+	if not IsAddOnLoaded("DragonflightUi") then return end
 	local icon = _G[name .. "Icon"]
 	if icon then
 		local br = 0.075
@@ -1746,7 +1747,7 @@ function DarkMode:Event(event, ...)
 										end
 
 										DarkMode:UpdateColor(NT, "bags")
-									else
+									elseif not IsAddOnLoaded("DragonflightUi") then
 										bagF.border = bagF:CreateTexture(v .. ".BagBorder", "ARTWORK")
 										bagF.border:SetTexture("Interface\\AddOns\\DarkMode\\media\\bag-main-border")
 										bagF.border:SetSize(bagF:GetSize())
