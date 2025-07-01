@@ -339,7 +339,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 end
 
 function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py, typ, texture, actionbuttons)
-	if not DarkMode:IsAddOnLoaded("DragonflightUi") then return end
+	if name ~= "StanceButton" and name ~= "PetActionButton" and DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 	local icon = _G[name .. "Icon"]
 	if icon then
 		local br = 0.075
