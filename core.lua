@@ -1200,8 +1200,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. ".DMBorder"] == nil then
-		-- Wrath
+	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. ".DMBorder"] == nil and DarkMode:GetWoWBuild() == "WRATH" then
 		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
@@ -1228,7 +1227,7 @@ function DarkMode:SearchUi(from)
 	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. ".DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
-		if DarkMode:GetWoWBuild() == "WRATH" or DarkMode:GetWoWBuild() == "CATA" then
+		if DarkMode:GetWoWBuild() ~= "CLASSIC" then
 			border:SetPoint("TOPLEFT", -1, 1)
 			if border.SetScale then
 				border:SetScale(0.82)
