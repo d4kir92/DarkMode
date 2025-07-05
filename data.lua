@@ -295,6 +295,7 @@ local DMFramesAddons = {"ItemRackMenuFrame", "ItemRackOptFrame", "PetJournalSumm
 for i = 0, 19 do
 	tinsert(DMFramesAddons, "ItemRackOptInv" .. i .. "NormalTexture")
 	tinsert(DMFramesAddons, "ItemRackMenu" .. i .. "NormalTexture")
+	tinsert(DMFramesAddons, "ItemRackButton" .. i .. "NormalTexture")
 end
 
 local BorderNames = {"RightEdge", "BottomRightCorner", "BottomEdge", "BottomLeftCorner", "LeftEdge", "TopLeftCorner", "TopEdge", "TopRightCorner"}
