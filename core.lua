@@ -167,56 +167,100 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 					sel.dm_setvertexcolor = true
 					if typ == "ui" then
 						local r, g, b, a = DarkMode:GetUiColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "uf" then
 						local r, g, b, a = DarkMode:GetUFColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "ufdr" then
 						local r, g, b, a = DarkMode:GetUFDRColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "np" then
 						local r, g, b, a = DarkMode:GetNPColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "tt" then
 						local r, g, b, a = DarkMode:GetTTColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "actionbuttons" then
 						local r, g, b, a = DarkMode:GetActionButtonsColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "bags" then
 						local r, g, b, a = DarkMode:GetBagsColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "micromenu" then
 						local r, g, b, a = DarkMode:GetMicroMenuColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "buffsanddebuffs" then
 						local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					elseif typ == "addons" then
 						local r, g, b, a = DarkMode:GetAddonsColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
 					else
 						local r, g, b, a = DarkMode:GetFrameColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
@@ -229,56 +273,100 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 
 		if typ == "ui" then
 			local r, g, b, a = DarkMode:GetUiColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "ufdr" then
 			local r, g, b, a = DarkMode:GetUFDRColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "np" then
 			local r, g, b, a = DarkMode:GetNPColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "tt" then
 			local r, g, b, a = DarkMode:GetTTColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "actionbuttons" then
 			local r, g, b, a = DarkMode:GetActionButtonsColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "bags" then
 			local r, g, b, a = DarkMode:GetBagsColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "micromenu" then
 			local r, g, b, a = DarkMode:GetMicroMenuColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "buffsanddebuffs" then
 			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		elseif typ == "addons" then
 			local r, g, b, a = DarkMode:GetAddonsColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
 		else
 			local r, g, b, a = DarkMode:GetFrameColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
@@ -608,6 +696,10 @@ end
 function DarkMode:UpdateColors()
 	for i, v in pairs(DMTexturesUi) do
 		local r, g, b, a = DarkMode:GetUiColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -615,6 +707,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesUF) do
 		local r, g, b, a = DarkMode:GetUFColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -622,6 +718,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesUFDR) do
 		local r, g, b, a = DarkMode:GetUFDRColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -629,6 +729,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesTT) do
 		local r, g, b, a = DarkMode:GetTTColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -636,6 +740,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMFS) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -643,6 +751,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesFramesAddons) do
 		local r, g, b, a = DarkMode:GetAddonsColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -650,6 +762,10 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesFrames) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
 		if r ~= nil and g ~= nil and b ~= nil then
 			v:SetVertexColor(r, g, b, a)
 		end
@@ -927,6 +1043,29 @@ end
 
 function DarkMode:SearchUi(from)
 	local raidOnly = from == "raid"
+	if TotemFrame then
+		for i = 1, 4 do
+			local totem = _G["TotemFrameTotem" .. i]
+			if totem then
+				DarkMode:ForeachChildren(
+					totem,
+					function(child, c)
+						if child and DarkMode:GetName(child) == nil then
+							DarkMode:ForeachRegions(
+								child,
+								function(region, r)
+									if region and r == 1 then
+										DarkMode:UpdateColor(region, "ui")
+									end
+								end
+							)
+						end
+					end
+				)
+			end
+		end
+	end
+
 	for index, tab in pairs(DarkMode:GetUiTable()) do
 		if raidOnly and index == "UnitFrames" then
 			for x, v in pairs(tab) do
