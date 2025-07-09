@@ -2,10 +2,12 @@ local _, DarkMode = ...
 local MSQ = nil
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
+local debugDisabled = true
 local debug = 0
 function DarkMode:Debug(num, msg, ...)
+	if debugDisabled then return end
 	if debug > 0 and debug == num or debug == 11 then
-		print(msg, ...)
+		DarkMode:DEB("[" .. debug .. "]", msg, ...)
 	end
 end
 
@@ -484,6 +486,7 @@ function DarkMode:RetryAddonsSearch()
 	C_Timer.After(
 		0.1,
 		function()
+			DarkMode:Debug(7, "RetryAddonsSearch")
 			DarkMode:RetryAddonsSearch()
 		end
 	)
@@ -515,6 +518,10 @@ function DarkMode:AddonsSearch(from)
 		return
 	end
 
+	if not debugDisabled then
+		DarkMode:DEB("AddonsSearch", from)
+	end
+
 	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
 	if foundTrinket == false and TrinketMenu_MenuFrame then
@@ -537,7 +544,7 @@ function DarkMode:AddonsSearch(from)
 	C_Timer.After(
 		0.1,
 		function()
-			DarkMode:Debug(5, "#17")
+			DarkMode:Debug(5, "AddonsSearch")
 			DarkMode:SearchAddons(from)
 			if PlayerTalentFrame then
 				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
@@ -878,7 +885,7 @@ function DarkMode:InitGreetingPanel()
 				C_Timer.After(
 					questDelay,
 					function()
-						DarkMode:Debug(5, "#1")
+						DarkMode:Debug(5, "InitGreetingPanel 1")
 						DarkMode:UpdateGossipFrame()
 					end
 				)
@@ -893,7 +900,7 @@ function DarkMode:InitGreetingPanel()
 					C_Timer.After(
 						questDelay,
 						function()
-							DarkMode:Debug(5, "#2")
+							DarkMode:Debug(5, "InitGreetingPanel 2")
 							DarkMode:UpdateGossipFrame()
 						end
 					)
@@ -918,7 +925,7 @@ function DarkMode:InitQuestLogFrame()
 				C_Timer.After(
 					questDelay,
 					function()
-						DarkMode:Debug(5, "#3")
+						DarkMode:Debug(5, "InitQuestLogFrame 1")
 						DarkMode:UpdateQuestLogFrame()
 					end
 				)
@@ -933,7 +940,7 @@ function DarkMode:InitQuestLogFrame()
 					C_Timer.After(
 						questDelay,
 						function()
-							DarkMode:Debug(5, "#4")
+							DarkMode:Debug(5, "InitQuestLogFrame 2")
 							DarkMode:UpdateQuestLogFrame()
 						end
 					)
@@ -1042,6 +1049,10 @@ for index, name in pairs(DarkMode:GetUiAddonsTable()) do
 end
 
 function DarkMode:SearchUi(from)
+	if not debugDisabled then
+		DarkMode:DEB("SearchUi", from)
+	end
+
 	local raidOnly = from == "raid"
 	if TotemFrame then
 		for i = 1, 4 do
@@ -1382,7 +1393,7 @@ function DarkMode:SearchUi(from)
 	C_Timer.After(
 		1.1,
 		function()
-			DarkMode:Debug(5, "#6")
+			DarkMode:Debug(5, "SearchUi")
 			for i, btn in pairs(_G) do
 				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, ".DMBorder", 1, true) then
 					local name = DarkMode:GetName(btn)
@@ -1468,7 +1479,7 @@ rf:SetScript(
 		C_Timer.After(
 			0.1,
 			function()
-				DarkMode:Debug(5, "#7")
+				DarkMode:Debug(5, "GROUP_ROSTER_UPDATE")
 				DarkMode:CheckCompactFrames()
 			end
 		)
@@ -1478,6 +1489,7 @@ rf:SetScript(
 C_Timer.After(
 	2,
 	function()
+		DarkMode:Debug(5, "CheckCompactFrames")
 		DarkMode:CheckCompactFrames()
 	end
 )
@@ -1574,11 +1586,13 @@ npf:SetScript(
 			C_Timer.After(
 				0.16,
 				function()
+					DarkMode:Debug(5, "NAME_PLATE_UNIT_ADDED 1")
 					worked = DarkMode:ColorNameplate(id)
 					if not worked then
 						C_Timer.After(
 							0.31,
 							function()
+								DarkMode:Debug(5, "NAME_PLATE_UNIT_ADDED 2")
 								worked = DarkMode:ColorNameplate(id)
 								if not worked and failedNameplateIds[id] == nil then
 									failedNameplateIds[id] = true
@@ -1606,7 +1620,7 @@ function DarkMode:InitQuestFrameGreetingPanel()
 				C_Timer.After(
 					questDelay,
 					function()
-						DarkMode:Debug(5, "#12")
+						DarkMode:Debug(5, "InitQuestFrameGreetingPanel 1")
 						DarkMode:UpdateQuestFrameGreetingPanel()
 					end
 				)
@@ -1621,7 +1635,7 @@ function DarkMode:InitQuestFrameGreetingPanel()
 					C_Timer.After(
 						questDelay,
 						function()
-							DarkMode:Debug(5, "#13")
+							DarkMode:Debug(5, "InitQuestFrameGreetingPanel 2")
 							DarkMode:UpdateQuestFrameGreetingPanel()
 						end
 					)
@@ -1649,11 +1663,19 @@ local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton", "CharacterReagentBag0Slot"}
-local startSearch = false
 C_Timer.After(
 	4,
 	function()
-		startSearch = true
+		DarkMode:Debug(3, "startSearch 1")
+		DarkMode:AddonsSearch("startSearch 1")
+	end
+)
+
+C_Timer.After(
+	8,
+	function()
+		DarkMode:Debug(3, "startSearch 2")
+		DarkMode:AddonsSearch("startSearch 2")
 	end
 )
 
@@ -1665,15 +1687,12 @@ function DarkMode:Event(event, ...)
 			hooksecurefunc(
 				"CreateFrame",
 				function(typ, name, parent, template)
-					if startSearch then
-						DarkMode:AddonsSearch("CreateFrame")
-					end
-
-					if strlower(typ) == "frame" and BugSackFrame and foundBugSack == false then
+					if BugSackFrame and foundBugSack == false and strlower(typ) == "frame" then
 						foundBugSack = true
 						C_Timer.After(
 							0.02,
 							function()
+								DarkMode:Debug(5, "foundBugSack")
 								DarkMode:FindTextures(BugSackFrame, "addons")
 							end
 						)
@@ -1690,7 +1709,7 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				1,
 				function()
-					DarkMode:Debug(5, "#14")
+					DarkMode:Debug(5, "GroupLootUpdate")
 					DarkMode:GroupLootUpdate()
 				end
 			)
@@ -1753,7 +1772,7 @@ function DarkMode:Event(event, ...)
 				C_Timer.After(
 					2,
 					function()
-						DarkMode:Debug(5, "#15")
+						DarkMode:Debug(5, "BAGS ~= RETAIL")
 						local mode = DarkMode:DMGV("COLORMODEBA", 1)
 						if mode ~= 7 and mode ~= 9 then
 							for i, v in pairs(BAGS) do
@@ -1872,7 +1891,7 @@ function DarkMode:Event(event, ...)
 				C_Timer.After(
 					1,
 					function()
-						DarkMode:Debug(5, "#16")
+						DarkMode:Debug(5, "BAGS == RETAIL")
 						local mode = DarkMode:DMGV("COLORMODEBA", 1)
 						if mode ~= 7 and mode ~= 9 then
 							for i, v in pairs(BAGS) do
@@ -2035,7 +2054,7 @@ function DarkMode:Event(event, ...)
 			C_Timer.After(
 				0.1,
 				function()
-					DarkMode:Debug(5, "#16")
+					DarkMode:Debug(5, "setup")
 					DarkMode:SearchUi("setup")
 					DarkMode:SearchFrames()
 					for index, name in pairs(DarkMode:GetFrameTextTable()) do
@@ -2135,7 +2154,7 @@ function DarkMode:Event(event, ...)
 		C_Timer.After(
 			0.1,
 			function()
-				DarkMode:Debug(5, "#18")
+				DarkMode:Debug(5, "GroupLootUpdate")
 				DarkMode:GroupLootUpdate()
 			end
 		)
@@ -2195,6 +2214,7 @@ vigor:SetScript(
 			C_Timer.After(
 				1,
 				function()
+					DarkMode:Debug(5, "UpdateVigor 1")
 					DarkMode:UpdateVigor()
 				end
 			)
@@ -2202,6 +2222,7 @@ vigor:SetScript(
 			C_Timer.After(
 				0.1,
 				function()
+					DarkMode:Debug(5, "UpdateVigor 2")
 					DarkMode:UpdateVigor()
 				end
 			)
