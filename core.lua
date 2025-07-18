@@ -475,7 +475,6 @@ local addonsRetry = false
 local foundMinimapTracking = false
 function DarkMode:RetryAddonsSearch()
 	if addonsRetry and GetTime() > addonsDelay then
-		print("SEARCH")
 		DarkMode:AddonsSearch("RETRY")
 	end
 
