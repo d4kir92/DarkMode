@@ -1,4 +1,5 @@
 local _, DarkMode = ...
+local bShow = false
 local MSQ = nil
 DMHIDDEN = CreateFrame("FRAME", "DMHIDDEN")
 DMHIDDEN:Hide()
@@ -30,7 +31,7 @@ local DMTexturesBags = {}
 local DMTexturesMicroMenu = {}
 local DMTexturesBuffsAndDebuffs = {}
 local MMBTNSETUP = {}
-function DarkMode:UpdateColor(texture, typ, bShow)
+function DarkMode:UpdateColor(texture, typ, from)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
 		DarkMode:MSG("[UpdateColor] INVALID TEXTURE OBJECT")
@@ -56,7 +57,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 	if texture:GetAlpha() == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
 		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor(texture)
+			local r, g, b, a = DarkMode:GetUiColor(texture, "UpdateColor 1")
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -168,7 +169,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 					if sel.dm_setvertexcolor then return end
 					sel.dm_setvertexcolor = true
 					if typ == "ui" then
-						local r, g, b, a = DarkMode:GetUiColor(sel)
+						local r, g, b, a = DarkMode:GetUiColor(sel, "UpdateColor 2")
 						if ola and ola < 1 then
 							a = ola
 						end
@@ -274,7 +275,7 @@ function DarkMode:UpdateColor(texture, typ, bShow)
 		end
 
 		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor(texture)
+			local r, g, b, a = DarkMode:GetUiColor(texture, "UpdateColor 3")
 			if ola and ola < 1 then
 				a = ola
 			end
@@ -712,7 +713,7 @@ end
 
 function DarkMode:UpdateColors()
 	for i, v in pairs(DMTexturesUi) do
-		local r, g, b, a = DarkMode:GetUiColor(v)
+		local r, g, b, a = DarkMode:GetUiColor(v, "UpdateColors")
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
 		end
@@ -791,7 +792,6 @@ end
 
 function DarkMode:FindTextures(frame, typ)
 	if frame == nil then return end
-	local bShow = false
 	local ignoreId1 = nil
 	local ignoreId2 = nil
 	local ignoreId3 = nil
@@ -1052,10 +1052,10 @@ function DarkMode:SearchAddons(from)
 			end, "SearchAddons"
 		)
 	end
-end
 
-for index, name in pairs(DarkMode:GetUiAddonsTable()) do
-	DarkMode:FindTexturesByName(name, "ui")
+	for index, name in pairs(DarkMode:GetUiAddonsTable()) do
+		DarkMode:FindTexturesByName(name, "ui")
+	end
 end
 
 function DarkMode:SearchUi(from)

@@ -34,13 +34,13 @@ end
 
 function DarkMode:GetTab(from)
 	if DMTAB == nil or DMTAB["PROFILES"] == nil then
-		DarkMode:MSG("Get Tab to early", from)
+		DarkMode:MSG("[GetTab] Get Tab to early", from)
 
 		return {}
 	end
 
 	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
-		DarkMode:MSG("Get Profile Tab to early", from)
+		DarkMode:MSG("[GetTab] Get Profile Tab to early", from)
 
 		return {}
 	end
@@ -49,11 +49,35 @@ function DarkMode:GetTab(from)
 end
 
 function DarkMode:SetEnabled(element, value)
+	if DMTAB == nil or DMTAB["PROFILES"] == nil then
+		DarkMode:MSG("[SetEnabled] Get Tab to early", element)
+
+		return false
+	end
+
+	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
+		DarkMode:MSG("[SetEnabled] Get Profile Tab to early", element)
+
+		return false
+	end
+
 	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
 	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element]["ENABLED"] = value
 end
 
 function DarkMode:IsEnabled(element, value)
+	if DMTAB == nil or DMTAB["PROFILES"] == nil then
+		DarkMode:MSG("[IsEnabled] Get Tab to early", element)
+
+		return false
+	end
+
+	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
+		DarkMode:MSG("[IsEnabled] Get Profile Tab to early", element)
+
+		return false
+	end
+
 	if element == nil then
 		DarkMode:MSG("[IsEnabled] Missing Name")
 
