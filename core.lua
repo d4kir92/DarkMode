@@ -475,6 +475,7 @@ local addonsRetry = false
 local foundMinimapTracking = false
 function DarkMode:RetryAddonsSearch()
 	if addonsRetry and GetTime() > addonsDelay then
+		print("SEARCH")
 		DarkMode:AddonsSearch("RETRY")
 	end
 
@@ -483,13 +484,23 @@ function DarkMode:RetryAddonsSearch()
 		DarkMode:UpdateColor(MiniMapTrackingBorder, "addons")
 	end
 
-	C_Timer.After(
-		0.1,
-		function()
-			DarkMode:Debug(7, "RetryAddonsSearch")
-			DarkMode:RetryAddonsSearch()
-		end
-	)
+	if addonsRetry then
+		DarkMode:After(
+			0.1,
+			function()
+				DarkMode:Debug(7, "RetryAddonsSearch")
+				DarkMode:RetryAddonsSearch()
+			end, "RetryAddonsSearch addonsRetry"
+		)
+	else
+		DarkMode:After(
+			0.19,
+			function()
+				DarkMode:Debug(7, "RetryAddonsSearch")
+				DarkMode:RetryAddonsSearch()
+			end, "RetryAddonsSearch"
+		)
+	end
 end
 
 local foundTrinket = false
@@ -541,7 +552,7 @@ function DarkMode:AddonsSearch(from)
 		)
 	end
 
-	C_Timer.After(
+	DarkMode:After(
 		0.1,
 		function()
 			DarkMode:Debug(5, "AddonsSearch")
@@ -589,7 +600,7 @@ function DarkMode:AddonsSearch(from)
 
 				ClassTalentFrame:UpdateColors()
 			end
-		end
+		end, "AddonsSearch1"
 	)
 end
 
@@ -882,12 +893,12 @@ function DarkMode:InitGreetingPanel()
 		frame:HookScript(
 			"OnShow",
 			function(sel, ...)
-				C_Timer.After(
+				DarkMode:After(
 					questDelay,
 					function()
 						DarkMode:Debug(5, "InitGreetingPanel 1")
 						DarkMode:UpdateGossipFrame()
-					end
+					end, "InitGreetingPanel1"
 				)
 			end
 		)
@@ -897,12 +908,12 @@ function DarkMode:InitGreetingPanel()
 				GossipFrame,
 				"OnEvent",
 				function()
-					C_Timer.After(
+					DarkMode:After(
 						questDelay,
 						function()
 							DarkMode:Debug(5, "InitGreetingPanel 2")
 							DarkMode:UpdateGossipFrame()
-						end
+						end, "InitGreetingPanel2"
 					)
 				end
 			)
@@ -922,12 +933,12 @@ function DarkMode:InitQuestLogFrame()
 		frame:HookScript(
 			"OnShow",
 			function(sel, ...)
-				C_Timer.After(
+				DarkMode:After(
 					questDelay,
 					function()
 						DarkMode:Debug(5, "InitQuestLogFrame 1")
 						DarkMode:UpdateQuestLogFrame()
-					end
+					end, "InitQuestLogFrame1"
 				)
 			end
 		)
@@ -937,12 +948,12 @@ function DarkMode:InitQuestLogFrame()
 				frame,
 				"OnEvent",
 				function()
-					C_Timer.After(
+					DarkMode:After(
 						questDelay,
 						function()
 							DarkMode:Debug(5, "InitQuestLogFrame 2")
 							DarkMode:UpdateQuestLogFrame()
-						end
+						end, "InitQuestLogFrame2"
 					)
 				end
 			)
@@ -1390,7 +1401,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	C_Timer.After(
+	DarkMode:After(
 		1.1,
 		function()
 			DarkMode:Debug(5, "SearchUi")
@@ -1431,7 +1442,7 @@ function DarkMode:SearchUi(from)
 			if PeggledMinimapIcon and PeggledMinimapIcon.border then
 				DarkMode:UpdateColor(PeggledMinimapIcon.border, "ui")
 			end
-		end
+		end, "SearchUi"
 	)
 
 	local btwQ = _G["BtWQuestsMinimapButton"]
@@ -1476,22 +1487,22 @@ rf:RegisterEvent("GROUP_ROSTER_UPDATE")
 rf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
-		C_Timer.After(
+		DarkMode:After(
 			0.1,
 			function()
 				DarkMode:Debug(5, "GROUP_ROSTER_UPDATE")
 				DarkMode:CheckCompactFrames()
-			end
+			end, "GROUP_ROSTER_UPDATE"
 		)
 	end
 )
 
-C_Timer.After(
+DarkMode:After(
 	2,
 	function()
 		DarkMode:Debug(5, "CheckCompactFrames")
 		DarkMode:CheckCompactFrames()
-	end
+	end, "CheckCompactFrames"
 )
 
 function DarkMode:ColorAuraButton(btn, index, btnName, from)
@@ -1583,13 +1594,13 @@ npf:SetScript(
 		local id = string.sub(name, 10)
 		local worked = DarkMode:ColorNameplate(id)
 		if not worked then
-			C_Timer.After(
+			DarkMode:After(
 				0.16,
 				function()
 					DarkMode:Debug(5, "NAME_PLATE_UNIT_ADDED 1")
 					worked = DarkMode:ColorNameplate(id)
 					if not worked then
-						C_Timer.After(
+						DarkMode:After(
 							0.31,
 							function()
 								DarkMode:Debug(5, "NAME_PLATE_UNIT_ADDED 2")
@@ -1598,10 +1609,10 @@ npf:SetScript(
 									failedNameplateIds[id] = true
 									--DarkMode:MSG("FAILED TO ADD DARKMODE ON NAMEPLATE", id, "If custom nameplates are installed, set Nameplates to 'Off' in DarkMode")
 								end
-							end
+							end, "NAME_PLATE_UNIT_ADDED 2"
 						)
 					end
-				end
+				end, "NAME_PLATE_UNIT_ADDED 1"
 			)
 		end
 	end
@@ -1617,12 +1628,12 @@ function DarkMode:InitQuestFrameGreetingPanel()
 		frame:HookScript(
 			"OnShow",
 			function(sel, ...)
-				C_Timer.After(
+				DarkMode:After(
 					questDelay,
 					function()
 						DarkMode:Debug(5, "InitQuestFrameGreetingPanel 1")
 						DarkMode:UpdateQuestFrameGreetingPanel()
-					end
+					end, "InitQuestFrameGreetingPanel 1"
 				)
 			end
 		)
@@ -1632,12 +1643,12 @@ function DarkMode:InitQuestFrameGreetingPanel()
 				QuestFrame,
 				"OnEvent",
 				function()
-					C_Timer.After(
+					DarkMode:After(
 						questDelay,
 						function()
 							DarkMode:Debug(5, "InitQuestFrameGreetingPanel 2")
 							DarkMode:UpdateQuestFrameGreetingPanel()
-						end
+						end, "InitQuestFrameGreetingPanel 2"
 					)
 				end
 			)
@@ -1663,20 +1674,20 @@ local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton", "CharacterReagentBag0Slot"}
-C_Timer.After(
+DarkMode:After(
 	4,
 	function()
 		DarkMode:Debug(3, "startSearch 1")
 		DarkMode:AddonsSearch("startSearch 1")
-	end
+	end, "startSearch 1"
 )
 
-C_Timer.After(
+DarkMode:After(
 	8,
 	function()
 		DarkMode:Debug(3, "startSearch 2")
 		DarkMode:AddonsSearch("startSearch 2")
-	end
+	end, "startSearch 2"
 )
 
 function DarkMode:Event(event, ...)
@@ -1689,12 +1700,12 @@ function DarkMode:Event(event, ...)
 				function(typ, name, parent, template)
 					if BugSackFrame and foundBugSack == false and strlower(typ) == "frame" then
 						foundBugSack = true
-						C_Timer.After(
+						DarkMode:After(
 							0.02,
 							function()
 								DarkMode:Debug(5, "foundBugSack")
 								DarkMode:FindTextures(BugSackFrame, "addons")
-							end
+							end, "foundBugSack"
 						)
 					end
 				end
@@ -1706,12 +1717,12 @@ function DarkMode:Event(event, ...)
 			DarkMode:InitGreetingPanel()
 			DarkMode:InitQuestLogFrame()
 			DarkMode:InitQuestFrameGreetingPanel()
-			C_Timer.After(
+			DarkMode:After(
 				1,
 				function()
 					DarkMode:Debug(5, "GroupLootUpdate")
 					DarkMode:GroupLootUpdate()
-				end
+				end, "GroupLootUpdate"
 			)
 
 			local chatButtons = {
@@ -1769,7 +1780,7 @@ function DarkMode:Event(event, ...)
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
-				C_Timer.After(
+				DarkMode:After(
 					2,
 					function()
 						DarkMode:Debug(5, "BAGS ~= RETAIL")
@@ -1818,7 +1829,7 @@ function DarkMode:Event(event, ...)
 								end
 							end
 						end
-					end
+					end, "BAGS"
 				)
 
 				function string:dm_endswith(suffix)
@@ -1888,7 +1899,7 @@ function DarkMode:Event(event, ...)
 				end
 			else
 				-- delay for other addons changing
-				C_Timer.After(
+				DarkMode:After(
 					1,
 					function()
 						DarkMode:Debug(5, "BAGS == RETAIL")
@@ -1918,7 +1929,7 @@ function DarkMode:Event(event, ...)
 								end
 							end
 						end
-					end
+					end, "OtherAddons"
 				)
 			end
 
@@ -2051,7 +2062,7 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
-			C_Timer.After(
+			DarkMode:After(
 				0.1,
 				function()
 					DarkMode:Debug(5, "setup")
@@ -2081,7 +2092,7 @@ function DarkMode:Event(event, ...)
 						ItemTextPageText:SetTextColor("H2", r, g, b)
 						ItemTextPageText:SetTextColor("H3", r, g, b)
 					end
-				end
+				end, "PLAYER_LOGIN"
 			)
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" and FriendsFramePortrait then
@@ -2151,12 +2162,12 @@ function DarkMode:Event(event, ...)
 		local from = ...
 		DarkMode:AddonsSearch(from)
 	elseif event == "START_LOOT_ROLL" then
-		C_Timer.After(
+		DarkMode:After(
 			0.1,
 			function()
 				DarkMode:Debug(5, "GroupLootUpdate")
 				DarkMode:GroupLootUpdate()
-			end
+			end, "START_LOOT_ROLL"
 		)
 	end
 end
@@ -2211,20 +2222,20 @@ vigor:SetScript(
 	"OnEvent",
 	function(sel, event)
 		if event == "PLAYER_ENTERING_WORLD" then
-			C_Timer.After(
+			DarkMode:After(
 				1,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 1")
 					DarkMode:UpdateVigor()
-				end
+				end, "PLAYER_ENTERING_WORLD"
 			)
 		elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
-			C_Timer.After(
+			DarkMode:After(
 				0.1,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 2")
 					DarkMode:UpdateVigor()
-				end
+				end, "PLAYER_MOUNT_DISPLAY_CHANGED"
 			)
 		end
 	end
@@ -2236,3 +2247,24 @@ f:RegisterEvent("PLAYER_LOGIN")
 f:RegisterEvent("ADDON_LOADED")
 f:RegisterEvent("START_LOOT_ROLL")
 f.incombat = false
+if false then
+	C_Timer.After(
+		1,
+		function()
+			DarkMode:SetDebug(true)
+			DarkMode:DrawDebug(
+				"DarkMode DrawDebug",
+				function()
+					local text = ""
+					for i, v in pairs(DarkMode:GetCountAfter()) do
+						if v > 100 then
+							text = text .. i .. ": " .. v .. "\n"
+						end
+					end
+
+					return text
+				end, 14, 1440, 1440, "CENTER", UIParent, "CENTER", 400, 0
+			)
+		end
+	)
+end
