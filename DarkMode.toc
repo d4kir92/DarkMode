@@ -28,6 +28,7 @@ locale\enUS.lua
 locale\deDE.lua
 locale\zhCN.lua
 locale\zhTW.lua
+locale\ruRU.lua
 
 data.lua
 settings.lua
