@@ -405,24 +405,3 @@ DMIgnoreTextureNames["HonorFramePvPIcon"] = true
 function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
-
-C_Timer.After(
-	1,
-	function()
-		if TargetFrame then
-			DarkMode:FindTextures(TargetFrame, "uf")
-		end
-
-		if TargetFrameToTHealthBar then
-			DarkMode:FindTextures(TargetFrameToTHealthBar, "uf")
-		end
-
-		if FocusFrame then
-			DarkMode:FindTextures(FocusFrame, "uf")
-		end
-
-		if FocusFrameToTHealthBar then
-			DarkMode:FindTextures(FocusFrameToTHealthBar, "uf")
-		end
-	end
-)
