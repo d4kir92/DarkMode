@@ -405,3 +405,58 @@ DMIgnoreTextureNames["HonorFramePvPIcon"] = true
 function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
+
+DarkMode:After(
+	1,
+	function()
+		if DarkMode:IsAddOnLoaded("DragonflightUI") then
+			if TargetFrame then
+				local texture = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBorder")
+				if texture then
+					DarkMode:UpdateColor(texture, "uf")
+				end
+
+				local texture2 = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBackground")
+				if texture2 then
+					DarkMode:UpdateColor(texture2, "uf")
+				end
+			end
+
+			if TargetFrameToT then
+				local texture = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBorder")
+				if texture then
+					DarkMode:UpdateColor(texture, "uf")
+				end
+
+				local texture2 = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBackground")
+				if texture2 then
+					DarkMode:UpdateColor(texture2, "uf")
+				end
+			end
+
+			if FocusFrame then
+				local texture = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBorder")
+				if texture then
+					DarkMode:UpdateColor(texture, "uf")
+				end
+
+				local texture2 = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBackground")
+				if texture2 then
+					DarkMode:UpdateColor(texture2, "uf")
+				end
+			end
+
+			if FocusFrameToT then
+				local texture = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBorder")
+				if texture then
+					DarkMode:UpdateColor(texture, "uf")
+				end
+
+				local texture2 = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBackground")
+				if texture2 then
+					DarkMode:UpdateColor(texture2, "uf")
+				end
+			end
+		end
+	end, "DragonflightUIFix"
+)

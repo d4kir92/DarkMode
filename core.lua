@@ -790,7 +790,7 @@ function DarkMode:UpdateColors()
 	end
 end
 
-function DarkMode:FindTextures(frame, typ)
+function DarkMode:FindTextures(frame, typ, findName, show)
 	if frame == nil then return end
 	local ignoreId1 = nil
 	local ignoreId2 = nil
@@ -808,11 +808,19 @@ function DarkMode:FindTextures(frame, typ)
 
 	if frame and frame ~= StoreFrame and name and DarkMode:GetIgnoreFrames(name) then return end
 	if frame.SetVertexColor then
-		DarkMode:UpdateColor(frame, typ)
+		if findName == nil then
+			DarkMode:UpdateColor(frame, typ)
+		else
+			if findName == DarkMode:GetName(frame) then return frame end
+		end
+
+		if show then
+			DarkMode:INFO("#1", "[" .. DarkMode:GetName(frame, true) .. "]")
+		end
 	end
 
 	if frame.GetRegions then
-		DarkMode:ForeachRegions(
+		local ret = DarkMode:ForeachRegions(
 			frame,
 			function(region, x)
 				local regionName = DarkMode:GetName(frame)
@@ -822,15 +830,25 @@ function DarkMode:FindTextures(frame, typ)
 					end
 
 					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(regionName)) then
-						DarkMode:UpdateColor(region, typ)
+						if findName == nil then
+							DarkMode:UpdateColor(region, typ)
+						else
+							if findName == DarkMode:GetName(region) then return region end
+						end
+
+						if show then
+							DarkMode:INFO("#2", "[" .. DarkMode:GetName(region, true) .. "]")
+						end
 					end
 				end
 			end, "FindTextures"
 		)
+
+		if ret then return ret end
 	end
 
 	if frame.GetChildren then
-		DarkMode:ForeachChildren(
+		local ret = DarkMode:ForeachChildren(
 			frame,
 			function(child, i)
 				local childName = DarkMode:GetName(child)
@@ -840,11 +858,21 @@ function DarkMode:FindTextures(frame, typ)
 					end
 
 					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(childName)) then
-						DarkMode:UpdateColor(child, typ)
+						if findName == nil then
+							DarkMode:UpdateColor(child, typ)
+						else
+							if findName == DarkMode:GetName(child) then return child end
+						end
+
+						if show then
+							DarkMode:INFO("#3", "[" .. DarkMode:GetName(child, true) .. "]")
+						end
 					end
 				end
 			end, "FindTextures"
 		)
+
+		if ret then return ret end
 	end
 end
 
@@ -1325,7 +1353,7 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. ".DMBorder"] == nil then
+	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
 		border:SetAllPoints(MinimapZoomIn)
@@ -1347,7 +1375,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
-	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. ".DMBorder"] == nil then
+	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		-- Wrath
 		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
