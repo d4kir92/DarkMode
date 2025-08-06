@@ -959,7 +959,7 @@ function DarkMode:InitQuestLogFrame()
 	if frame then
 		frame:HookScript(
 			"OnShow",
-			function(sel, ...)
+			function(sel)
 				DarkMode:After(
 					questDelay,
 					function()
@@ -987,15 +987,50 @@ function DarkMode:InitQuestLogFrame()
 		end
 	end
 
-	function DarkMode:UpdateQuestMapFrame()
-		for index, name in pairs(DarkMode:GetFrameTextTable()) do
-			if _G[name] and debug then
-				DarkMode:FindTextsByName(name)
+	if WorldMapFrame then
+		local findNames = false
+		local foundNames = {}
+		function DarkMode:UpdateQuestMapFrame()
+			if findNames then
+				for index, name in pairs(DarkMode:GetFrameTextTable()) do
+					if _G[name] and foundNames[name] == nil then
+						foundNames[name] = true
+						DarkMode:FindTextsByName(name)
+					end
+				end
+
+				DarkMode:After(
+					0.2,
+					function()
+						DarkMode:UpdateQuestMapFrame()
+					end, "UpdateQuestMapFrame 1"
+				)
+			else
+				DarkMode:After(
+					0.7,
+					function()
+						DarkMode:UpdateQuestMapFrame()
+					end, "UpdateQuestMapFrame 2"
+				)
 			end
 		end
-	end
 
-	DarkMode:UpdateQuestMapFrame()
+		WorldMapFrame:HookScript(
+			"OnShow",
+			function(sel)
+				findNames = true
+			end
+		)
+
+		WorldMapFrame:HookScript(
+			"OnHide",
+			function(sel)
+				findNames = false
+			end
+		)
+
+		DarkMode:UpdateQuestMapFrame()
+	end
 end
 
 function DarkMode:SearchFrames()
