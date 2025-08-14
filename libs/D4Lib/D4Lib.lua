@@ -49,6 +49,7 @@ if C_Timer == nil then
 end
 
 local countAfter = {}
+local countAfterEvents = {}
 local debug = false
 function D4:SetDebug(bo)
     debug = bo
@@ -76,6 +77,10 @@ end
 
 function D4:GetCountAfter()
     return countAfter
+end
+
+function D4:GetCountAfterEvents()
+    return countAfterEvents
 end
 
 function D4:GetClassColor(class)
@@ -110,6 +115,32 @@ function D4:RegisterEvent(frame, event, unit)
             frame:RegisterEvent(event)
         end
     end
+end
+
+function D4:UnregisterEvent(frame, event)
+    if C_EventUtils.IsEventValid(event) then
+        frame:UnregisterEvent(event)
+    end
+end
+
+function D4:OnEvent(frame, callback, from)
+    if from == nil then
+        D4:INFO("[D4][OnEvent] Missing from")
+
+        return
+    end
+
+    frame:HookScript(
+        "OnEvent",
+        function(sel, event, ...)
+            if debug then
+                countAfterEvents[from] = countAfterEvents[from] or 0
+                countAfterEvents[from] = countAfterEvents[from] + 1
+            end
+
+            callback(sel, event, ...)
+        end
+    )
 end
 
 function D4:ForeachChildren(frame, callback, from)
@@ -191,15 +222,15 @@ local ICON_TAG_LIST_EN = {
 local callbacks = {}
 local fSecure = CreateFrame("Frame")
 D4:RegisterEvent(fSecure, "PLAYER_REGEN_ENABLED")
-fSecure:SetScript(
-    "OnEvent",
+D4:OnEvent(
+    fSecure,
     function()
         for i, func in pairs(callbacks) do
             func()
         end
 
         callbacks = {}
-    end
+    end, "fSecure"
 )
 
 function D4:SafeExec(sel, func, from)
@@ -890,8 +921,8 @@ end
 
 local f = CreateFrame("Frame")
 D4:RegisterEvent(f, "PLAYER_LOGIN")
-f:SetScript(
-    "OnEvent",
+D4:OnEvent(
+    f,
     function(self, event, ...)
         if GetTrackingTexture then
             local trackingTexture = GetTrackingTexture()
@@ -900,7 +931,7 @@ f:SetScript(
                 MiniMapTracking:Show()
             end
         end
-    end
+    end, "MiniMapTracking"
 )
 
 function D4:DrawDebug(name, callback, fontSize, sw, sh, p1, p2, p3, p4, p5)
@@ -914,9 +945,19 @@ function D4:DrawDebug(name, callback, fontSize, sw, sh, p1, p2, p3, p4, p5)
     local fDebug = CreateFrame("Frame", name)
     fDebug:SetSize(sw, sh)
     fDebug:SetPoint(p1, p2, p3, p4, p5)
+    fDebug.header = fDebug:CreateFontString(nil, nil, "GameFontNormal")
+    fDebug.header:SetPoint("CENTER", fDebug, "CENTER", 0, 200)
+    fDebug.header:SetSize(sw, sh)
+    fDebug.header:SetJustifyH("LEFT")
+    --fDebug.header:SetText(name)
+    if fontSize then
+        D4:SetFontSize(fDebug.header, fontSize)
+    end
+
     fDebug.text = fDebug:CreateFontString(nil, nil, "GameFontNormal")
     fDebug.text:SetPoint("CENTER", fDebug, "CENTER", 0, 0)
     fDebug.text:SetSize(sw, sh)
+    fDebug.text:SetJustifyH("LEFT")
     if fontSize then
         D4:SetFontSize(fDebug.text, fontSize)
     end
@@ -925,10 +966,10 @@ function D4:DrawDebug(name, callback, fontSize, sw, sh, p1, p2, p3, p4, p5)
         local text = callback()
         fDebug.text:SetText(text)
         D4:After(
-            0.1,
+            0.2,
             function()
                 Think()
-            end, "DrawDebug Think"
+            end, "D4:DD " .. name
         )
     end
 
