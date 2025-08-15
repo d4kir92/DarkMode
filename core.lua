@@ -274,6 +274,11 @@ function DarkMode:UpdateColor(texture, typ, from)
 			)
 		end
 
+		local ola = 1
+		if texture:GetAlpha() < 1 then
+			ola = texture:GetAlpha()
+		end
+
 		if typ == "ui" then
 			local r, g, b, a = DarkMode:GetUiColor(texture, "UpdateColor 3")
 			if ola and ola < 1 then
@@ -474,6 +479,13 @@ end
 local addonsDelay = 0
 local addonsRetry = false
 local foundMinimapTracking = false
+local talentFrameFound = false
+function DarkMode:UpdateSpellBook()
+	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.View1, "sb")
+	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.View2, "sb")
+	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls, "sb")
+end
+
 function DarkMode:RetryAddonsSearch()
 	if addonsRetry and GetTime() > addonsDelay then
 		DarkMode:AddonsSearch("RETRY")
@@ -482,6 +494,39 @@ function DarkMode:RetryAddonsSearch()
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
 		DarkMode:UpdateColor(MiniMapTrackingBorder, "addons")
+	end
+
+	if not talentFrameFound and PlayerSpellsFrame then
+		talentFrameFound = true
+		if PlayerSpellsFrame.TabSystem then
+			DarkMode:ForeachChildren(
+				PlayerSpellsFrame.TabSystem,
+				function(child, x)
+					DarkMode:FindTextures(child, "frames")
+				end
+			)
+		end
+
+		if PlayerSpellsFrame.SpellBookFrame then
+			if PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem then
+				DarkMode:ForeachChildren(
+					PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem,
+					function(child, x)
+						DarkMode:FindTextures(child, "frames")
+					end
+				)
+			end
+
+			if PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame and PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.View1 and PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls then
+				hooksecurefunc(
+					PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame,
+					"ApplyLayout",
+					function()
+						DarkMode:UpdateSpellBook()
+					end
+				)
+			end
+		end
 	end
 
 	if addonsRetry then
@@ -666,7 +711,8 @@ function DarkMode:UpdateText(text, name, layer)
 	return false
 end
 
-function DarkMode:FindTexts(frame, name)
+function DarkMode:FindTexts(frame, name, iter)
+	iter = iter or 0
 	if frame ~= nil then
 		if frame.SetTextColor then
 			DarkMode:UpdateText(frame, name, 1)
@@ -695,7 +741,7 @@ function DarkMode:FindTexts(frame, name)
 						end
 
 						if type(child) == "table" then
-							DarkMode:FindTexts(child, name)
+							DarkMode:FindTexts(child, name, iter + 1)
 						end
 					end, "FindTexts"
 				)
