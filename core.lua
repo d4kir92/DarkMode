@@ -522,7 +522,12 @@ function DarkMode:RetryAddonsSearch()
 					PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame,
 					"ApplyLayout",
 					function()
-						DarkMode:UpdateSpellBook()
+						DarkMode:After(
+							0.1,
+							function()
+								DarkMode:UpdateSpellBook()
+							end
+						)
 					end
 				)
 			end
