@@ -1,5 +1,5 @@
 ## Interface: 30403
-## Version: 0.7.52
+## Version: 0.7.53
 ## Title:  D|cff3FC7EBark|rM|cff3FC7EBode|r |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Improve Any Ui or Frame
 ## Notes-ruRU: Аддон, с помощью которого можно раскрасить интерфейс и фреймы

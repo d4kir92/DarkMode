@@ -526,7 +526,7 @@ function DarkMode:RetryAddonsSearch()
 							0.1,
 							function()
 								DarkMode:UpdateSpellBook()
-							end
+							end, "ApplyLoadout"
 						)
 					end
 				)
