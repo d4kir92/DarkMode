@@ -5,7 +5,7 @@
 ## Interface-Mists: 50500
 ## Interface: 110107, 110200
 
-## Version: 0.7.50
+## Version: 0.7.51
 ## Title: D|cff3FC7EBark|rM|cff3FC7EBode|r |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Improve Any Ui or Frame
 ## Notes-ruRU: Аддон, с помощью которого можно раскрасить интерфейс и фреймы
