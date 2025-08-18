@@ -523,20 +523,22 @@ function DarkMode:RetryAddonsSearch()
 					"ApplyLayout",
 					function()
 						DarkMode:After(
-							0.1,
+							0.15,
 							function()
 								DarkMode:UpdateSpellBook()
 							end, "ApplyLoadout"
 						)
 					end
 				)
+
+				DarkMode:UpdateSpellBook()
 			end
 		end
 	end
 
 	if addonsRetry then
 		DarkMode:After(
-			0.1,
+			0.12,
 			function()
 				DarkMode:Debug(7, "RetryAddonsSearch")
 				DarkMode:RetryAddonsSearch()
@@ -603,7 +605,7 @@ function DarkMode:AddonsSearch(from)
 	end
 
 	DarkMode:After(
-		0.1,
+		0.13,
 		function()
 			DarkMode:Debug(5, "AddonsSearch")
 			DarkMode:SearchAddons(from)
@@ -1601,7 +1603,7 @@ rf:SetScript(
 	"OnEvent",
 	function(self, event, name, ...)
 		DarkMode:After(
-			0.1,
+			0.15,
 			function()
 				DarkMode:Debug(5, "GROUP_ROSTER_UPDATE")
 				DarkMode:CheckCompactFrames()
@@ -2344,7 +2346,7 @@ vigor:SetScript(
 			)
 		elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
 			DarkMode:After(
-				0.1,
+				0.15,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 2")
 					DarkMode:UpdateVigor()
