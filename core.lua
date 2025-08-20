@@ -2346,7 +2346,7 @@ vigor:SetScript(
 			)
 		elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
 			DarkMode:After(
-				0.15,
+				0.21,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 2")
 					DarkMode:UpdateVigor()
