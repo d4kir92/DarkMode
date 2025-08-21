@@ -1805,6 +1805,7 @@ DarkMode:After(
 	end, "startSearch 2"
 )
 
+local inspectFound = false
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
@@ -2275,6 +2276,44 @@ function DarkMode:Event(event, ...)
 		end
 	elseif event == "ADDON_LOADED" then
 		local from = ...
+		if InspectFrame and not inspectFound then
+			inspectFound = true
+			DarkMode:After(
+				0.1,
+				function()
+					if InspectModelFrame then
+						DarkMode:FindTextures(InspectModelFrame, "frames")
+					end
+
+					if InspectMainHandSlot then
+						DarkMode:ForeachRegions(
+							InspectMainHandSlot,
+							function(region, x)
+								if x == 14 then
+									tinsert(DarkMode:GetFrameTableSpecial(), region) -- CATA
+								end
+							end, "InspectMainHandSlot"
+						)
+					end
+
+					if InspectRangedSlot then
+						DarkMode:ForeachRegions(
+							InspectRangedSlot,
+							function(region, x)
+								if x == 14 then
+									tinsert(DarkMode:GetFrameTableSpecial(), region) -- CATA
+								end
+							end, "InspectRangedSlot"
+						)
+					end
+
+					for index, frame in pairs(DarkMode:GetFrameTableSpecial()) do
+						DarkMode:UpdateColor(frame, "frames")
+					end
+				end, "Inspect Found"
+			)
+		end
+
 		DarkMode:AddonsSearch(from)
 	elseif event == "START_LOOT_ROLL" then
 		DarkMode:After(
