@@ -1001,12 +1001,38 @@ function DarkMode:InitGreetingPanel()
 	end
 end
 
+function DarkMode:SearchForTexts(from)
+	if from == nil then
+		DarkMode:INFO("[SearchForTexts] Missing From")
+
+		return
+	end
+
+	local c = 0
+	for index, name in pairs(DarkMode:GetFrameTextTable()) do
+		if DarkMode:GetFrameByName(name) then
+			c = c + 1
+			if c >= 20 then
+				DarkMode:After(
+					0.21,
+					function()
+						DarkMode:SearchForTexts("RETRY" .. from)
+					end, "Retry Texts"
+				)
+
+				return
+			end
+
+			DarkMode:FindTextsByName(name)
+			DarkMode:GetFrameTextTable()[name] = nil
+		end
+	end
+end
+
 function DarkMode:InitQuestLogFrame()
 	local frame = DarkMode:GetFrameByName("QuestLogFrame")
 	function DarkMode:UpdateQuestLogFrame()
-		for index, name in pairs(DarkMode:GetFrameTextTable()) do
-			DarkMode:FindTextsByName(name)
-		end
+		DarkMode:SearchForTexts("UpdateQuestLogFrame")
 	end
 
 	if frame then
@@ -1042,25 +1068,24 @@ function DarkMode:InitQuestLogFrame()
 
 	if WorldMapFrame then
 		local findNames = false
-		local foundNames = {}
 		function DarkMode:UpdateQuestMapFrame()
 			if findNames then
-				for index, name in pairs(DarkMode:GetFrameTextTable()) do
-					if _G[name] and foundNames[name] == nil then
-						foundNames[name] = true
+				for index, name in pairs(DarkMode:GetMapFrameTextTable()) do
+					if _G[name] then
 						DarkMode:FindTextsByName(name)
+						DarkMode:GetMapFrameTextTable()[name] = nil
 					end
 				end
 
 				DarkMode:After(
-					0.2,
+					0.1,
 					function()
 						DarkMode:UpdateQuestMapFrame()
 					end, "UpdateQuestMapFrame 1"
 				)
 			else
 				DarkMode:After(
-					0.7,
+					0.5,
 					function()
 						DarkMode:UpdateQuestMapFrame()
 					end, "UpdateQuestMapFrame 2"
@@ -1087,29 +1112,82 @@ function DarkMode:InitQuestLogFrame()
 end
 
 function DarkMode:SearchFrames()
+	local c = 0
 	for index, frame in pairs(DarkMode:GetFrameTableSpecial()) do
-		DarkMode:UpdateColor(frame, "frames")
+		if frame ~= nil then
+			c = c + 1
+			if c >= 30 then
+				DarkMode:After(
+					0.21,
+					function()
+						DarkMode:SearchFrames()
+					end, "Reached Limit Special"
+				)
+
+				return
+			end
+
+			DarkMode:UpdateColor(frame, "frames")
+			frame = nil
+		end
 	end
 
 	for index, name in pairs(DarkMode:GetFrameTable()) do
-		if name ~= "LootFrame" then
-			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "frames")
+		if DarkMode:GetFrameByName(name) then
+			c = c + 1
+			if c >= 30 then
+				DarkMode:After(
+					0.22,
+					function()
+						DarkMode:SearchFrames()
+					end, "Reached Limit"
+				)
+
+				return
 			end
-		else
-			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				-- BottomLeft and BottomRight Corner 
-				if v ~= ".Bg" and v ~= ".Background" then
+
+			if name ~= "LootFrame" then
+				for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
 					DarkMode:FindTexturesByName(name .. v, "frames")
 				end
+			else
+				for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+					-- BottomLeft and BottomRight Corner 
+					if v ~= ".Bg" and v ~= ".Background" then
+						DarkMode:FindTexturesByName(name .. v, "frames")
+					end
+				end
 			end
+
+			DarkMode:GetFrameTable()[name] = nil
 		end
 	end
 end
 
 local foundAuctionator = false
 local foundExpansion = false
+local lastAddonsSearch = 0
+local searchAddonsDelay = 0.1
 function DarkMode:SearchAddons(from)
+	if from == nil then
+		DarkMode:INFO("[SearchAddons] NO FROM")
+
+		return
+	end
+
+	if lastAddonsSearch > GetTime() then
+		DarkMode:After(
+			searchAddonsDelay + 0.02,
+			function()
+				DarkMode:SearchAddons("TOFAST" .. from)
+			end, "Retry Addons"
+		)
+
+		return
+	end
+
+	lastAddonsSearch = GetTime() + searchAddonsDelay
+	local c = 0
 	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
 		foundAuctionator = true
 		for x, v in pairs(AuctionatorAHTabsContainer.Tabs) do
@@ -1146,8 +1224,24 @@ function DarkMode:SearchAddons(from)
 	end
 
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
-		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-			DarkMode:FindTexturesByName(name .. v, "addons")
+		if DarkMode:GetFrameByName(name) then
+			c = c + 1
+			if c >= 30 then
+				DarkMode:After(
+					0.21,
+					function()
+						DarkMode:SearchAddons("RETRY1" .. from)
+					end, "Reached Limit Addon"
+				)
+
+				return
+			end
+
+			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+				DarkMode:FindTexturesByName(name .. v, "addons")
+			end
+
+			DarkMode:GetFrameAddonsTable()[name] = nil
 		end
 	end
 
@@ -1170,7 +1264,22 @@ function DarkMode:SearchAddons(from)
 	end
 
 	for index, name in pairs(DarkMode:GetUiAddonsTable()) do
-		DarkMode:FindTexturesByName(name, "ui")
+		if DarkMode:GetFrameByName(name) then
+			c = c + 1
+			if c >= 30 then
+				DarkMode:After(
+					0.22,
+					function()
+						DarkMode:SearchAddons("RETRY2" .. from)
+					end, "Reached Limit UiAddon"
+				)
+
+				return
+			end
+
+			DarkMode:FindTexturesByName(name, "ui")
+			DarkMode:GetUiAddonsTable()[name] = nil
+		end
 	end
 end
 
@@ -2184,10 +2293,7 @@ function DarkMode:Event(event, ...)
 					DarkMode:Debug(5, "setup")
 					DarkMode:SearchUi("setup")
 					DarkMode:SearchFrames()
-					for index, name in pairs(DarkMode:GetFrameTextTable()) do
-						DarkMode:FindTextsByName(name)
-					end
-
+					DarkMode:SearchForTexts("INIT")
 					if ItemTextPageText then
 						hooksecurefunc(
 							ItemTextPageText,

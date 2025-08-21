@@ -228,8 +228,16 @@ function DarkMode:GetUiTable()
 end
 
 local DMUiAddons = {"LFGListInviteDialog.Border", "LFDRoleCheckPopup.Border", "UIWidgetPowerBarContainerFrame", "TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder", "FocusFrame.FocusFrameContainer.FrameTexture", "ArenaPrepFrame1Texture", "ArenaPrepFrame2Texture", "ArenaPrepFrame3Texture", "ArenaPrepFrame4Texture", "ArenaPrepFrame5Texture", "ArenaEnemyFrame1Texture", "ArenaEnemyFrame2Texture", "ArenaEnemyFrame3Texture", "ArenaEnemyFrame4Texture", "ArenaEnemyFrame5Texture",}
+local DMFramesUiAddonsTab = nil
 function DarkMode:GetUiAddonsTable()
-	return DMUiAddons
+	if DMFramesUiAddonsTab == nil then
+		DMFramesUiAddonsTab = {}
+		for x, name in ipairs(DMUiAddons) do
+			DMFramesUiAddonsTab[name] = name
+		end
+	end
+
+	return DMFramesUiAddonsTab
 end
 
 local DMFrames = {"MovieFrame.CloseDialog.Border", "LFDQueueFrameFindGroupButton_LeftSeparator", "LFDQueueFrameFindGroupButton_RightSeparator", "QuestLogDetailScrollFrame", "QuestLogListScrollFrame", "ChatConfigFrame", "ChatConfigCategoryFrame", "ChatConfigBackgroundFrame", "TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder", "ReadyStatus.Border", "DMSettings", "AdventureMapQuestChoiceDialog", "CovenantMissionFrame", "PVPReadyDialog.Border", "LFGDungeonReadyDialog.Border", "QueueStatusFrame", "StackSplitFrame", "PVPReadyDialog", "ReputationDetailFrame", "ReputationDetailFrame.Border", "ReputationFrame.ReputationDetailFrame.Border", "CurrencyTransferMenu", "CurrencyTransferMenu.TitleContainer", "CurrencyTransferLog", "TokenFrameContainerScrollBar", "TokenFramePopup", "TokenFramePopup.Border", "QuestLogDetailFrame", "QuestNPCModelTextFrame", "QuestModelScene", "QuestLogFrame", "QuestLogCollapseAllButton", "QuestScrollFrame.ScrollBar", "QuestFrame", "QuestFrameDetailPanel", "QuestDetailScrollFrame", "QuestDetailScrollChildFrame", "QuestFrameGreetingPanel", "QuestGreetingScrollFrame", "QuestFrameProgressPanel", "QuestProgressScrollFrame", "QuestRewardScrollFrame", "QuestFrameRewardPanel", "QuestInfoRewardsFrame", "QuestMapFrame", "QuestMapFrame.DetailsFrame", "QuestMapFrame.QuestsTab.Background", "QuestMapFrame.EventsTab.Background", "QuestMapFrame.MapLegendTab.Background", "CharacterModelScene", "GroupLootHistoryFrame", "GroupLootHistoryFrame.ResizeButton", "ModelPreviewFrameCloseButton_LeftSeparator", "ModelPreviewFrame", "SideDressUpModelCloseButton", "SideDressUpFrame", "ArchaeologyFrame", "MailItem1", "MailItem2", "MailItem3", "MailItem4", "MailItem5", "MailItem6", "MailItem7", "MailFrame", "InboxFrame", "GuildMemberDetailFrame", "TabardFrame", "TradeFrame", "TradeFrame.RecipientOverlay", "DressUpFrame", "LootFrame", "ReadyCheckListenerFrame", "LFGDungeonReadyStatus.Border", "CinematicFrameCloseDialog.Border", "StaticPopup1", "StaticPopup1.Border", "StaticPopup1.BG", "StaticPopup2.Border", "StaticPopup2.BG", "ItemTextFrame", "WorldStateScoreFrame", "WorldStateScoreFrameTab1", "WorldStateScoreFrameTab2", "WorldStateScoreFrameTab3", "SettingsPanel", "InspectPaperDollFrame", "PaperDollFrame", "CharacterFrame", "CharacterStatsPane", "CharacterFrameTab1", "CharacterFrameTab2", "CharacterFrameTab3", "CharacterFrameTab4", "CharacterFrameTab5", "nwtab5", "nwtab6", "ReputationFrame", "ReputationListScrollFrame", "SkillFrame", "SkillListScrollFrame", "SkillDetailScrollFrame", "HonorFrame", "PetPaperDollFrame", "PetPaperDollFrameTab1", "PetPaperDollFrameTab2", "PetPaperDollFrameTab3", "PetPaperDollFrameExpBar", "TokenFrame", "SpellBookFrame", "SpellBookSkillLineTab1", "SpellBookSkillLineTab2", "SpellBookSkillLineTab3", "SpellBookSkillLineTab4", "SpellBookSkillLineTab5", "SpellBookSkillLineTab6", "SpellBookSkillLineTab7", "WhatsTrainingFrame", "SpellBookFrameTabButton1", "SpellBookFrameTabButton2", "SpellBookFrameTabButton3", "SpellBookFrameTabButton4", "FriendsFrame", "FriendsFrameFriendsScrollFrame", "FriendsFrameTab1", "FriendsFrameTab2", "FriendsFrameTab3", "FriendsFrameTab4", "FriendsFrameTab5", "WhoListScrollFrame", "WhoFrameList", "WorldMapFrame", "WorldMapFrame.BorderFrame", "WorldMapFrame.MiniBorderFrame", "LFGParentFrame", "LFGParentFrameTab1", "LFGParentFrameTab2", "LFMFrame", "LFGBrowseFrame", "LFGListingFrame", "PVEFrame", "PVEFrameTab1", "PVEFrameTab2", "PVEFrameTab3", "PVEFrameTab4", "PVPFrame", "PVPFrameTab1", "PVPFrameTab2", "PVPFrameTab3", "PVPFrameTab4", "ChallengesFrame", "GameMenuFrame", "GameMenuFrame.Border", "GameMenuFrame.Header", "GossipFrameGreetingPanel", "GossipGreetingScrollFrame", "GossipFrame", "GossipFrame.GreetingPanel", "GossipFrame.GreetingPanel.ScrollBox", "GossipFrame.GreetingPanel.ScrollBar.Background", "MerchantFrame", "MerchantBuyBackItem", "MerchantFrameTab1", "MerchantFrameTab2", "MerchantItem1", "MerchantItem2", "MerchantItem3", "MerchantItem4", "MerchantItem5", "MerchantItem6", "MerchantItem7", "MerchantItem8", "MerchantItem9", "MerchantItem10", "MerchantItem11", "MerchantItem12", "MerchantMoney", "MerchantMoneyBg", "PetStableFrame", "AddonList", "AddonListDisableAllButton_RightSeparator", "AddonListEnableAllButton_RightSeparator", "AddonListOkayButton_LeftSeparator", "AddonListOkayButton_RightSeparator", "AddonListCancelButton_LeftSeparator", "HelpFrame", "VideoOptionsFrame", "InterfaceOptionsFrame", "TimeManagerFrame", "OpenMailFrame", "OpenMailScrollFrame", "MailFrameTab1", "MailFrameTab2", "SendMailFrame", "SendMailMoney", "SendMailMoneyBg", "SendMailMoneyFrame", "SendMail", "MailEditBoxScrollBar", "BankFrame", "BankFrameTab1", "BankFrameTab2", "BankFrameTab3", "BankFrameTab4", "BankFrameMoneyFrame", "BankFrameMoneyFrameBorder", "BackpackTokenFrame", "ContainerFrame1", "ContainerFrame2", "ContainerFrame3", "ContainerFrame4", "ContainerFrame5", "ContainerFrame6", "ContainerFrame7", "ContainerFrame8", "ContainerFrame9", "ContainerFrame10", "ContainerFrame11", "ContainerFrame12", "ContainerFrameCombinedBags", "PVPFrame", "PVPParentFrame", "PVPParentFrameTab1", "PVPParentFrameTab2", "BattlefieldFrame", "BattlefieldListScrollFrame", "BattlefieldFrameType", "YourFrameName", "QuestMapFrame", "QuestMapFrame.DetailsFrame"}
@@ -260,8 +268,16 @@ function DarkMode:IsBrighterFrame(name)
 	return DMFranesBrighter[name] or false
 end
 
+local DMFramesTab = nil
 function DarkMode:GetFrameTable()
-	return DMFrames
+	if DMFramesTab == nil then
+		DMFramesTab = {}
+		for x, name in ipairs(DMFrames) do
+			DMFramesTab[name] = name
+		end
+	end
+
+	return DMFramesTab
 end
 
 local DMFramesSpecial = {}
@@ -314,8 +330,16 @@ for x, borderName in pairs(BorderNames) do
 	tinsert(DMFramesAddons, "RXPFrameGuideName." .. borderName)
 end
 
+local DMFramesAddonsTab = nil
 function DarkMode:GetFrameAddonsTable()
-	return DMFramesAddons
+	if DMFramesAddonsTab == nil then
+		DMFramesAddonsTab = {}
+		for x, name in ipairs(DMFramesAddons) do
+			DMFramesAddonsTab[name] = name
+		end
+	end
+
+	return DMFramesAddonsTab
 end
 
 local DMFrameTexts = {"WarGamesFrameDescription", "PVPHonorFrameInfoScrollFrameChildFrameDescription", "BattlefieldFrameZoneDescription", "GossipGreetingScrollChildFrame", "QuestGreetingScrollChildFrame", "QuestProgressScrollChildFrame", "QuestRewardScrollChildFrame", "QuestLogDetailScrollChildFrame", "QuestInfoTitleHeader", "QuestInfoQuestType", "QuestInfoObjective1", "QuestInfoObjective2", "QuestInfoObjective3", "QuestInfoObjective4", "QuestInfoObjective5", "QuestInfoObjective6", "QuestInfoDescriptionHeader", "QuestInfoDescriptionText", "QuestInfoObjectivesHeader", "QuestInfoObjectivesText", "QuestInfoRewardText", "QuestInfoRewardsFrame", "GossipGreetingText", "QuestTitleButton1", "QuestTitleButton2", "QuestTitleButton3", "QuestTitleButton4", "QuestTitleButton5", "QuestTitleButton6", "QuestTitleButton7", "QuestTitleButton8", "QuestTitleButton9", "QuestTitleButton10", "QuestTitleButton11", "QuestTitleButton12", "QuestTitleButton13", "QuestTitleButton14", "QuestTitleButton15", "GossipTitleButton1", "GossipTitleButton2", "GossipTitleButton3", "GossipTitleButton4", "GossipTitleButton5", "GossipTitleButton6", "GossipTitleButton7", "GossipTitleButton8", "GossipTitleButton9", "GossipTitleButton10", "GossipTitleButton11", "GossipTitleButton12", "GossipTitleButton13", "GossipTitleButton14", "GossipTitleButton15",}
@@ -325,8 +349,32 @@ for i = 1, 12 do
 	tinsert(DMFrameTexts, "SpellButton" .. i .. "RequiredLevelString")
 end
 
+local DMFrameTextsTab = nil
 function DarkMode:GetFrameTextTable()
-	return DMFrameTexts
+	if DMFrameTextsTab == nil then
+		DMFrameTextsTab = {}
+		for x, name in ipairs(DMFrameTexts) do
+			if not string.find(name, "QuestInfo", 1, true) then
+				DMFrameTextsTab[name] = name
+			end
+		end
+	end
+
+	return DMFrameTextsTab
+end
+
+local DMMapFrameTextsTab = nil
+function DarkMode:GetMapFrameTextTable()
+	if DMMapFrameTextsTab == nil then
+		DMMapFrameTextsTab = {}
+		for x, name in ipairs(DMFrameTexts) do
+			if string.find(name, "QuestInfo", 1, true) then
+				DMMapFrameTextsTab[name] = name
+			end
+		end
+	end
+
+	return DMMapFrameTextsTab
 end
 
 local DMGroupLootFrames = {"GroupLootContainer", "GroupLootFrame1", "GroupLootFrame2", "GroupLootFrame3", "GroupLootFrame4", "GroupLootFrame5", "GroupLootFrame1Corner", "GroupLootFrame2Corner", "GroupLootFrame3Corner", "GroupLootFrame4Corner", "GroupLootFrame5Corner"}
