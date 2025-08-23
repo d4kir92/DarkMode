@@ -910,7 +910,7 @@ function DarkMode:FindTextures(frame, typ, findName, show)
 						DarkMode:MSG(">>>", name, childName, child:GetTextureFilePath(), child:GetTexture(), "Size:", child:GetSize())
 					end
 
-					if not hasName or (hasName and not DarkMode:GetIgnoreTextureName(childName)) then
+					if not childName or (childName and not DarkMode:GetIgnoreTextureName(childName)) then
 						if findName == nil then
 							DarkMode:UpdateColor(child, typ)
 						else
