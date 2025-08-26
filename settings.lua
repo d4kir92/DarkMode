@@ -344,7 +344,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.58")
+	DarkMode:SetVersion(136122, "0.7.59")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -415,7 +415,7 @@ function DarkMode:InitDMSettings()
 
 		AddCheckBox(4, "GRYPHONS", true)
 		AddCheckBox(4, "MASKMINIMAPBUTTONS", true)
-		if not MSQ then
+		if not getglobal("MSQ") then
 			AddCheckBox(4, "MASKACTIONBUTTONS", true)
 			AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
 			AddCheckBox(4, "THINBORDERS", false)

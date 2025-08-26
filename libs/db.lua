@@ -55,7 +55,7 @@ function DarkMode:SetEnabled(element, value)
 		return false
 	end
 
-	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
+	if DMTAB["PROFILES"][DarkMode:GetCP("SetEnabled")] == nil then
 		DarkMode:MSG("[SetEnabled] Get Profile Tab to early", element)
 
 		return false
@@ -72,7 +72,7 @@ function DarkMode:IsEnabled(element, value)
 		return false
 	end
 
-	if DMTAB["PROFILES"][DarkMode:GetCP(from)] == nil then
+	if DMTAB["PROFILES"][DarkMode:GetCP("IsEnabled")] == nil then
 		DarkMode:MSG("[IsEnabled] Get Profile Tab to early", element)
 
 		return false
