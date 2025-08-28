@@ -1433,6 +1433,15 @@ function DarkMode:SearchUi(from)
 						local btn = _G[name .. x]
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
+						if btn and btnTextureFloatingBG then
+							btn:HookScript(
+								"OnLeave",
+								function()
+									btnTextureNormalTexture:SetAlpha(0.5)
+								end
+							)
+						end
+
 						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
