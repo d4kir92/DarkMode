@@ -22,6 +22,8 @@ end
 local DMTexturesUi = {}
 local DMTexturesUF = {}
 local DMTexturesUFDR = {}
+local DMTexturesUFHP = {}
+local DMTexturesUFPOR = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
@@ -31,7 +33,7 @@ local DMTexturesBags = {}
 local DMTexturesMicroMenu = {}
 local DMTexturesBuffsAndDebuffs = {}
 local MMBTNSETUP = {}
-function DarkMode:UpdateColor(texture, typ, from)
+function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
 		DarkMode:MSG("[UpdateColor] INVALID TEXTURE OBJECT")
@@ -53,7 +55,7 @@ function DarkMode:UpdateColor(texture, typ, from)
 		textureId = texture:GetTexture()
 	end
 
-	if textureId and DarkMode:GetTextureBlockTable()[textureId] then return false end
+	if textureId and DarkMode:GetTextureBlockTable()[textureId] and skipIgnore == nil then return false end
 	if texture:GetAlpha() == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
 		if typ == "ui" then
@@ -76,6 +78,24 @@ function DarkMode:UpdateColor(texture, typ, from)
 			end
 		elseif typ == "ufdr" then
 			local r, g, b, a = DarkMode:GetUFDRColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "ufhp" then
+			local r, g, b, a = DarkMode:GetUFHPColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "ufpor" then
+			local r, g, b, a = DarkMode:GetUFPORColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -195,6 +215,24 @@ function DarkMode:UpdateColor(texture, typ, from)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
+					elseif typ == "ufhp" then
+						local r, g, b, a = DarkMode:GetUFHPColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
+					elseif typ == "ufpor" then
+						local r, g, b, a = DarkMode:GetUFPORColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
 					elseif typ == "np" then
 						local r, g, b, a = DarkMode:GetNPColor(sel)
 						if ola and ola < 1 then
@@ -306,6 +344,42 @@ function DarkMode:UpdateColor(texture, typ, from)
 			if r ~= nil and g ~= nil and b ~= nil then
 				texture:SetVertexColor(r, g, b, a)
 			end
+		elseif typ == "ufhp" then
+			local r, g, b, a = DarkMode:GetUFHPColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "ufpor" then
+			local r, g, b, a = DarkMode:GetUFPORColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "ufhp" then
+			local r, g, b, a = DarkMode:GetUFPORColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "ufpor" then
+			local r, g, b, a = DarkMode:GetUFPORColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
 		elseif typ == "np" then
 			local r, g, b, a = DarkMode:GetNPColor(texture)
 			if ola and ola < 1 then
@@ -391,6 +465,14 @@ function DarkMode:UpdateColor(texture, typ, from)
 		elseif typ == "ufdr" then
 			if not tContains(DMTexturesUFDR, texture) then
 				tinsert(DMTexturesUFDR, texture)
+			end
+		elseif typ == "ufhp" then
+			if not tContains(DMTexturesUFHP, texture) then
+				tinsert(DMTexturesUFHP, texture)
+			end
+		elseif typ == "ufpor" then
+			if not tContains(DMTexturesUFPOR, texture) then
+				tinsert(DMTexturesUFPOR, texture)
 			end
 		elseif typ == "np" then
 			if not tContains(DMTexturesNP, texture) then
@@ -789,6 +871,28 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesUFDR) do
 		local r, g, b, a = DarkMode:GetUFDRColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
+	for i, v in pairs(DMTexturesUFHP) do
+		local r, g, b, a = DarkMode:GetUFHPColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
+	for i, v in pairs(DMTexturesUFPOR) do
+		local r, g, b, a = DarkMode:GetUFPORColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
 		end
@@ -2122,7 +2226,83 @@ function DarkMode:Event(event, ...)
 						PlayerFrameDragon:SetTexture("")
 					end
 				end
+
+				for x, name in pairs({"PlayerFrame", "TargetFrame", "FocusFrame", "TargetFrameToT", "FocusFrameToT"}) do
+					local hp = DarkMode:GetFrameByName(name .. "HealthBar")
+					if hp then
+						local hpBar = select(1, hp:GetRegions())
+						if hpBar then
+							local redo = false
+							hooksecurefunc(
+								hp,
+								"SetStatusBarColor",
+								function(sel, ...)
+									if redo then return end
+									redo = true
+									sel:SetStatusBarColor(DarkMode:GetUFHPColor(hpBar))
+									redo = false
+								end
+							)
+
+							hp:SetStatusBarColor(DarkMode:GetUFHPColor(hpBar))
+						end
+					end
+
+					local portrait = DarkMode:GetFrameByName(name .. "Portrait") or DarkMode:GetFrameByName("PlayerPortrait")
+					if portrait then
+						local redo = false
+						hooksecurefunc(
+							portrait,
+							"SetVertexColor",
+							function(sel, ...)
+								if redo then return end
+								redo = true
+								DarkMode:UpdateColor(portrait, "ufpor", "portrait2", true)
+								redo = false
+							end
+						)
+
+						DarkMode:UpdateColor(portrait, "ufpor", "portrait1", true)
+					end
+				end
 			else
+				if TargetFrame and TargetFrame.TargetFrameContainer and TargetFrame.TargetFrameContainer.BossPortraitFrameTexture then
+					DarkMode:UpdateColor(TargetFrame.TargetFrameContainer.BossPortraitFrameTexture, "ufdr")
+				end
+
+				if FocusFrame and FocusFrame.TargetFrameContainer and FocusFrame.TargetFrameContainer.BossPortraitFrameTexture then
+					DarkMode:UpdateColor(FocusFrame.TargetFrameContainer.BossPortraitFrameTexture, "ufdr")
+				end
+
+				for x, name in pairs({"Player", "Target", "Focus", "TargetFrameToT", "FocusFrameToT"}) do
+					local healthbar = DarkMode:GetFrameByName(name .. "Frame.TargetFrameContent.TargetFrameContentMain.HealthBarsContainer.HealthBar")
+					if healthbar and healthbar.HealthBarTexture then
+						DarkMode:UpdateColor(healthbar.HealthBarTexture, "ufhp")
+					else
+						local healthbar2 = DarkMode:GetFrameByName(name .. ".HealthBar") or DarkMode:GetFrameByName("PlayerFrame.PlayerFrameContent.PlayerFrameContentMain.HealthBarsContainer.HealthBar")
+						if healthbar2 then
+							DarkMode:UpdateColor(select(4, healthbar2:GetRegions()), "ufhp")
+						end
+					end
+
+					local portrait = DarkMode:GetFrameByName(name .. ".Portrait") or DarkMode:GetFrameByName(name .. "Frame." .. name .. "FrameContainer.Portrait") or DarkMode:GetFrameByName(name .. "Frame." .. "Target" .. "FrameContainer.Portrait") or DarkMode:GetFrameByName(name .. "Frame." .. name .. "FrameContainer.PlayerPortrait")
+					if portrait then
+						local redo = false
+						hooksecurefunc(
+							portrait,
+							"SetVertexColor",
+							function(sel, ...)
+								if redo then return end
+								redo = true
+								DarkMode:UpdateColor(portrait, "ufpor")
+								redo = false
+							end
+						)
+
+						DarkMode:UpdateColor(portrait, "ufpor")
+					end
+				end
+
 				-- delay for other addons changing
 				DarkMode:After(
 					1,

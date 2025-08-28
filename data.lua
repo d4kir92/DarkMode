@@ -88,6 +88,28 @@ function DarkMode:GetUFDRColor(texture)
 	return r, g, b, a
 end
 
+function DarkMode:GetUFHPColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEUNFRHPA", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFHPC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
+function DarkMode:GetUFPORColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEUNFRPORA", 1)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFPORC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
 function DarkMode:GetNPColor(texture)
 	local mode = DarkMode:DMGV("COLORMODENP", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMNPC")
