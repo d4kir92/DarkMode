@@ -1433,7 +1433,7 @@ function DarkMode:SearchUi(from)
 						local btn = _G[name .. x]
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
-						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
+						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
@@ -1568,7 +1568,7 @@ function DarkMode:SearchUi(from)
 
 									DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Default" then
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
@@ -2239,12 +2239,19 @@ function DarkMode:Event(event, ...)
 								function(sel, ...)
 									if redo then return end
 									redo = true
-									sel:SetStatusBarColor(DarkMode:GetUFHPColor(hpBar))
+									local r, g, b, a = DarkMode:GetUFHPColor(hpBar)
+									if r and g and b and a then
+										sel:SetStatusBarColor(r, g, b, a)
+									end
+
 									redo = false
 								end
 							)
 
-							hp:SetStatusBarColor(DarkMode:GetUFHPColor(hpBar))
+							local r, g, b, a = DarkMode:GetUFHPColor(hpBar)
+							if r and g and b and a then
+								hp:SetStatusBarColor(r, g, b, a)
+							end
 						end
 					end
 

@@ -6,7 +6,7 @@ local cas = {}
 local cbs = {}
 local sls = {}
 local cps = {}
-local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Default", "Custom", "Off"}
+local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Uncolored", "Custom", "Off"}
 function DarkMode:GetColorModes()
 	return DMColorModes
 end
@@ -364,7 +364,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.61")
+	DarkMode:SetVersion(136122, "0.7.62")
 	if not DarkMode:IsOldWow() then
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -468,9 +468,9 @@ function DarkMode:InitDMSettings()
 		DarkMode:AddColor(4, "COLORMODEF", 1, "CUSTOMFRC", true)
 		DarkMode:AddColor(4, "COLORMODEFA", 1, "CUSTOMFRAC", true)
 		AddCategory("ADVANCED")
-		DarkMode:AddColor(4, "COLORMODEUNFRDRA", 7, "CUSTOMUFDRC", false)
-		DarkMode:AddColor(4, "COLORMODEUNFRHPA", 7, "CUSTOMUFHPC", false)
-		DarkMode:AddColor(4, "COLORMODEUNFRPORA", 7, "CUSTOMUFPORC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", 9, "CUSTOMUFDRC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", 9, "CUSTOMUFHPC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRPORA", 9, "CUSTOMUFPORC", false)
 	end
 
 	DMSettings.Search = CreateFrame("EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate")

@@ -16,7 +16,7 @@ function DarkMode:GetColor(id, name)
 		local r, g, b, _ = DarkMode:GetClassColor(PlayerClassEng)
 
 		return r, g, b, 1
-	elseif colorMode == "Default" then
+	elseif colorMode == "Uncolored" then
 		return 1, 1, 1, 1
 	elseif colorMode == "Off" then
 		return nil, nil, nil, nil
@@ -78,7 +78,7 @@ function DarkMode:GetUFColor(texture)
 end
 
 function DarkMode:GetUFDRColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEUNFRDRA", 1)
+	local mode = DarkMode:DMGV("COLORMODEAUNFRDRA", 9)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFDRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
@@ -89,7 +89,7 @@ function DarkMode:GetUFDRColor(texture)
 end
 
 function DarkMode:GetUFHPColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEUNFRHPA", 1)
+	local mode = DarkMode:DMGV("COLORMODEAUNFRHPA", 9)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFHPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
@@ -100,7 +100,7 @@ function DarkMode:GetUFHPColor(texture)
 end
 
 function DarkMode:GetUFPORColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEUNFRPORA", 1)
+	local mode = DarkMode:DMGV("COLORMODEAUNFRPORA", 9)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFPORC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
