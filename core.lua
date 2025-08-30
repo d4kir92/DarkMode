@@ -309,6 +309,10 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						end
 					end
 
+					if sel.SetDesaturated then
+						sel:SetDesaturated(nil)
+					end
+
 					sel.dm_setvertexcolor = false
 				end
 			)
@@ -2527,24 +2531,22 @@ function DarkMode:Event(event, ...)
 				FriendsFramePortrait:Hide()
 			end
 
-			if UIParent.SetFixedFrameStrata then
-				DarkMode:CreateMinimapButton(
-					{
-						["name"] = "DarkMode",
-						["icon"] = 136122,
-						["dbtab"] = DMTAB,
-						["vTT"] = {{"|T136122:16:16:0:0|t D|cff3FC7EBark|rM|cff3FC7EBode|r", "v|cff3FC7EB" .. DarkMode:GetVersion()}, {DarkMode:Trans("LID_LEFTCLICK"), DarkMode:Trans("LID_OPENSETTINGS")}, {DarkMode:Trans("LID_RIGHTCLICK"), DarkMode:Trans("LID_HIDEMINIMAPBUTTON")}},
-						["funcL"] = function()
-							DarkMode:ToggleSettings()
-						end,
-						["funcR"] = function()
-							DarkMode:SetEnabled("MMBTN", false)
-							DarkMode:HideMMBtn("DarkMode")
-						end,
-						["dbkey"] = "MMBTN"
-					}
-				)
-			end
+			DarkMode:CreateMinimapButton(
+				{
+					["name"] = "DarkMode",
+					["icon"] = 136122,
+					["dbtab"] = DMTAB,
+					["vTT"] = {{"|T136122:16:16:0:0|t D|cff3FC7EBark|rM|cff3FC7EBode|r", "v|cff3FC7EB" .. DarkMode:GetVersion()}, {DarkMode:Trans("LID_LEFTCLICK"), DarkMode:Trans("LID_OPENSETTINGS")}, {DarkMode:Trans("LID_RIGHTCLICK"), DarkMode:Trans("LID_HIDEMINIMAPBUTTON")}},
+					["funcL"] = function()
+						DarkMode:ToggleSettings()
+					end,
+					["funcR"] = function()
+						DarkMode:SetEnabled("MMBTN", false)
+						DarkMode:HideMMBtn("DarkMode")
+					end,
+					["dbkey"] = "MMBTN"
+				}
+			)
 
 			if GameMenuFrame then
 				GameMenuFrame:HookScript(

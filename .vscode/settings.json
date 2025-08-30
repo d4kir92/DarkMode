@@ -61,7 +61,10 @@
         "SAVE",
         "RELOADUI",
         "STANDARD_TEXT_FONT",
-        "PaperDollFrame"
+        "PaperDollFrame",
+        "MultiBarBottomLeft",
+        "MultiBarBottomLeftButton1",
+        "MultiBarBottomLeftButton1Icon"
     ],
     "Lua.type.weakUnionCheck": true
 }
