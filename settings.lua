@@ -88,146 +88,41 @@ end
 
 local function AddSlider(x, key, val, func, vmin, vmax, steps, keys)
 	if sls[key] == nil then
-		sls[key] = CreateFrame("Slider", "sls[" .. key .. "]", DMSettings.SC, "UISliderTemplate")
-		sls[key]:SetSize(DMSettings.SC:GetWidth() - 30 - 100 - x, 16)
-		sls[key]:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy)
-		if sls[key].Low == nil then
-			sls[key].Low = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
-			sls[key].Low:SetPoint("BOTTOMLEFT", sls[key], "BOTTOMLEFT", 0, -12)
-			sls[key].Low:SetFont(STANDARD_TEXT_FONT, 10, "THINOUTLINE")
-			sls[key].Low:SetTextColor(1, 1, 1)
-		end
-
-		if sls[key].High == nil then
-			sls[key].High = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
-			sls[key].High:SetPoint("BOTTOMRIGHT", sls[key], "BOTTOMRIGHT", 0, -12)
-			sls[key].High:SetFont(STANDARD_TEXT_FONT, 10, "THINOUTLINE")
-			sls[key].High:SetTextColor(1, 1, 1)
-		end
-
-		if sls[key].Text == nil then
-			sls[key].Text = sls[key]:CreateFontString(nil, nil, "GameFontNormal")
-			sls[key].Text:SetPoint("TOP", sls[key], "TOP", 0, 16)
-			sls[key].Text:SetFont(STANDARD_TEXT_FONT, 12, "THINOUTLINE")
-			sls[key].Text:SetTextColor(1, 1, 1)
-		end
+		sls[key] = DarkMode:CreateSlider(
+			{
+				["key"] = key,
+				["name"] = key,
+				["parent"] = DMSettings.SC,
+				["value"] = val,
+				["vmin"] = vmin,
+				["vmax"] = vmax,
+				["steps"] = steps,
+				["ptab"] = {"TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy},
+				["sw"] = DMSettings.SC:GetWidth() - 30 - 100 - x,
+				["sh"] = 16,
+				["decimals"] = 0,
+			}
+		)
 
 		sls[key].key = key
-		sls[key].SetText = function(self, text)
-			if sls[key].Text then
-				sls[key].Text:SetText(text)
-			else
-				_G["sls[" .. key .. "]" .. "Text"]:SetText(text)
-			end
-		end
-
-		if type(vmin) == "number" then
-			if sls[key].Low then
-				sls[key].Low:SetText(vmin)
-			else
-				_G["sls[" .. key .. "]" .. "Low"]:SetText(vmin)
-			end
-
-			if sls[key].High then
-				sls[key].High:SetText(vmax)
-			else
-				_G["sls[" .. key .. "]" .. "High"]:SetText(vmax)
-			end
-
-			sls[key]:SetMinMaxValues(vmin, vmax)
-			if sls[key].Text then
-				sls[key].Text:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:DMGV(key, val))
-			else
-				_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:DMGV(key, val))
-			end
-		else
-			if sls[key].Low then
-				sls[key].Low:SetText("")
-			else
-				_G["sls[" .. key .. "]" .. "Low"]:SetText("")
-			end
-
-			if sls[key].High then
-				sls[key].High:SetText("")
-			else
-				_G["sls[" .. key .. "]" .. "High"]:SetText("")
-			end
-
-			sls[key]:SetMinMaxValues(1, #vmin)
-			if sls[key].Text then
-				sls[key].Text:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. vmin[DarkMode:DMGV(key, val)])
-			else
-				_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. vmin[DarkMode:DMGV(key, val)])
-			end
-		end
-
-		if sls[key].SetObeyStepOnDrag then
-			sls[key]:SetObeyStepOnDrag(true)
-		end
-
-		if steps then
-			sls[key]:SetValueStep(steps)
-		end
-
-		sls[key]:SetValue(DarkMode:DMGV(key, val))
 		sls[key]:SetScript(
 			"OnValueChanged",
 			function(sel, valu)
-				--valu = valu - valu % steps
-				if steps then
-					valu = tonumber(string.format("%" .. steps .. "f", valu))
+				valu = tonumber(string.format("%0.0f", valu))
+				DarkMode:DMSV(key, valu)
+				if keys then
+					for i, v in pairs(sliders) do
+						DarkMode:DMSV(v.key, valu)
+						v:SetValue(DarkMode:DMGV(v.key, valu))
+					end
 				end
 
-				if valu and valu ~= DarkMode:DMGV(key) then
-					if type(vmin) == "number" then
-						DarkMode:DMSV(key, valu)
-						if keys then
-							for i, v in pairs(keys) do
-								DarkMode:DMSV(v, valu)
-							end
-						end
+				if func then
+					func(sel, valu)
+				end
 
-						if sls[key].Text then
-							sls[key].Text:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. valu)
-						else
-							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. valu)
-						end
-
-						if keys then
-							for i, v in pairs(sliders) do
-								v:SetValue(DarkMode:DMGV(v.key, valu))
-								v.Text:SetText(DarkMode:Trans("LID_" .. v.key) .. ": " .. DarkMode:GetColorModes()[valu])
-							end
-						end
-					else
-						DarkMode:DMSV(key, valu)
-						if keys then
-							for i, v in pairs(keys) do
-								DarkMode:DMSV(v, valu)
-							end
-						end
-
-						if sls[key].Text then
-							sls[key].Text:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. vmin[valu])
-						else
-							_G["sls[" .. key .. "]" .. "Text"]:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. vmin[valu])
-						end
-
-						if keys then
-							for i, v in pairs(sliders) do
-								v:SetValue(DarkMode:DMGV(v.key, valu))
-								v.Text:SetText(DarkMode:Trans("LID_" .. v.key) .. ": " .. vmin[valu])
-							end
-						end
-					end
-
-					if func then
-						func(sel, valu)
-					end
-
-					if DMSettings.save then
-						DMSettings.save:Enable()
-					end
+				if DMSettings.save then
+					DMSettings.save:Enable()
 				end
 			end
 		)
@@ -364,9 +259,9 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.63")
+	DarkMode:SetVersion(136122, "0.7.64")
 	if not DarkMode:IsOldWow() then
-		DMSettings = CreateFrame("Frame", "DMSettings", UIParent, "BasicFrameTemplate")
+		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
 		DMSettings = CreateFrame("Frame", "DMSettings", UIParent)
 		DMSettings.TitleText = DMSettings:CreateFontString(nil, nil, "GameFontNormal")

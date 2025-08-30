@@ -60,7 +60,8 @@
         "ChatEdit_SendText",
         "SAVE",
         "RELOADUI",
-        "STANDARD_TEXT_FONT"
+        "STANDARD_TEXT_FONT",
+        "PaperDollFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }
