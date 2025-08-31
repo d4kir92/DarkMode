@@ -309,7 +309,7 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						end
 					end
 
-					if sel.SetDesaturated then
+					if DarkMode:IsEnabled("DESATURATE", true) and sel.SetDesaturated then
 						sel:SetDesaturated(nil)
 					end
 
