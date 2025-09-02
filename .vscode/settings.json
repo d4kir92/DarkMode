@@ -64,7 +64,13 @@
         "PaperDollFrame",
         "MultiBarBottomLeft",
         "MultiBarBottomLeftButton1",
-        "MultiBarBottomLeftButton1Icon"
+        "MultiBarBottomLeftButton1Icon",
+        "QuestInfoDescriptionHeader",
+        "QuestInfoDescriptionText",
+        "QuestInfoObjectivesHeader",
+        "QuestInfoObjectivesText",
+        "QuestInfoRewardText",
+        "QuestInfoRewardsFrame"
     ],
     "Lua.type.weakUnionCheck": true
 }

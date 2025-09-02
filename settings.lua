@@ -194,6 +194,7 @@ function DarkMode:AddDMColorPicker(name, parent, x, y, keyMode)
 						if restore then
 							newR, newG, newB, newA = unpack(restore)
 						else
+							local OpacitySliderFrame = getglobal("OpacitySliderFrame")
 							if OpacitySliderFrame then
 								newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
 							elseif ColorPickerFrame.Content.ColorPicker.GetColorAlpha then
@@ -259,7 +260,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.66")
+	DarkMode:SetVersion(136122, "0.7.67")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else

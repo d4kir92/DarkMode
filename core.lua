@@ -579,6 +579,7 @@ function DarkMode:RetryAddonsSearch()
 		DarkMode:AddonsSearch("RETRY")
 	end
 
+	local MiniMapTrackingBorder = getglobal("MiniMapTrackingBorder")
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
 		DarkMode:UpdateColor(MiniMapTrackingBorder, "addons")
@@ -645,20 +646,23 @@ end
 
 local foundTrinket = false
 function DarkMode:TriggerTrinketMenu()
-	DarkMode:ForeachChildren(
-		TrinketMenu_MenuFrame,
-		function(child, c)
-			DarkMode:ForeachRegions(
-				child,
-				function(region, r)
-					local name = DarkMode:GetName(region)
-					if name and string.find(name, "NormalTexture", 1, true) then
-						DarkMode:UpdateColor(region, "addons")
+	local TrinketMenu_MenuFrame = getglobal("TrinketMenu_MenuFrame")
+	if TrinketMenu_MenuFrame then
+		DarkMode:ForeachChildren(
+			TrinketMenu_MenuFrame,
+			function(child, c)
+				DarkMode:ForeachRegions(
+					child,
+					function(region, r)
+						local name = DarkMode:GetName(region)
+						if name and string.find(name, "NormalTexture", 1, true) then
+							DarkMode:UpdateColor(region, "addons")
+						end
 					end
-				end
-			)
-		end
-	)
+				)
+			end
+		)
+	end
 end
 
 function DarkMode:AddonsSearch(from)
@@ -675,6 +679,7 @@ function DarkMode:AddonsSearch(from)
 
 	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
+	local TrinketMenu_MenuFrame = getglobal("TrinketMenu_MenuFrame")
 	if foundTrinket == false and TrinketMenu_MenuFrame then
 		foundTrinket = true
 		TrinketMenu_MenuFrame:HookScript(
@@ -697,6 +702,7 @@ function DarkMode:AddonsSearch(from)
 		function()
 			DarkMode:Debug(5, "AddonsSearch")
 			DarkMode:SearchAddons(from)
+			local PlayerTalentFrame = getglobal("PlayerTalentFrame")
 			if PlayerTalentFrame then
 				for i, v in pairs({"PlayerSpecTab1", "PlayerSpecTab2", "PlayerSpecTab3", "PlayerSpecTab4"}) do
 					local tab = _G[v]
@@ -713,6 +719,7 @@ function DarkMode:AddonsSearch(from)
 				end
 			end
 
+			local ClassTalentFrame = getglobal("ClassTalentFrame")
 			if ClassTalentFrame and ClassTalentFrame.dm_setup_talent == nil then
 				ClassTalentFrame.dm_setup_talent = true
 				function ClassTalentFrame:UpdateColors()
@@ -1298,6 +1305,11 @@ function DarkMode:SearchAddons(from)
 
 	lastAddonsSearch = GetTime() + searchAddonsDelay
 	local c = 0
+	local AuctionatorAHTabsContainer = getglobal("AuctionatorAHTabsContainer")
+	local AuctionatorShoppingFrame = getglobal("AuctionatorShoppingFrame")
+	local AuctionatorBuyFrame = getglobal("AuctionatorBuyFrame")
+	local AuctionatorSellingFrame = getglobal("AuctionatorSellingFrame")
+	local AuctionatorCancellingFrame = getglobal("AuctionatorCancellingFrame")
 	if AuctionatorAHTabsContainer ~= nil and AuctionatorAHTabsContainer.Tabs ~= nil and foundAuctionator == false then
 		foundAuctionator = true
 		for x, v in pairs(AuctionatorAHTabsContainer.Tabs) do
@@ -1669,6 +1681,8 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
+	local MinimapZoomIn = getglobal("MinimapZoomIn")
+	local MinimapZoomOut = getglobal("MinimapZoomOut")
 	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
@@ -1682,6 +1696,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border2, "ui")
 	end
 
+	local MiniMapTrackingFrame = getglobal("MiniMapTrackingFrame")
 	if MiniMapTrackingFrame and _G["MiniMapTrackingFrame" .. ".DMBorder"] == nil then
 		-- Classic Era
 		local border = MiniMapTrackingFrame:CreateTexture("MiniMapTrackingFrame" .. ".DMBorder", "OVERLAY")
@@ -1691,6 +1706,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
+	local MiniMapTrackingButton = getglobal("MiniMapTrackingButton")
 	if MiniMapTrackingButton and _G["MiniMapTrackingButton" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		-- Wrath
 		local border = MiniMapTrackingButton:CreateTexture("MiniMapTrackingButton" .. ".DMBorder", "OVERLAY")
@@ -1704,6 +1720,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
+	local MiniMapWorldMapButton = getglobal("MiniMapWorldMapButton")
 	if MiniMapWorldMapButton and _G["MiniMapWorldMapButton" .. ".DMBorder"] == nil and DarkMode:GetWoWBuild() == "WRATH" then
 		local border = MiniMapWorldMapButton:CreateTexture("MiniMapWorldMapButton" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
@@ -1716,6 +1733,7 @@ function DarkMode:SearchUi(from)
 		DarkMode:UpdateColor(border, "ui")
 	end
 
+	local MiniMapMailFrame = getglobal("MiniMapMailFrame")
 	if MiniMapMailFrame and _G["MiniMapMailFrame" .. ".DMBorder"] == nil then
 		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
@@ -1767,10 +1785,12 @@ function DarkMode:SearchUi(from)
 				end
 			end
 
+			local MiniMapLFGFrame = getglobal("MiniMapLFGFrame")
 			if MiniMapLFGFrame then
 				DarkMode:FindTextures(MiniMapLFGFrame, "ui")
 			end
 
+			local Lib_GPI_Minimap_LFGBulletinBoard = getglobal("Lib_GPI_Minimap_LFGBulletinBoard")
 			if Lib_GPI_Minimap_LFGBulletinBoard then
 				DarkMode:ForeachRegions(
 					Lib_GPI_Minimap_LFGBulletinBoard,
@@ -1782,6 +1802,7 @@ function DarkMode:SearchUi(from)
 				)
 			end
 
+			local PeggledMinimapIcon = getglobal("PeggledMinimapIcon")
 			if PeggledMinimapIcon and PeggledMinimapIcon.border then
 				DarkMode:UpdateColor(PeggledMinimapIcon.border, "ui")
 			end
@@ -2042,6 +2063,7 @@ function DarkMode:Event(event, ...)
 			hooksecurefunc(
 				"CreateFrame",
 				function(typ, name, parent, template)
+					local BugSackFrame = getglobal("BugSackFrame")
 					if BugSackFrame and foundBugSack == false and strlower(typ) == "frame" then
 						foundBugSack = true
 						DarkMode:After(
@@ -2082,6 +2104,7 @@ function DarkMode:Event(event, ...)
 				["QuickJoinToastButton"] = {0.76, 0.98, -1, 0},
 			}
 
+			local ChatFrame1ButtonFrameBottomButton = getglobal("ChatFrame1ButtonFrameBottomButton")
 			if ChatFrame1ButtonFrameBottomButton then
 				for i = 1, 10 do
 					for btnName, btnTab in pairs(chatButtons) do
@@ -2176,10 +2199,12 @@ function DarkMode:Event(event, ...)
 					end, "BAGS"
 				)
 
-				function string:dm_endswith(suffix)
+				function string.dm_endswith(suffix)
 					return self:sub(-#suffix) == suffix
 				end
 
+				local TargetFrameTextureFrame = getglobal("TargetFrameTextureFrame")
+				local TargetFrameTextureFrameTexture = getglobal("TargetFrameTextureFrameTexture")
 				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
 					TargetFrameDragon:SetSize(256, 128)
@@ -2206,6 +2231,7 @@ function DarkMode:Event(event, ...)
 					TargetFrameDragon:SetTexture("")
 				end
 
+				local PlayerFrameTexture = getglobal("PlayerFrameTexture")
 				if PlayerFrame and PlayerFrameTexture then
 					local parent = DarkMode:GetParent(PlayerFrameTexture)
 					if parent then
@@ -2360,6 +2386,7 @@ function DarkMode:Event(event, ...)
 				)
 			end
 
+			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
 				if AuraFrameMixin and AuraFrameMixin.Update then
 					hooksecurefunc(
@@ -2400,6 +2427,7 @@ function DarkMode:Event(event, ...)
 						function(sel, ...)
 							DarkMode:Debug(3, "BuffFrame_UpdateAllBuffAnchors")
 							local buttonName = "BuffButton"
+							local BUFF_ACTUAL_DISPLAY = getglobal("BUFF_ACTUAL_DISPLAY")
 							for index = 1, BUFF_ACTUAL_DISPLAY do
 								local btn = _G[buttonName .. index]
 								if btn and BuffFrameBuffs[index] == nil then
@@ -2430,6 +2458,7 @@ function DarkMode:Event(event, ...)
 					)
 				end
 
+				local TargetFrame_UpdateAuras = getglobal("TargetFrame_UpdateAuras")
 				if TargetFrame_UpdateAuras then
 					hooksecurefunc(
 						"TargetFrame_UpdateAuras",
@@ -2602,6 +2631,7 @@ function DarkMode:Event(event, ...)
 						)
 					end
 
+					local InspectRangedSlot = getglobal("InspectRangedSlot")
 					if InspectRangedSlot then
 						DarkMode:ForeachRegions(
 							InspectRangedSlot,
