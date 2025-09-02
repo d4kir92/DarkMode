@@ -2199,10 +2199,19 @@ function DarkMode:Event(event, ...)
 					end, "BAGS"
 				)
 
-				function string.dm_endswith(suffix)
-					return self:sub(-#suffix) == suffix
+				local function dm_endswith(sel, suffix)
+					if type(suffix) ~= "string" then
+						error("suffix must be a string", 2)
+					end
+
+					local len_s, len_suffix = #self, #suffix
+					if len_suffix == 0 then return true end
+					if len_suffix > len_s then return false end
+
+					return sel:sub(len_s - len_suffix + 1) == suffix
 				end
 
+				string.dm_endswith = dm_endswith
 				local TargetFrameTextureFrame = getglobal("TargetFrameTextureFrame")
 				local TargetFrameTextureFrameTexture = getglobal("TargetFrameTextureFrameTexture")
 				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
