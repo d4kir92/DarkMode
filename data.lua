@@ -1,8 +1,10 @@
 local _, DarkMode = ...
 function DarkMode:GetColor(id, name)
 	local colorMode = DarkMode:GetColorModes()[id]
-	if colorMode == "Dark" then
-		return 0.220, 0.220, 0.220, 1
+	if colorMode == "Dimmed" then
+		return 0.5, 0.5, 0.5, 1
+	elseif colorMode == "Dark" then
+		return 0.360, 0.360, 0.360, 1
 	elseif colorMode == "Dark+" then
 		return 0.200, 0.200, 0.200, 1
 	elseif colorMode == "Darker" then
@@ -16,12 +18,14 @@ function DarkMode:GetColor(id, name)
 		local r, g, b, _ = DarkMode:GetClassColor(PlayerClassEng)
 
 		return r, g, b, 1
-	elseif colorMode == "Uncolored" then
+	elseif colorMode == "Uncolored" or colorMode == "Default" then
 		return 1, 1, 1, 1
 	elseif colorMode == "Off" then
 		return nil, nil, nil, nil
 	elseif colorMode == "Custom" then
 		return DarkMode:GetCustomColor(name)
+	else
+		DarkMode:INFO("[GetColor] Missing colorMode", colorMode)
 	end
 
 	return 1.000, 0.000, 0.000, 0.3
@@ -69,6 +73,17 @@ end
 function DarkMode:GetUFColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEUNFR", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFC")
+	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
+		texture:SetDesaturated(true)
+	end
+
+	return r, g, b, a
+end
+
+function DarkMode:GetBtnsColor(texture)
+	local mode = DarkMode:DMGV("COLORMODEABTNS", 9)
+	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBTNS")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
 	if mode ~= 7 and mode ~= 9 and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
 		texture:SetDesaturated(true)

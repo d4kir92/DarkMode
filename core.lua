@@ -26,6 +26,7 @@ local DMTexturesUF = {}
 local DMTexturesUFDR = {}
 local DMTexturesUFHP = {}
 local DMTexturesUFPOR = {}
+local DMTexturesBtns = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
 local DMTexturesFrames = {}
@@ -71,6 +72,15 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "btns" then
+			local r, g, b, a = DarkMode:GetBtnsColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -168,7 +178,7 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 
 				texture:SetColorTexture(r, g, b, a)
 			end
-		else
+		elseif typ == "frames" then
 			local r, g, b, a = DarkMode:GetFrameColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
@@ -177,6 +187,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 
 				texture:SetColorTexture(r, g, b, a)
 			end
+		else
+			DarkMode:INFO("[UpdateColor] #1 Missing type", typ)
 		end
 
 		return true
@@ -201,6 +213,15 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						end
 					elseif typ == "uf" then
 						local r, g, b, a = DarkMode:GetUFColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
+						if r ~= nil and g ~= nil and b ~= nil then
+							sel:SetVertexColor(r, g, b, a)
+						end
+					elseif typ == "btns" then
+						local r, g, b, a = DarkMode:GetBtnsColor(sel)
 						if ola and ola < 1 then
 							a = ola
 						end
@@ -298,7 +319,7 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
-					else
+					elseif typ == "frames" then
 						local r, g, b, a = DarkMode:GetFrameColor(sel)
 						if ola and ola < 1 then
 							a = ola
@@ -307,10 +328,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						if r ~= nil and g ~= nil and b ~= nil then
 							sel:SetVertexColor(r, g, b, a)
 						end
-					end
-
-					if DarkMode:IsEnabled("DESATURATE", true) and sel.SetDesaturated then
-						sel:SetDesaturated(nil)
+					else
+						DarkMode:INFO("[UpdateColor] #2 Missing type", typ)
 					end
 
 					sel.dm_setvertexcolor = false
@@ -334,6 +353,15 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end
 		elseif typ == "uf" then
 			local r, g, b, a = DarkMode:GetUFColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			if r ~= nil and g ~= nil and b ~= nil then
+				texture:SetVertexColor(r, g, b, a)
+			end
+		elseif typ == "btns" then
+			local r, g, b, a = DarkMode:GetBtnsColor(texture)
 			if ola and ola < 1 then
 				a = ola
 			end
@@ -467,6 +495,10 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 		elseif typ == "uf" then
 			if not tContains(DMTexturesUF, texture) then
 				tinsert(DMTexturesUF, texture)
+			end
+		elseif typ == "btns" then
+			if not tContains(DMTexturesBtns, texture) then
+				tinsert(DMTexturesBtns, texture)
 			end
 		elseif typ == "ufdr" then
 			if not tContains(DMTexturesUFDR, texture) then
@@ -873,6 +905,17 @@ function DarkMode:UpdateColors()
 
 	for i, v in pairs(DMTexturesUF) do
 		local r, g, b, a = DarkMode:GetUFColor(v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then
+			a = v:GetAlpha()
+		end
+
+		if r ~= nil and g ~= nil and b ~= nil then
+			v:SetVertexColor(r, g, b, a)
+		end
+	end
+
+	for i, v in pairs(DMTexturesBtns) do
+		local r, g, b, a = DarkMode:GetBtnsColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
 		end
@@ -1367,11 +1410,9 @@ function DarkMode:SearchAddons(from)
 		end
 	end
 
-	if DarkMode:IsEnabled("COLORBUTTONS", true) then
-		for index, name in pairs({"RankerToggleButton", "RankerWhatIfButton"}) do
-			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "addons")
-			end
+	for index, name in pairs({"RankerToggleButton", "RankerWhatIfButton"}) do
+		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
+			DarkMode:FindTexturesByName(name .. v, "btns")
 		end
 	end
 
@@ -2590,28 +2631,28 @@ function DarkMode:Event(event, ...)
 				GameMenuFrame:HookScript(
 					"OnShow",
 					function()
-						if DarkMode:IsEnabled("COLORBUTTONS", true) then
-							DarkMode:ForeachChildren(
-								GameMenuFrame,
-								function(child, x)
-									if child.Left then
-										DarkMode:UpdateColor(child.Left, "frames")
-									end
-
-									if child.Middle then
-										DarkMode:UpdateColor(child.Middle, "frames")
-									end
-
-									if child.Center then
-										DarkMode:UpdateColor(child.Center, "frames")
-									end
-
-									if child.Right then
-										DarkMode:UpdateColor(child.Right, "frames")
-									end
+						DarkMode:ForeachChildren(
+							GameMenuFrame,
+							function(child, x)
+								if child.Left then
+									DarkMode:UpdateColor(child.Left, "btns")
 								end
-							)
-						end
+
+								if child.Middle then
+									DarkMode:UpdateColor(child.Middle, "btns")
+								end
+
+								if child.Center then
+									DarkMode:UpdateColor(child.Center, "btns")
+								end
+
+								if child.Right then
+									DarkMode:UpdateColor(child.Right, "btns")
+								end
+							end
+						)
+
+						DarkMode:FindTextures(GameMenuFrame, "frames")
 					end
 				)
 			end
