@@ -2245,7 +2245,7 @@ function DarkMode:Event(event, ...)
 						error("suffix must be a string", 2)
 					end
 
-					local len_s, len_suffix = #self, #suffix
+					local len_s, len_suffix = #sel, #suffix
 					if len_suffix == 0 then return true end
 					if len_suffix > len_s then return false end
 

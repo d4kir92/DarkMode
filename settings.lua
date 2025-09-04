@@ -44,7 +44,6 @@ local function AddCategory(key)
 	end
 
 	DMSetPos(cas[key], key)
-	posy = posy - 4
 end
 
 local function AddCheckBox(x, key, val, func)
@@ -240,14 +239,18 @@ function DarkMode:ToggleSettings()
 	end
 end
 
+local vals = {}
 function DarkMode:AddColor(px, key, value, cKey, add)
 	local slider = AddSlider(
 		px,
 		key,
 		DarkMode:DMGV(key, value),
 		function(sel, val)
-			sel:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:GetColorModes()[val])
-			DarkMode:UpdateColors()
+			if vals[key] ~= val then
+				vals[key] = val
+				sel:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:GetColorModes()[val])
+				DarkMode:UpdateColors()
+			end
 		end, 1, getn(DarkMode:GetColorModes()), 1
 	)
 
@@ -260,7 +263,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.69")
+	DarkMode:SetVersion(136122, "0.7.70")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -337,9 +340,7 @@ function DarkMode:InitDMSettings()
 			AddCheckBox(4, "THINBORDERS", false)
 		end
 
-		AddCheckBox(4, "DESATURATE", true)
 		posy = posy - 10
-		--AddCategory("OVERALL")
 		local gCM = AddSlider(
 			4,
 			"COLORMODEG",
@@ -363,6 +364,8 @@ function DarkMode:InitDMSettings()
 		DarkMode:AddColor(4, "COLORMODEF", 1, "CUSTOMFRC", true)
 		DarkMode:AddColor(4, "COLORMODEFA", 1, "CUSTOMFRAC", true)
 		AddCategory("ADVANCED")
+		AddCheckBox(4, "DESATURATE", true)
+		posy = posy - 10
 		DarkMode:AddColor(4, "COLORMODEABTNS", 9, "CUSTOMBTNS", false)
 		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", 9, "CUSTOMUFDRC", false)
 		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", 9, "CUSTOMUFHPC", false)
