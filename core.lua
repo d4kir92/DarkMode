@@ -1226,7 +1226,8 @@ function DarkMode:InitQuestLogFrame()
 		end
 	end
 
-	if WorldMapFrame then
+	local QuestLogFrame = getglobal("QuestLogFrame")
+	if WorldMapFrame or QuestLogFrame then
 		local findNames = false
 		function DarkMode:UpdateQuestMapFrame()
 			if findNames then
@@ -1253,19 +1254,37 @@ function DarkMode:InitQuestLogFrame()
 			end
 		end
 
-		WorldMapFrame:HookScript(
-			"OnShow",
-			function(sel)
-				findNames = true
-			end
-		)
+		if QuestLogFrame then
+			QuestLogFrame:HookScript(
+				"OnShow",
+				function(sel)
+					findNames = true
+				end
+			)
 
-		WorldMapFrame:HookScript(
-			"OnHide",
-			function(sel)
-				findNames = false
-			end
-		)
+			QuestLogFrame:HookScript(
+				"OnHide",
+				function(sel)
+					findNames = false
+				end
+			)
+		end
+
+		if WorldMapFrame then
+			WorldMapFrame:HookScript(
+				"OnShow",
+				function(sel)
+					findNames = true
+				end
+			)
+
+			WorldMapFrame:HookScript(
+				"OnHide",
+				function(sel)
+					findNames = false
+				end
+			)
+		end
 
 		DarkMode:UpdateQuestMapFrame()
 	end
