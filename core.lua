@@ -2782,7 +2782,7 @@ vigor:SetScript(
 	function(sel, event)
 		if event == "PLAYER_ENTERING_WORLD" then
 			DarkMode:After(
-				1,
+				1.1,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 1")
 					DarkMode:UpdateVigor()
@@ -2790,7 +2790,7 @@ vigor:SetScript(
 			)
 		elseif event == "PLAYER_MOUNT_DISPLAY_CHANGED" then
 			DarkMode:After(
-				0.21,
+				0.26,
 				function()
 					DarkMode:Debug(5, "UpdateVigor 2")
 					DarkMode:UpdateVigor()
