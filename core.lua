@@ -1443,6 +1443,32 @@ function DarkMode:SearchUi(from)
 			end
 		else
 			if index == "ActionButtons" then
+				DarkMode:After(
+					0,
+					function()
+						for i, name in pairs(tab) do
+							for x = 1, 12 do
+								local btn = getglobal(name .. x)
+								if btn then
+									local nt = btn["DragonflightUINormalTexture2Replacement"]
+									DarkMode:ForeachRegions(
+										btn,
+										function(child, n)
+											if DarkMode:GetName(child) == "DragonflightUINormalTexture2Replacement" then
+												DarkMode:UpdateColor(child, "actionbuttons")
+											end
+										end
+									)
+
+									if nt then
+										DarkMode:UpdateColor(nt, "actionbuttons")
+									end
+								end
+							end
+						end
+					end, "ActionButtons DragonflightUI"
+				)
+
 				for i, name in pairs(tab) do
 					local max = 12
 					if name == "BT4Button" or name == "DominosActionButton" then
@@ -2570,6 +2596,59 @@ function DarkMode:Event(event, ...)
 
 				FriendsFramePortrait:Hide()
 			end
+
+			DarkMode:After(
+				0,
+				function()
+					local DragonflightUIXPBar = getglobal("DragonflightUIXPBar")
+					if DragonflightUIXPBar and DragonflightUIXPBar.Bar then
+						DarkMode:ForeachRegions(
+							DragonflightUIXPBar.Bar,
+							function(region)
+								if DarkMode:GetName(region) == "Border" then
+									DarkMode:UpdateColor(region, "ui")
+								end
+							end
+						)
+					end
+
+					local DragonflightUIRepBar = getglobal("DragonflightUIRepBar")
+					if DragonflightUIRepBar and DragonflightUIRepBar.Bar then
+						DarkMode:ForeachRegions(
+							DragonflightUIRepBar.Bar,
+							function(region)
+								if DarkMode:GetName(region) == "Border" then
+									DarkMode:UpdateColor(region, "ui")
+								end
+							end
+						)
+					end
+
+					local DragonflightUIBigBagBorder = getglobal("DragonflightUIBigBagBorder")
+					if DragonflightUIBigBagBorder then
+						DarkMode:UpdateColor(DragonflightUIBigBagBorder, "ui")
+					end
+
+					local DragonflightUIKeyRingBorder = getglobal("DragonflightUIKeyRingBorder")
+					if DragonflightUIKeyRingBorder then
+						DarkMode:UpdateColor(DragonflightUIKeyRingBorder, "ui")
+					end
+
+					for x = 0, 3 do
+						local btn = getglobal("CharacterBag" .. x .. "Slot")
+						if btn then
+							DarkMode:ForeachRegions(
+								btn,
+								function(region)
+									if DarkMode:GetName(region) == "DragonflightUIBagBorder" then
+										DarkMode:UpdateColor(region, "ui")
+									end
+								end
+							)
+						end
+					end
+				end, "DragonflightUI"
+			)
 
 			DarkMode:CreateMinimapButton(
 				{
