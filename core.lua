@@ -1762,7 +1762,7 @@ function DarkMode:SearchUi(from)
 	end
 
 	local MiniMapMailFrame = getglobal("MiniMapMailFrame")
-	if MiniMapMailFrame and _G["MiniMapMailFrame" .. ".DMBorder"] == nil then
+	if MiniMapMailFrame and _G["MiniMapMailFrame" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		local border = MiniMapMailFrame:CreateTexture("MiniMapMailFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 		border:SetPoint("TOPLEFT", 0, 1)
