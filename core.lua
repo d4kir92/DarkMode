@@ -1188,12 +1188,28 @@ function DarkMode:InitQuestLogFrame()
 				)
 			else
 				DarkMode:After(
-					0.5,
+					0.2,
 					function()
 						DarkMode:UpdateQuestMapFrame()
 					end, "UpdateQuestMapFrame 2"
 				)
 			end
+		end
+
+		if QuestFrame then
+			QuestFrame:HookScript(
+				"OnShow",
+				function(sel)
+					findNames = true
+				end
+			)
+
+			QuestFrame:HookScript(
+				"OnHide",
+				function(sel)
+					findNames = false
+				end
+			)
 		end
 
 		if QuestLogFrame then
