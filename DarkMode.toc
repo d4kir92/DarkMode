@@ -3,9 +3,9 @@
 ## Interface-Wrath: 30300, 30403
 ## Interface-Cata: 40402
 ## Interface-Mists: 50502
-## Interface: 110205
+## Interface: 110205, 120000
 
-## Version: 0.7.84
+## Version: 0.7.85
 ## Title: D|cff3FC7EBark|rM|cff3FC7EBode|r |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Darkens or colors the user interface/windows
 ## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein
