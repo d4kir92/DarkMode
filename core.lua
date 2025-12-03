@@ -2441,6 +2441,41 @@ function DarkMode:Event(event, ...)
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+				if BuffFrame and BuffFrame.UpdateAuras then
+					hooksecurefunc(
+						BuffFrame,
+						"UpdateAuras",
+						function(sel)
+							DarkMode:Debug(3, "BuffFrame Update")
+							for index, btn in pairs(sel.auraFrames) do
+								if btn and AuraFrames[btn] == nil then
+									AuraFrames[btn] = true
+									DarkMode:Debug(3, "BuffFrame Added btn", btn)
+									if LibStub and MSQ == nil then
+										MSQ = LibStub("Masque", true)
+									end
+
+									if MSQ and btn then
+										if btn.__MSQ_Mask then
+											DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+										end
+
+										if btn.__MSQ_Normal then
+											DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+										end
+
+										if btn.__MSQ_NewNormal then
+											DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
+										end
+									else
+										DarkMode:ColorAuraButton(btn, index, "Aura", "BuffFrame")
+									end
+								end
+							end
+						end
+					)
+				end
+
 				if AuraFrameMixin and AuraFrameMixin.Update then
 					hooksecurefunc(
 						AuraFrameMixin,
