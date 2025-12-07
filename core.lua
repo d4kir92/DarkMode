@@ -1663,7 +1663,7 @@ function DarkMode:SearchUi(from)
 						local frame = DarkMode:GetFrameByName(name)
 						if frame then
 							DarkMode:ForeachChildren(
-								ExpansionLandingPage.Overlay,
+								frame,
 								function(child, x)
 									if x == 1 then
 										DarkMode:FindTextures(child, "ui") -- Bartender Border in BlizzardArt
