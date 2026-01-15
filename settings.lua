@@ -263,7 +263,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.94")
+	DarkMode:SetVersion(136122, "0.7.95")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
