@@ -1714,10 +1714,18 @@ function DarkMode:SearchUi(from)
 							border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
 							DarkMode:UpdateColor(border, "micromenu")
 						else
-							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-							border:SetAllPoints(mbtn)
-							DarkMode:UpdateColor(border, "micromenu")
+							if DarkMode:GetWoWBuild() == "TBC" then
+								local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+								border:SetPoint("TOPLEFT", mbtn, "TOPLEFT", 0, 19)
+								border:SetPoint("BOTTOMRIGHT", mbtn, "BOTTOMRIGHT", 0, 0)
+								DarkMode:UpdateColor(border, "micromenu")
+							else
+								local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+								border:SetAllPoints(mbtn)
+								DarkMode:UpdateColor(border, "micromenu")
+							end
 						end
 					end
 				end
@@ -2260,8 +2268,14 @@ function DarkMode:Event(event, ...)
 				local TargetFrameTextureFrameTexture = getglobal("TargetFrameTextureFrameTexture")
 				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
-					TargetFrameDragon:SetSize(256, 128)
-					TargetFrameDragon:SetPoint("TOPRIGHT", TargetFrameTextureFrame, "TOPRIGHT", 0, 0)
+					if DarkMode:GetWoWBuild() == "TBC" then
+						TargetFrameDragon:SetSize(256, 128)
+						TargetFrameDragon:SetPoint("TOPLEFT", TargetFrameTextureFrame, "TOPLEFT", -7, -3)
+					else
+						TargetFrameDragon:SetSize(256, 128)
+						TargetFrameDragon:SetPoint("TOPLEFT", TargetFrameTextureFrame, "TOPLEFT", 0, 0)
+					end
+
 					hooksecurefunc(
 						TargetFrameTextureFrameTexture,
 						"SetTexture",
@@ -2290,8 +2304,14 @@ function DarkMode:Event(event, ...)
 					if parent then
 						PlayerFrameDragon = parent:CreateTexture("PlayerFrameDragon", "BORDER")
 						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
-						PlayerFrameDragon:SetSize(256, 128)
-						PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+						if DarkMode:GetWoWBuild() == "TBC" then
+							PlayerFrameDragon:SetSize(256, 128)
+							PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", -16, -3)
+						else
+							PlayerFrameDragon:SetSize(256, 128)
+							PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
+						end
+
 						hooksecurefunc(
 							PlayerFrameTexture,
 							"SetTexture",
