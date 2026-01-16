@@ -2611,6 +2611,118 @@ function DarkMode:Event(event, ...)
 							end
 						end
 					)
+				else
+					function DarkMode:UpdateTargetBuffs()
+						DarkMode:Debug(3, "UNIT_AURA")
+						local name = "TargetFrame"
+						if name == nil then return end
+						local buttonName = name .. "Buff"
+						for index = 1, 32 do
+							local btn = _G[buttonName .. index]
+							if LibStub and MSQ == nil then
+								MSQ = LibStub("Masque", true)
+							end
+
+							if btn and TargetBuffs[index] == nil then
+								TargetBuffs[index] = true
+								DarkMode:Debug(3, "TargetFrame_UpdateAuras Added index", index)
+								if MSQ and btn then
+									if btn.__MSQ_Mask then
+										DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+									end
+
+									if btn.__MSQ_Normal then
+										DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+									end
+
+									if btn.__MSQ_NewNormal then
+										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
+									end
+								else
+									DarkMode:ColorAuraButton(btn, index, buttonName, "TargetFrame_UpdateAuras")
+								end
+							end
+						end
+					end
+
+					local frameT = CreateFrame("Frame")
+					frameT:RegisterUnitEvent("UNIT_AURA", "focus")
+					frameT:SetScript(
+						"OnEvent",
+						function(sel, eve, unit)
+							if unit == "focus" then
+								DarkMode:UpdateTargetBuffs()
+							end
+						end
+					)
+
+					TargetFrame:HookScript(
+						"OnShow",
+						function()
+							DarkMode:After(
+								0.1,
+								function()
+									DarkMode:UpdateTargetBuffs()
+								end, "TargetFrameShow"
+							)
+						end
+					)
+
+					function DarkMode:UpdateFocusBuffs()
+						DarkMode:Debug(3, "UNIT_AURA")
+						local name = "FocusFrame"
+						if name == nil then return end
+						local buttonName = name .. "Buff"
+						for index = 1, 32 do
+							local btn = _G[buttonName .. index]
+							if LibStub and MSQ == nil then
+								MSQ = LibStub("Masque", true)
+							end
+
+							if btn and FocusBuffs[index] == nil then
+								FocusBuffs[index] = true
+								DarkMode:Debug(3, "FocusFrame_UpdateAuras Added index", index)
+								if MSQ and btn then
+									if btn.__MSQ_Mask then
+										DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons")
+									end
+
+									if btn.__MSQ_Normal then
+										DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons")
+									end
+
+									if btn.__MSQ_NewNormal then
+										DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons")
+									end
+								else
+									DarkMode:ColorAuraButton(btn, index, buttonName, "FocusFrame_UpdateAuras")
+								end
+							end
+						end
+					end
+
+					local frameF = CreateFrame("Frame")
+					frameF:RegisterUnitEvent("UNIT_AURA", "target")
+					frameF:SetScript(
+						"OnEvent",
+						function(sel, eve, unit)
+							if unit == "target" then
+								DarkMode:UpdateFocusBuffs()
+							end
+						end
+					)
+
+					FocusFrame:HookScript(
+						"OnShow",
+						function()
+							DarkMode:After(
+								0.1,
+								function()
+									DarkMode:UpdateFocusBuffs()
+								end, "TargetFrameShow"
+							)
+						end
+					)
 				end
 			end
 
