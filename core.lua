@@ -2283,6 +2283,7 @@ function DarkMode:Event(event, ...)
 						TargetFrameTextureFrameTexture,
 						"SetTexture",
 						function(sel, texture)
+							if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 							TargetFrameDragon:SetDrawLayer("BACKGROUND", 1)
 							if texture:dm_endswith("UI-TargetingFrame-Rare") then
 								TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
@@ -2296,9 +2297,11 @@ function DarkMode:Event(event, ...)
 						end
 					)
 
-					TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-					DarkMode:UpdateColor(TargetFrameDragon, "ufdr")
-					TargetFrameDragon:SetTexture("")
+					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
+						TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+						DarkMode:UpdateColor(TargetFrameDragon, "ufdr")
+						TargetFrameDragon:SetTexture("")
+					end
 				end
 
 				local PlayerFrameTexture = getglobal("PlayerFrameTexture")
@@ -2319,6 +2322,7 @@ function DarkMode:Event(event, ...)
 							PlayerFrameTexture,
 							"SetTexture",
 							function(sel, texture)
+								if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 								PlayerFrameDragon:SetDrawLayer("BORDER", 1)
 								if texture:dm_endswith("UI-TargetingFrame-Rare") or texture:dm_endswith("UI-TargetingFrame-Rare.blp") then
 									PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
@@ -2338,9 +2342,11 @@ function DarkMode:Event(event, ...)
 							end
 						)
 
-						PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-						DarkMode:UpdateColor(PlayerFrameDragon, "ufdr")
-						PlayerFrameDragon:SetTexture("")
+						if not DarkMode:IsAddOnLoaded("DragonflightUi") then
+							PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+							DarkMode:UpdateColor(PlayerFrameDragon, "ufdr")
+							PlayerFrameDragon:SetTexture("")
+						end
 					end
 				end
 
