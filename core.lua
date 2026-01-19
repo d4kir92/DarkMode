@@ -1801,7 +1801,12 @@ function DarkMode:SearchUi(from)
 	if GameTimeFrame and DarkMode:GetWoWBuild() ~= "RETAIL" and _G["GameTimeFrame" .. ".DMBorder"] == nil then
 		local border = GameTimeFrame:CreateTexture("GameTimeFrame" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\gt_border")
-		if DarkMode:GetWoWBuild() ~= "CLASSIC" then
+		if DarkMode:GetWoWBuild() == "TBC" then
+			border:SetPoint("TOPLEFT", 0, 0)
+			if border.SetScale then
+				border:SetScale(1)
+			end
+		elseif DarkMode:GetWoWBuild() ~= "CLASSIC" then
 			border:SetPoint("TOPLEFT", -1, 1)
 			if border.SetScale then
 				border:SetScale(0.82)
@@ -1989,7 +1994,7 @@ local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 function DarkMode:ColorNameplate(id)
 	if nameplateIds[id] == nil and _G["NamePlate" .. id] then
-		if _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["border"] then
+		if _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["border"] then
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer.border", "np")
 		elseif _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] then
