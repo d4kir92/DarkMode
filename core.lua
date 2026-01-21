@@ -2272,18 +2272,43 @@ function DarkMode:Event(event, ...)
 				end
 
 				string.dm_endswith = dm_endswith
+				local FocusFrameTextureFrame = getglobal("FocusFrameTextureFrame")
+				local FocusFrameTextureFrameTexture = getglobal("FocusFrameTextureFrameTexture")
+				if FocusFrameTextureFrame and FocusFrameTextureFrameTexture then
+					FocusFrameDragon = FocusFrameTextureFrame:CreateTexture("FocusFrameDragon", "BACKGROUND")
+					FocusFrameDragon:SetSize(256, 128)
+					FocusFrameDragon:SetPoint("CENTER", FocusFramePortrait, "CENTER", -54, -20)
+					hooksecurefunc(
+						FocusFrameTextureFrameTexture,
+						"SetTexture",
+						function(sel, texture)
+							if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
+							FocusFrameDragon:SetDrawLayer("BACKGROUND", 1)
+							if texture:dm_endswith("UI-TargetingFrame-Rare") then
+								FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
+							elseif texture:dm_endswith("UI-TargetingFrame-Elite") then
+								FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
+							elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") then
+								FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+							else
+								FocusFrameDragon:SetTexture("")
+							end
+						end
+					)
+
+					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
+						FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+						DarkMode:UpdateColor(FocusFrameDragon, "ufdr")
+						FocusFrameDragon:SetTexture("")
+					end
+				end
+
 				local TargetFrameTextureFrame = getglobal("TargetFrameTextureFrame")
 				local TargetFrameTextureFrameTexture = getglobal("TargetFrameTextureFrameTexture")
 				if TargetFrameTextureFrame and TargetFrameTextureFrameTexture then
 					TargetFrameDragon = TargetFrameTextureFrame:CreateTexture("TargetFrameDragon", "BACKGROUND")
-					if DarkMode:GetWoWBuild() == "TBC" then
-						TargetFrameDragon:SetSize(256, 128)
-						TargetFrameDragon:SetPoint("TOPLEFT", TargetFrameTextureFrame, "TOPLEFT", -7, -3)
-					else
-						TargetFrameDragon:SetSize(256, 128)
-						TargetFrameDragon:SetPoint("TOPLEFT", TargetFrameTextureFrame, "TOPLEFT", 0, 0)
-					end
-
+					TargetFrameDragon:SetSize(256, 128)
+					TargetFrameDragon:SetPoint("CENTER", TargetFramePortrait, "CENTER", -54, -20)
 					hooksecurefunc(
 						TargetFrameTextureFrameTexture,
 						"SetTexture",
@@ -2315,14 +2340,8 @@ function DarkMode:Event(event, ...)
 					if parent then
 						PlayerFrameDragon = parent:CreateTexture("PlayerFrameDragon", "BORDER")
 						PlayerFrameDragon:SetTexCoord(1, 0, 0, 1)
-						if DarkMode:GetWoWBuild() == "TBC" then
-							PlayerFrameDragon:SetSize(256, 128)
-							PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", -16, -3)
-						else
-							PlayerFrameDragon:SetSize(256, 128)
-							PlayerFrameDragon:SetPoint("TOPLEFT", parent, "TOPLEFT", 0, 0)
-						end
-
+						PlayerFrameDragon:SetSize(256, 128)
+						PlayerFrameDragon:SetPoint("CENTER", PlayerPortrait, "CENTER", 54, -20)
 						hooksecurefunc(
 							PlayerFrameTexture,
 							"SetTexture",
@@ -2657,11 +2676,11 @@ function DarkMode:Event(event, ...)
 					end
 
 					local frameT = CreateFrame("Frame")
-					frameT:RegisterUnitEvent("UNIT_AURA", "focus")
+					frameT:RegisterUnitEvent("UNIT_AURA", "target")
 					frameT:SetScript(
 						"OnEvent",
 						function(sel, eve, unit)
-							if unit == "focus" then
+							if unit == "target" then
 								DarkMode:UpdateTargetBuffs()
 							end
 						end
@@ -2713,11 +2732,11 @@ function DarkMode:Event(event, ...)
 					end
 
 					local frameF = CreateFrame("Frame")
-					frameF:RegisterUnitEvent("UNIT_AURA", "target")
+					frameF:RegisterUnitEvent("UNIT_AURA", "focus")
 					frameF:SetScript(
 						"OnEvent",
 						function(sel, eve, unit)
-							if unit == "target" then
+							if unit == "focus" then
 								DarkMode:UpdateFocusBuffs()
 							end
 						end
