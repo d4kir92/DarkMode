@@ -1,5 +1,5 @@
 ## Interface: 40402
-## Version: 0.7.109
+## Version: 0.7.110
 ## Title:  D|cff3FC7EBark|rM|cff3FC7EBode|r |T136122:16:16:0:0|t by |cff3FC7EBD4KiR |T132115:16:16:0:0|t
 ## Notes: Darkens or colors the user interface/windows
 ## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein

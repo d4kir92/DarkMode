@@ -2006,6 +2006,10 @@ function DarkMode:ColorNameplate(id)
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.Border", "np")
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.CastBar.BorderShield", "np")
 		end
+
+		if nameplateIds[id] ~= nil and _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["castBar"] and _G["NamePlate" .. id]["UnitFrame"]["castBar"]["border"] then
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.castBar.border", "np")
+		end
 	end
 
 	return nameplateIds[id] ~= nil
