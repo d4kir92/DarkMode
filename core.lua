@@ -1820,7 +1820,7 @@ function DarkMode:SearchUi(from)
 	end
 
 	DarkMode:After(
-		1.1,
+		2.1,
 		function()
 			DarkMode:Debug(5, "SearchUi")
 			for i, btn in pairs(_G) do
