@@ -1198,11 +1198,11 @@ function D4:EasyFind(word, exact)
                 print("i", i, "v", v)
             end
         else
-            if i and type(i) == "string" and string.find(string.lower(i), word) then
+            if i and type(i) == "string" and string.find(string.lower(i), word, 1, true) then
                 print("i", i, "v", v)
             end
 
-            if v and type(v) == "string" and string.find(string.lower(v), word) then
+            if v and type(v) == "string" and string.find(string.lower(v), word, 1, true) then
                 print("i", i, "v", v)
             end
         end
@@ -1335,7 +1335,7 @@ D4:After(
                 if D4:GetWoWBuild() == "TBC" then
                     rootDescription:Insert(roleMenu, 2)
                 else
-                    rootDescription:Insert(roleMenu, 40)
+                    rootDescription:Insert(roleMenu, 2)
                 end
 
                 if UnitIsUnit(unit, "player") or isLeader or isAssistant then
