@@ -1301,6 +1301,28 @@ function DarkMode:SearchFrames()
 	end
 end
 
+local foundLTPBorder = 0
+function DarkMode:InitLeatrixDruidBar()
+	if foundLTPBorder >= 3 then return end
+	local children = {PlayerFrame:GetChildren()}
+	for _, child in pairs(children) do
+		if child.DefaultBorder then
+			DarkMode:UpdateColor(child.DefaultBorder, "uf")
+			foundLTPBorder = foundLTPBorder + 1
+		end
+
+		if child.DefaultBorderRight then
+			DarkMode:UpdateColor(child.DefaultBorderRight, "uf")
+			foundLTPBorder = foundLTPBorder + 1
+		end
+
+		if child.DefaultBorderLeft then
+			DarkMode:UpdateColor(child.DefaultBorderLeft, "uf")
+			foundLTPBorder = foundLTPBorder + 1
+		end
+	end
+end
+
 local foundAuctionator = false
 local foundExpansion = false
 local lastAddonsSearch = 0
@@ -1365,6 +1387,7 @@ function DarkMode:SearchAddons(from)
 		DarkMode:FindTextures(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "addons")
 	end
 
+	DarkMode:InitLeatrixDruidBar()
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		if DarkMode:GetFrameByName(name) then
 			c = c + 1
@@ -1826,9 +1849,9 @@ function DarkMode:SearchUi(from)
 			for i, btn in pairs(_G) do
 				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, ".DMBorder", 1, true) then
 					local name = DarkMode:GetName(btn)
-					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.border == nil or btn.border == true) then
-						btn.border = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-						local border = btn.border
+					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.dmborder == nil or btn.dmborder == true) then
+						btn.dmborder = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+						local border = btn.dmborder
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
 						border:SetPoint("TOPLEFT", 0, 1)
 						border:SetParent(btn)
