@@ -530,12 +530,12 @@ function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py,
 		icon:SetTexCoord(br, 1 - br, br, 1 - br)
 	end
 
-	if parent.border ~= nil then return end
+	if parent.dmborder ~= nil then return end
 	px = px or 0
 	py = py or 0
 	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default"
-	parent.border = parent:CreateTexture(name .. ".DMBorder", "OVERLAY")
-	local border = parent.border
+	parent.dmborder = parent:CreateTexture(name .. ".DMBorder", "OVERLAY")
+	local border = parent.dmborder
 	border:SetDrawLayer("OVERLAY", 3)
 	border:SetSize(sizew, sizeh)
 	if string.find(name, "PetActionButton", 1, true) and DarkMode:IsEnabled("THINBORDERS", false) then
@@ -1323,6 +1323,30 @@ function DarkMode:InitLeatrixDruidBar()
 	end
 end
 
+local foundOutfitterFrame = false
+local setupOutfitterFrame = false
+function DarkMode:InitOutfitterFrame()
+	if foundOutfitterFrame then return end
+	if OutfitterFrame then
+		hooksecurefunc(
+			OutfitterFrame,
+			"Show",
+			function()
+				if setupOutfitterFrame then return end
+				setupOutfitterFrame = true
+				local children = {OutfitterFrame:GetRegions()}
+				for i, child in pairs(children) do
+					if i ~= 1 then
+						DarkMode:UpdateColor(child, "addons")
+					end
+				end
+			end
+		)
+
+		foundOutfitterFrame = true
+	end
+end
+
 local foundAuctionator = false
 local foundExpansion = false
 local lastAddonsSearch = 0
@@ -1388,6 +1412,7 @@ function DarkMode:SearchAddons(from)
 	end
 
 	DarkMode:InitLeatrixDruidBar()
+	DarkMode:InitOutfitterFrame()
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		if DarkMode:GetFrameByName(name) then
 			c = c + 1
@@ -1651,7 +1676,7 @@ function DarkMode:SearchUi(from)
 									btnTextureFloatingBG:SetPoint("CENTER", btn, "CENTER", 0, 0)
 								end
 
-								if btn and btn.border == nil then
+								if btn and btn.dmborder == nil then
 									local sw, sh = btn:GetSize()
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
@@ -1849,7 +1874,7 @@ function DarkMode:SearchUi(from)
 			for i, btn in pairs(_G) do
 				if (strfind(i, "LibDBIcon10_", 1, true) or strfind(i, "MinimapButton_D4Lib_", 1, true) or strfind(i, "LFGMinimapFrame", 1, true)) and not strfind(i, ".DMBorder", 1, true) then
 					local name = DarkMode:GetName(btn)
-					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and (btn.dmborder == nil or btn.dmborder == true) then
+					if btn and _G[name .. ".DMBorder"] == nil and btn.CreateTexture ~= nil and DarkMode:IsEnabled("MASKMINIMAPBUTTONS", true) and btn.dmborder == nil and (btn.d4border == nil or btn.d4border == true) then
 						btn.dmborder = btn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 						local border = btn.dmborder
 						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mmicon_border")
