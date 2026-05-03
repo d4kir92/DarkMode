@@ -2233,7 +2233,7 @@ function DarkMode:Event(event, ...)
 								"SetNormalTexture",
 								function(sel, texture)
 									-- Leatrix Plus fix...
-									if texture == "" then
+									if texture == "" and btn.border then
 										btn.border:SetAlpha(0)
 									end
 								end
