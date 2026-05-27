@@ -533,7 +533,7 @@ function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py,
 	if parent.dmborder ~= nil then return end
 	px = px or 0
 	py = py or 0
-	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default"
+	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default2"
 	parent.dmborder = parent:CreateTexture(name .. ".DMBorder", "OVERLAY")
 	local border = parent.dmborder
 	border:SetDrawLayer("OVERLAY", 3)
@@ -1685,7 +1685,11 @@ function DarkMode:SearchUi(from)
 										scale = 1.2
 									end
 
-									DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
+									if DarkMode:IsEnabled("SHADOWACTIONBARS", false) then
+										DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER3", true)
+									else
+										DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
+									end
 								end
 							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
 								local icon = _G[name .. x .. "Icon"]
@@ -1699,7 +1703,11 @@ function DarkMode:SearchUi(from)
 									sw = DarkMode:MathR(sw)
 									sh = DarkMode:MathR(sh)
 									local scale = 1.1
-									DarkMode:AddActionButtonBorder(btn, btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
+									if DarkMode:IsEnabled("SHADOWACTIONBARS", false) then
+										DarkMode:AddActionButtonBorder(btn, btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER3", true)
+									else
+										DarkMode:AddActionButtonBorder(btn, btn, name, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER3", true)
+									end
 								end
 							end
 						end

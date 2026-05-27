@@ -263,7 +263,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.127")
+	DarkMode:SetVersion(136122, "0.7.128")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -338,6 +338,7 @@ function DarkMode:InitDMSettings()
 			AddCheckBox(4, "MASKACTIONBUTTONS", true)
 			AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
 			AddCheckBox(4, "THINBORDERS", false)
+			AddCheckBox(4, "SHADOWACTIONBARS", false)
 		end
 
 		posy = posy - 10
