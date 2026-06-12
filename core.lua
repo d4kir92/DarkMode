@@ -533,7 +533,12 @@ function DarkMode:AddActionButtonBorder(parent, btn, name, sizew, sizeh, px, py,
 	if parent.dmborder ~= nil then return end
 	px = px or 0
 	py = py or 0
-	texture = texture or "Interface\\AddOns\\DarkMode\\media\\default2"
+	if DarkMode:IsEnabled("SHADOWACTIONBARS", false) then
+		texture = texture or "Interface\\AddOns\\DarkMode\\media\\defaultEER3"
+	else
+		texture = texture or "Interface\\AddOns\\DarkMode\\media\\default"
+	end
+
 	parent.dmborder = parent:CreateTexture(name .. ".DMBorder", "OVERLAY")
 	local border = parent.dmborder
 	border:SetDrawLayer("OVERLAY", 3)
