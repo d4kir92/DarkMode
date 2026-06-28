@@ -378,20 +378,6 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end
 
 			DarkMode:SetVertexColor(texture, r, g, b, a, "ufpor 2")
-		elseif typ == "ufhp" then
-			local r, g, b, a = DarkMode:GetUFPORColor(texture)
-			if ola and ola < 1 then
-				a = ola
-			end
-
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufhp 2")
-		elseif typ == "ufpor" then
-			local r, g, b, a = DarkMode:GetUFPORColor(texture)
-			if ola and ola < 1 then
-				a = ola
-			end
-
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufpor 2")
 		elseif typ == "np" then
 			local r, g, b, a = DarkMode:GetNPColor(texture)
 			if ola and ola < 1 then
@@ -451,61 +437,33 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 		end
 
 		if typ == "ui" then
-			if not tContains(DMTexturesUi, texture) then
-				tinsert(DMTexturesUi, texture)
-			end
+			DMTexturesUi[texture] = true
 		elseif typ == "uf" then
-			if not tContains(DMTexturesUF, texture) then
-				tinsert(DMTexturesUF, texture)
-			end
+			DMTexturesUF[texture] = true
 		elseif typ == "btns" then
-			if not tContains(DMTexturesBtns, texture) then
-				tinsert(DMTexturesBtns, texture)
-			end
+			DMTexturesBtns[texture] = true
 		elseif typ == "ufdr" then
-			if not tContains(DMTexturesUFDR, texture) then
-				tinsert(DMTexturesUFDR, texture)
-			end
+			DMTexturesUFDR[texture] = true
 		elseif typ == "ufhp" then
-			if not tContains(DMTexturesUFHP, texture) then
-				tinsert(DMTexturesUFHP, texture)
-			end
+			DMTexturesUFHP[texture] = true
 		elseif typ == "ufpor" then
-			if not tContains(DMTexturesUFPOR, texture) then
-				tinsert(DMTexturesUFPOR, texture)
-			end
+			DMTexturesUFPOR[texture] = true
 		elseif typ == "np" then
-			if not tContains(DMTexturesNP, texture) then
-				tinsert(DMTexturesNP, texture)
-			end
+			DMTexturesNP[texture] = true
 		elseif typ == "tt" then
-			if not tContains(DMTexturesTT, texture) then
-				tinsert(DMTexturesTT, texture)
-			end
+			DMTexturesTT[texture] = true
 		elseif typ == "actionbuttons" then
-			if not tContains(DMTexturesActionButtons, texture) then
-				tinsert(DMTexturesActionButtons, texture)
-			end
+			DMTexturesActionButtons[texture] = true
 		elseif typ == "bags" then
-			if not tContains(DMTexturesBags, texture) then
-				tinsert(DMTexturesBags, texture)
-			end
+			DMTexturesBags[texture] = true
 		elseif typ == "micromenu" then
-			if not tContains(DMTexturesMicroMenu, texture) then
-				tinsert(DMTexturesMicroMenu, texture)
-			end
+			DMTexturesMicroMenu[texture] = true
 		elseif typ == "buffsanddebuffs" then
-			if not tContains(DMTexturesBuffsAndDebuffs, texture) then
-				tinsert(DMTexturesBuffsAndDebuffs, texture)
-			end
+			DMTexturesBuffsAndDebuffs[texture] = true
 		elseif typ == "frames" then
-			if DMTexturesFrames[texture] == nil then
-				DMTexturesFrames[texture] = texture
-			end
+			DMTexturesFrames[texture] = true
 		elseif typ == "addons" then
-			if DMTexturesFramesAddons[texture] == nil then
-				DMTexturesFramesAddons[texture] = texture
-			end
+			DMTexturesFramesAddons[texture] = true
 		else
 			DarkMode:MSG("[UpdateColor] Missing Type:", typ)
 		end
@@ -802,9 +760,7 @@ function DarkMode:UpdateText(text, name, layer)
 			text:SetTextColor(DarkMode:GetTextColor(r, g, b, a))
 		end
 
-		if not tContains(DMFS, text) then
-			tinsert(DMFS, text)
-		end
+		DMFS[text] = true
 
 		return true
 	end
@@ -859,7 +815,7 @@ function DarkMode:FindTextsByName(name)
 end
 
 function DarkMode:UpdateColors()
-	for i, v in pairs(DMTexturesUi) do
+	for v in pairs(DMTexturesUi) do
 		local r, g, b, a = DarkMode:GetUiColor(v, "UpdateColors")
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -868,7 +824,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesUF) do
+	for v in pairs(DMTexturesUF) do
 		local r, g, b, a = DarkMode:GetUFColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -877,7 +833,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesBtns) do
+	for v in pairs(DMTexturesBtns) do
 		local r, g, b, a = DarkMode:GetBtnsColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -886,7 +842,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesUFDR) do
+	for v in pairs(DMTexturesUFDR) do
 		local r, g, b, a = DarkMode:GetUFDRColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -895,7 +851,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesUFHP) do
+	for v in pairs(DMTexturesUFHP) do
 		local r, g, b, a = DarkMode:GetUFHPColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -904,7 +860,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesUFPOR) do
+	for v in pairs(DMTexturesUFPOR) do
 		local r, g, b, a = DarkMode:GetUFPORColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -913,7 +869,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesTT) do
+	for v in pairs(DMTexturesTT) do
 		local r, g, b, a = DarkMode:GetTTColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -922,7 +878,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMFS) do
+	for v in pairs(DMFS) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -931,7 +887,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesFramesAddons) do
+	for v in pairs(DMTexturesFramesAddons) do
 		local r, g, b, a = DarkMode:GetAddonsColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
@@ -940,7 +896,7 @@ function DarkMode:UpdateColors()
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 
-	for i, v in pairs(DMTexturesFrames) do
+	for v in pairs(DMTexturesFrames) do
 		local r, g, b, a = DarkMode:GetFrameColor(v)
 		if v:GetAlpha() and v:GetAlpha() < 1 then
 			a = v:GetAlpha()
