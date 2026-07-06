@@ -263,7 +263,7 @@ function DarkMode:AddColor(px, key, value, cKey, add)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.135")
+	DarkMode:SetVersion(136122, "0.7.136")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -371,6 +371,7 @@ function DarkMode:InitDMSettings()
 		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", 9, "CUSTOMUFDRC", false)
 		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", 9, "CUSTOMUFHPC", false)
 		DarkMode:AddColor(4, "COLORMODEAUNFRPORA", 9, "CUSTOMUFPORC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRREPA", 9, "CUSTOMUFREC", false)
 	end
 
 	DMSettings.Search = CreateFrame("EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate")

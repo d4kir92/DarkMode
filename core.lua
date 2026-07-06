@@ -48,6 +48,7 @@ local DMTexturesUF = {}
 local DMTexturesUFDR = {}
 local DMTexturesUFHP = {}
 local DMTexturesUFPOR = {}
+local DMTexturesUFREP = {}
 local DMTexturesBtns = {}
 local DMTexturesNP = {}
 local DMTexturesTT = {}
@@ -130,6 +131,15 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end
 		elseif typ == "ufpor" then
 			local r, g, b, a = DarkMode:GetUFPORColor(texture)
+			if r ~= nil and g ~= nil and b ~= nil then
+				if texture:GetAlpha() < 1 then
+					a = texture:GetAlpha()
+				end
+
+				texture:SetColorTexture(r, g, b, a)
+			end
+		elseif typ == "ufrep" then
+			local r, g, b, a = DarkMode:GetUFREPColor(texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then
 					a = texture:GetAlpha()
@@ -266,6 +276,13 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 						end
 
 						DarkMode:SetVertexColor(sel, r, g, b, a, "ufpor")
+					elseif typ == "ufrep" then
+						local r, g, b, a = DarkMode:GetUFREPColor(sel)
+						if ola and ola < 1 then
+							a = ola
+						end
+
+						DarkMode:SetVertexColor(sel, r, g, b, a, "ufrep")
 					elseif typ == "np" then
 						local r, g, b, a = DarkMode:GetNPColor(sel)
 						if ola and ola < 1 then
@@ -378,6 +395,13 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end
 
 			DarkMode:SetVertexColor(texture, r, g, b, a, "ufpor 2")
+		elseif typ == "ufrep" then
+			local r, g, b, a = DarkMode:GetUFREPColor(texture)
+			if ola and ola < 1 then
+				a = ola
+			end
+
+			DarkMode:SetVertexColor(texture, r, g, b, a, "ufrep 2")
 		elseif typ == "np" then
 			local r, g, b, a = DarkMode:GetNPColor(texture)
 			if ola and ola < 1 then
@@ -448,6 +472,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			DMTexturesUFHP[texture] = true
 		elseif typ == "ufpor" then
 			DMTexturesUFPOR[texture] = true
+		elseif typ == "ufrep" then
+			DMTexturesUFREP[texture] = true
 		elseif typ == "np" then
 			DMTexturesNP[texture] = true
 		elseif typ == "tt" then
@@ -1943,6 +1969,19 @@ DarkMode:After(
 	end, "CheckCompactFrames"
 )
 
+local tf = CreateFrame("FRAME")
+DarkMode:RegisterEvent(tf, "PLAYER_TARGET_CHANGED")
+DarkMode:RegisterEvent(tf, "PLAYER_FOCUS_CHANGED")
+tf:SetScript(
+	"OnEvent",
+	function()
+		local tab = DarkMode:GetUiTable()["UnitFrames"]
+		for i, name in pairs(tab) do
+			DarkMode:FindTexturesByName(name, "uf")
+		end
+	end
+)
+
 function DarkMode:ColorAuraButton(btn, index, btnName, from)
 	if btn == nil then return end
 	local name = DarkMode:GetName(btn)
@@ -2511,6 +2550,26 @@ function DarkMode:Event(event, ...)
 						end
 					end, "OtherAddons"
 				)
+			end
+
+			local reputations = {"TargetFrameNameBackground", "FokusFrameNameBackground", "TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor", "FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor"}
+			for i, v in pairs(reputations) do
+				local reputation = _G[v]
+				if reputation then
+					local redo = false
+					hooksecurefunc(
+						reputation,
+						"SetVertexColor",
+						function(sel, ...)
+							if redo then return end
+							redo = true
+							DarkMode:UpdateColor(reputation, "ufrep", "reputation2", true)
+							redo = false
+						end
+					)
+
+					DarkMode:UpdateColor(reputation, "ufrep", "reputation1", true)
+				end
 			end
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
