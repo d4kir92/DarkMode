@@ -1756,7 +1756,7 @@ function DarkMode:SearchUi(from)
 						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
 						DarkMode:UpdateColor(border, "micromenu")
 					else
-						if DarkMode:GetWoWBuild() == "TBC" then
+						if DarkMode:GetWoWBuild() == "TBC" or DarkMode:GetWoWBuild() == "MISTS" then
 							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 							border:SetPoint("TOPLEFT", mbtn, "TOPLEFT", 0, 19)
