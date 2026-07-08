@@ -1742,33 +1742,31 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	if MICRO_BUTTONS then
-		local mode = DarkMode:DMGV("COLORMODEMI", 1)
-		if mode ~= 7 and mode ~= 9 then
-			for i, name in pairs(MICRO_BUTTONS) do
-				if name then
-					local mbtn = _G[name]
-					if mbtn and _G[name .. ".DMBorder"] == nil then
-						if mbtn.Background and MMBTNSETUP[mbtn.Background] == nil then
-							MMBTNSETUP[mbtn.Background] = true
+	local mode = DarkMode:DMGV("COLORMODEMI", 1)
+	if mode ~= 7 and mode ~= 9 then
+		for i, name in pairs(DarkMode:GetMicroMenuButtons()) do
+			if name then
+				local mbtn = _G[name]
+				if mbtn and _G[name .. ".DMBorder"] == nil then
+					if mbtn.Background and MMBTNSETUP[mbtn.Background] == nil then
+						MMBTNSETUP[mbtn.Background] = true
+						local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+						border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+						border:SetSize(32, 64)
+						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
+						DarkMode:UpdateColor(border, "micromenu")
+					else
+						if DarkMode:GetWoWBuild() == "TBC" then
 							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-							border:SetSize(32, 64)
-							border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
+							border:SetPoint("TOPLEFT", mbtn, "TOPLEFT", 0, 19)
+							border:SetPoint("BOTTOMRIGHT", mbtn, "BOTTOMRIGHT", 0, 0)
 							DarkMode:UpdateColor(border, "micromenu")
 						else
-							if DarkMode:GetWoWBuild() == "TBC" then
-								local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-								border:SetPoint("TOPLEFT", mbtn, "TOPLEFT", 0, 19)
-								border:SetPoint("BOTTOMRIGHT", mbtn, "BOTTOMRIGHT", 0, 0)
-								DarkMode:UpdateColor(border, "micromenu")
-							else
-								local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
-								border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
-								border:SetAllPoints(mbtn)
-								DarkMode:UpdateColor(border, "micromenu")
-							end
+							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
+							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
+							border:SetAllPoints(mbtn)
+							DarkMode:UpdateColor(border, "micromenu")
 						end
 					end
 				end
