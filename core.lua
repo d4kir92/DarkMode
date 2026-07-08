@@ -2053,6 +2053,9 @@ function DarkMode:ColorNameplate(id)
 		if _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["border"] then
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer.border", "np")
+		elseif _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["healthBar"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["healthBar"]["bgTexture"] then
+			nameplateIds[id] = true
+			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer.healthBar.bgTexture", "np")
 		elseif _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] then
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer", "np")
