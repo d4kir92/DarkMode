@@ -1,11 +1,11 @@
-## Interface-Classic: 11508
+## Interface-Classic: 11509
 ## Interface-BCC: 20506
 ## Interface-Wrath: 30300, 30403
 ## Interface-Cata: 40402
 ## Interface-Mists: 50504
-## Interface: 120100, 120007
+## Interface: 120100
 
-## Version: 0.7.142
+## Version: 0.7.143
 ## Title: DarkMode by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Darkens or colors the user interface/windows
 ## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein
