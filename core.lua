@@ -1487,6 +1487,73 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
+	if DruidComboPointBarFrame then
+		DarkMode:ForeachChildren(
+			DruidComboPointBarFrame,
+			function(child, c)
+				if child then
+					DarkMode:ForeachRegions(
+						child,
+						function(region, r)
+							if region and (r == 1 or r == 2 or r == 3 or r == 4 or r == 5 or r == 7 or r == 9) then
+								DarkMode:UpdateColor(region, "uf")
+							end
+						end
+					)
+				end
+			end
+		)
+	end
+
+	if PersonalResourceDisplayFrame then
+		if PersonalResourceDisplayFrame.ClassFrameContainer then
+			DarkMode:ForeachChildren(
+				PersonalResourceDisplayFrame.ClassFrameContainer,
+				function(child, c)
+					if child then
+						DarkMode:ForeachChildren(
+							child,
+							function(cchild, cc)
+								if cchild then
+									DarkMode:ForeachRegions(
+										cchild,
+										function(region, r)
+											if region and (r == 1 or r == 2 or r == 3 or r == 4 or r == 5 or r == 7 or r == 9) then
+												DarkMode:UpdateColor(region, "ui")
+											end
+										end
+									)
+								end
+							end
+						)
+					end
+				end
+			)
+		end
+
+		if PersonalResourceDisplayFrame.HealthBarsContainer and PersonalResourceDisplayFrame.HealthBarsContainer.healthBar then
+			DarkMode:ForeachRegions(
+				PersonalResourceDisplayFrame.HealthBarsContainer.healthBar,
+				function(region, r)
+					if r == 1 then
+						DarkMode:UpdateColor(region, "ui")
+					end
+				end
+			)
+		end
+
+		if PersonalResourceDisplayFrame.PowerBar then
+			DarkMode:ForeachRegions(
+				PersonalResourceDisplayFrame.PowerBar,
+				function(region, r)
+					if r == 1 then
+						DarkMode:UpdateColor(region, "ui")
+					end
+				end
+			)
+		end
+	end
+
 	for index, tab in pairs(DarkMode:GetUiTable()) do
 		if raidOnly and index == "UnitFrames" then
 			for x, v in pairs(tab) do
@@ -1756,7 +1823,7 @@ function DarkMode:SearchUi(from)
 						border:SetPoint("CENTER", mbtn.Background, "CENTER", 0, 10)
 						DarkMode:UpdateColor(border, "micromenu")
 					else
-						if DarkMode:GetWoWBuild() == "TBC" or DarkMode:GetWoWBuild() == "MISTS" then
+						if DarkMode:GetWoWBuild() == "CLASSIC" or DarkMode:GetWoWBuild() == "TBC" or DarkMode:GetWoWBuild() == "MISTS" then
 							local border = mbtn:CreateTexture(name .. ".DMBorder", "OVERLAY")
 							border:SetTexture("Interface\\AddOns\\DarkMode\\media\\mbtn_border")
 							border:SetPoint("TOPLEFT", mbtn, "TOPLEFT", 0, 19)
