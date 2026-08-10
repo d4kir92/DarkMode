@@ -609,89 +609,91 @@ if D4:GetWoWBuild() == "CLASSIC" then
                         UnitFrameManaBar_Initialize("focus", _G["FocusFrameManaBar"], _G["FocusFrameManaBarText"], true)
                     end
 
-                    local function TextStatusBar_UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
-                        if statusFrame.LeftText and statusFrame.RightText then
-                            statusFrame.LeftText:SetText("")
-                            statusFrame.RightText:SetText("")
-                            statusFrame.LeftText:Hide()
-                            statusFrame.RightText:Hide()
-                        end
-
-                        if (tonumber(valueMax) ~= valueMax or valueMax > 0) and not statusFrame.pauseUpdates then
-                            statusFrame:Show()
-                            if (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable) or statusFrame.forceShow then
-                                textString:Show()
-                            elseif statusFrame.lockShow > 0 and (not statusFrame.forceHideText) then
-                                textString:Show()
-                            else
-                                textString:SetText("")
-                                textString:Hide()
-                                return
+                    if TextStatusBar_UpdateTextStringWithValues then
+                        local function UpdateTextStringWithValues(statusFrame, textString, value, valueMin, valueMax)
+                            if statusFrame.LeftText and statusFrame.RightText then
+                                statusFrame.LeftText:SetText("")
+                                statusFrame.RightText:SetText("")
+                                statusFrame.LeftText:Hide()
+                                statusFrame.RightText:Hide()
                             end
 
-                            if value == 0 and statusFrame.zeroText then
-                                textString:SetText(statusFrame.zeroText)
-                                statusFrame.isZero = 1
-                                textString:Show()
-                                return
-                            end
-
-                            statusFrame.isZero = nil
-                            local valueDisplay = value
-                            local valueMaxDisplay = valueMax
-                            if statusFrame.numericDisplayTransformFunc then
-                                valueDisplay, valueMaxDisplay = statusFrame.numericDisplayTransformFunc(value, valueMax)
-                            else
-                                valueDisplay = AbbreviateLargeNumbers(value)
-                                valueMaxDisplay = AbbreviateLargeNumbers(valueMax)
-                            end
-
-                            local shouldUsePrefix = statusFrame.prefix and (statusFrame.alwaysPrefix or not (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable))
-                            local displayMode = GetCVar("statusTextDisplay")
-                            if statusFrame.showNumeric then displayMode = "NUMERIC" end
-                            if statusFrame.disablePercentages and displayMode == "PERCENT" then displayMode = "NUMERIC" end
-                            if valueMax <= 0 or displayMode == "NUMERIC" or displayMode == "NONE" then
-                                if shouldUsePrefix then
-                                    textString:SetText(statusFrame.prefix .. " " .. valueDisplay .. " / " .. valueMaxDisplay)
+                            if (tonumber(valueMax) ~= valueMax or valueMax > 0) and not statusFrame.pauseUpdates then
+                                statusFrame:Show()
+                                if (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable) or statusFrame.forceShow then
+                                    textString:Show()
+                                elseif statusFrame.lockShow > 0 and (not statusFrame.forceHideText) then
+                                    textString:Show()
                                 else
-                                    textString:SetText(valueDisplay .. " / " .. valueMaxDisplay)
+                                    textString:SetText("")
+                                    textString:Hide()
+                                    return
                                 end
-                            elseif displayMode == "BOTH" then
-                                if statusFrame.LeftText and statusFrame.RightText then
-                                    if not statusFrame.disablePercentages and (not statusFrame.powerToken or statusFrame.powerToken == "MANA") then
-                                        statusFrame.LeftText:SetText(math.ceil((value / valueMax) * 100) .. "%")
-                                        statusFrame.LeftText:Show()
+
+                                if value == 0 and statusFrame.zeroText then
+                                    textString:SetText(statusFrame.zeroText)
+                                    statusFrame.isZero = 1
+                                    textString:Show()
+                                    return
+                                end
+
+                                statusFrame.isZero = nil
+                                local valueDisplay = value
+                                local valueMaxDisplay = valueMax
+                                if statusFrame.numericDisplayTransformFunc then
+                                    valueDisplay, valueMaxDisplay = statusFrame.numericDisplayTransformFunc(value, valueMax)
+                                else
+                                    valueDisplay = AbbreviateLargeNumbers(value)
+                                    valueMaxDisplay = AbbreviateLargeNumbers(valueMax)
+                                end
+
+                                local shouldUsePrefix = statusFrame.prefix and (statusFrame.alwaysPrefix or not (statusFrame.cvar and GetCVar(statusFrame.cvar) == "1" and statusFrame.textLockable))
+                                local displayMode = GetCVar("statusTextDisplay")
+                                if statusFrame.showNumeric then displayMode = "NUMERIC" end
+                                if statusFrame.disablePercentages and displayMode == "PERCENT" then displayMode = "NUMERIC" end
+                                if valueMax <= 0 or displayMode == "NUMERIC" or displayMode == "NONE" then
+                                    if shouldUsePrefix then
+                                        textString:SetText(statusFrame.prefix .. " " .. valueDisplay .. " / " .. valueMaxDisplay)
+                                    else
+                                        textString:SetText(valueDisplay .. " / " .. valueMaxDisplay)
+                                    end
+                                elseif displayMode == "BOTH" then
+                                    if statusFrame.LeftText and statusFrame.RightText then
+                                        if not statusFrame.disablePercentages and (not statusFrame.powerToken or statusFrame.powerToken == "MANA") then
+                                            statusFrame.LeftText:SetText(math.ceil((value / valueMax) * 100) .. "%")
+                                            statusFrame.LeftText:Show()
+                                        end
+
+                                        statusFrame.RightText:SetText(valueDisplay)
+                                        statusFrame.RightText:Show()
+                                        textString:Hide()
+                                    else
+                                        valueDisplay = valueDisplay .. " / " .. valueMaxDisplay
+                                        if not statusFrame.disablePercentages then valueDisplay = "(" .. math.ceil((value / valueMax) * 100) .. "%) " .. valueDisplay end
                                     end
 
-                                    statusFrame.RightText:SetText(valueDisplay)
-                                    statusFrame.RightText:Show()
-                                    textString:Hide()
-                                else
-                                    valueDisplay = valueDisplay .. " / " .. valueMaxDisplay
-                                    if not statusFrame.disablePercentages then valueDisplay = "(" .. math.ceil((value / valueMax) * 100) .. "%) " .. valueDisplay end
-                                end
-
-                                textString:SetText(valueDisplay)
-                            elseif displayMode == "PERCENT" then
-                                valueDisplay = math.ceil((value / valueMax) * 100) .. "%"
-                                if shouldUsePrefix then
-                                    textString:SetText(statusFrame.prefix .. " " .. valueDisplay)
-                                else
                                     textString:SetText(valueDisplay)
+                                elseif displayMode == "PERCENT" then
+                                    valueDisplay = math.ceil((value / valueMax) * 100) .. "%"
+                                    if shouldUsePrefix then
+                                        textString:SetText(statusFrame.prefix .. " " .. valueDisplay)
+                                    else
+                                        textString:SetText(valueDisplay)
+                                    end
                                 end
-                            end
-                        else
-                            textString:Hide()
-                            textString:SetText("")
-                            if not statusFrame.alwaysShow then
-                                statusFrame:Hide()
                             else
-                                statusFrame:SetValue(0)
+                                textString:Hide()
+                                textString:SetText("")
+                                if not statusFrame.alwaysShow then
+                                    statusFrame:Hide()
+                                else
+                                    statusFrame:SetValue(0)
+                                end
                             end
                         end
-                    end
 
-                    hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", TextStatusBar_UpdateTextStringWithValues)
+                        hooksecurefunc("TextStatusBar_UpdateTextStringWithValues", UpdateTextStringWithValues)
+                    end
                 end
             end
         end
