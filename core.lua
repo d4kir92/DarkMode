@@ -1185,7 +1185,7 @@ function DarkMode:SearchUi(from)
 	local mode = DarkMode:DMGV("COLORMODEMI", 1)
 	if mode ~= 7 and mode ~= 9 then
 		local microButtons = DarkMode:GetMicroMenuButtons()
-		tinsert(microButtons, "SocialMicroButton")
+		tinsert(microButtons, "SocialsMicroButton")
 		for i, name in pairs(microButtons) do
 			if name then
 				local mbtn = _G[name]
