@@ -69,7 +69,11 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	end
 
 	local textureId = nil
-	if texture.GetTexture ~= nil then textureId = texture:GetTexture() end
+	if texture.GetTexture ~= nil then
+		local ok, id = pcall(texture.GetTexture, texture)
+		if ok and not (issecretvalue and issecretvalue(id)) then textureId = id end
+	end
+
 	local blockTable = DarkMode:GetTextureBlockTable()
 	if textureId and type(blockTable) == "table" and blockTable[textureId] and skipIgnore == nil then return false end
 	if texture:GetAlpha() == 0 then return false end
