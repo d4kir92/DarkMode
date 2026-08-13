@@ -70,7 +70,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 
 	local textureId = nil
 	if texture.GetTexture ~= nil then textureId = texture:GetTexture() end
-	if textureId and DarkMode:GetTextureBlockTable()[textureId] and skipIgnore == nil then return false end
+	local blockTable = DarkMode:GetTextureBlockTable()
+	if textureId and type(blockTable) == "table" and blockTable[textureId] and skipIgnore == nil then return false end
 	if texture:GetAlpha() == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
 		if typ == "ui" then
