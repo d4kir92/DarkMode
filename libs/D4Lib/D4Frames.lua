@@ -757,13 +757,14 @@ function D4:CreateDropdown(key, value, choices, parent, func)
     Y = Y - 18
     if DoesTemplateExist and DoesTemplateExist("SettingsDropdownWithButtonsTemplate") then
         local control = CreateFrame("Frame", key, parent, "SettingsDropdownWithButtonsTemplate")
-        control:SetPoint("TOPLEFT", X + 5 + 125, Y)
-        DropDown = control.Dropdown
-        DropDown:SetWidth(200)
+        control:SetPoint("TOPLEFT", X + 5, Y)
+        DropDown = control
+        control:SetWidth(270)
+        control.Dropdown:SetWidth(200)
         local function SetLabel(txt)
-            DropDown:SetDefaultText(txt)
-            if DropDown.Update then DropDown:Update() end
-            if DropDown.SetText then DropDown:SetText(txt) end
+            control.Dropdown:SetDefaultText(txt)
+            if control.Dropdown.Update then control.Dropdown:Update() end
+            if control.Dropdown.SetText then control.Dropdown:SetText(txt) end
         end
 
         SetLabel(D4:Trans("LID_" .. choices[TAB[key]]))
@@ -782,7 +783,7 @@ function D4:CreateDropdown(key, value, choices, parent, func)
         if btnPrev == nil or btnNext == nil then
             local found = {}
             for _, child in ipairs({control:GetChildren()}) do
-                if child ~= DropDown and child.SetEnabled and child.GetObjectType and child:GetObjectType() == "Button" then tinsert(found, child) end
+                if child ~= control.Dropdown and child.SetEnabled and child.GetObjectType and child:GetObjectType() == "Button" then tinsert(found, child) end
             end
 
             table.sort(found, function(a, b) return (a:GetLeft() or 0) < (b:GetLeft() or 0) end)
@@ -843,13 +844,13 @@ function D4:CreateDropdown(key, value, choices, parent, func)
 
         control:HookScript("OnShow", UpdateSteppersSoon)
         UpdateSteppersSoon()
-        DropDown:SetupMenu(function(dropdown, rootDescription)
+        control.Dropdown:SetupMenu(function(dropdown, rootDescription)
             UpdateSteppersSoon()
-            if key and key == "" then D4:INFO("[D4][CreateDropdown] has no key") end
+            if key and key == "" then D4:INFO("[D4][ control.Dropdown] has no key") end
             rootDescription:CreateTitle(D4:Trans("LID_" .. key))
             for _, data in ipairs(order) do
                 local name = choices[data]
-                if key and name and name == "" then D4:INFO("[D4][CreateDropdown] " .. key .. " has no name") end
+                if key and name and name == "" then D4:INFO("[D4][ control.Dropdown] " .. key .. " has no name") end
                 rootDescription:CreateButton(D4:Trans("LID_" .. name), function() SetValue(data) end)
             end
         end)
