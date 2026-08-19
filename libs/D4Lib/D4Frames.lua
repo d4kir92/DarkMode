@@ -755,21 +755,68 @@ function D4:CreateDropdown(key, value, choices, parent, func)
 
     local DropDown = nil
     Y = Y - 18
-    if D4:GetWoWBuild() == "RETAIL" then
-        DropDown = CreateFrame("DropdownButton", key, parent, "WowStyle1DropdownTemplate")
-        DropDown:SetDefaultText(D4:Trans("LID_" .. choices[TAB[key]]))
-        DropDown:SetPoint("TOPLEFT", X + 5, Y)
+    if DoesTemplateExist and DoesTemplateExist("SettingsDropdownWithButtonsTemplate") then
+        local control = CreateFrame("Frame", key, parent, "SettingsDropdownWithButtonsTemplate")
+        control:SetPoint("TOPLEFT", X + 5, Y)
+        DropDown = control.Dropdown
         DropDown:SetWidth(200)
+        DropDown:SetDefaultText(D4:Trans("LID_" .. choices[TAB[key]]))
+        local order = {}
+        for data in pairs(choices) do
+            tinsert(order, data)
+        end
+
+        table.sort(order, function(a, b)
+            if type(a) == type(b) then return a < b end
+            return tostring(a) < tostring(b)
+        end)
+
+        local btnPrev = control.DecrementButton
+        local btnNext = control.IncrementButton
+        local function GetIndex()
+            for i, data in ipairs(order) do
+                if data == TAB[key] then return i end
+            end
+            return 1
+        end
+
+        local function UpdateSteppers()
+            local i = GetIndex()
+            if btnPrev then btnPrev:SetEnabled(i > 1) end
+            if btnNext then btnNext:SetEnabled(i < #order) end
+        end
+
+        local function SetValue(data)
+            TAB[key] = data
+            DropDown:SetDefaultText(D4:Trans("LID_" .. choices[data]))
+            UpdateSteppers()
+            if func then func(data) end
+        end
+
+        if btnPrev then
+            btnPrev:SetScript("OnClick", function()
+                local i = GetIndex()
+                if i > 1 then SetValue(order[i - 1]) end
+            end)
+        end
+
+        if btnNext then
+            btnNext:SetScript("OnClick", function()
+                local i = GetIndex()
+                if i < #order then SetValue(order[i + 1]) end
+            end)
+        end
+
+        control:SetScript("OnShow", UpdateSteppers)
+        UpdateSteppers()
         DropDown:SetupMenu(function(dropdown, rootDescription)
+            UpdateSteppers()
             if key and key == "" then D4:INFO("[D4][CreateDropdown] has no key") end
             rootDescription:CreateTitle(D4:Trans("LID_" .. key))
-            for data, name in pairs(choices) do
+            for _, data in ipairs(order) do
+                local name = choices[data]
                 if key and name and name == "" then D4:INFO("[D4][CreateDropdown] " .. key .. " has no name") end
-                rootDescription:CreateButton(D4:Trans("LID_" .. name), function()
-                    TAB[key] = data
-                    DropDown:SetDefaultText(D4:Trans("LID_" .. name))
-                    if func then func(data) end
-                end)
+                rootDescription:CreateButton(D4:Trans("LID_" .. name), function() SetValue(data) end)
             end
         end)
     else
