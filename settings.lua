@@ -6,9 +6,18 @@ local cas = {}
 local cbs = {}
 local sls = {}
 local cps = {}
-local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Uncolored", "Custom", "Off"}
+local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Custom", "Off"}
+local DMColorModeIDs = {}
+for i, v in pairs(DMColorModes) do
+	DMColorModeIDs[v] = i
+end
+
 function DarkMode:GetColorModes()
 	return DMColorModes
+end
+
+function DarkMode:GetColorModeID(name)
+	return DMColorModeIDs[name] or 1
 end
 
 local function DMSetPos(ele, key, x, y, ignoreY)
@@ -173,7 +182,7 @@ function DarkMode:AddDMColorPicker(name, parent, x, y, keyMode)
 		end)
 
 		btn:SetScript("OnUpdate", function()
-			if DarkMode:DMGV(keyMode) == 8 then
+			if DarkMode:DMGV(keyMode) == DarkMode:GetColorModeID("Custom") then
 				btn:SetAlpha(1)
 				btn:EnableMouse(true)
 			else
@@ -299,11 +308,12 @@ function DarkMode:InitDMSettings()
 		AddCategory("ADVANCED")
 		AddCheckBox(4, "DESATURATE", true)
 		posy = posy - 10
-		DarkMode:AddColor(4, "COLORMODEABTNS", 9, "CUSTOMBTNS", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", 9, "CUSTOMUFDRC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", 9, "CUSTOMUFHPC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRPORA", 9, "CUSTOMUFPORC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRREPA", 9, "CUSTOMUFREC", false)
+		local off = DarkMode:GetColorModeID("Off")
+		DarkMode:AddColor(4, "COLORMODEABTNS", off, "CUSTOMBTNS", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", off, "CUSTOMUFHPC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRPORA", off, "CUSTOMUFPORC", false)
+		DarkMode:AddColor(4, "COLORMODEAUNFRREPA", off, "CUSTOMUFREC", false)
 	end
 
 	DMSettings.Search = CreateFrame("EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate")

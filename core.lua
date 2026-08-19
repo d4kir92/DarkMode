@@ -559,7 +559,7 @@ end
 
 function DarkMode:FindTextsByName(name)
 	local frame = DarkMode:GetFrameByName(name)
-	if frame and DarkMode:DMGV("COLORMODEF", 1) ~= 7 then DarkMode:FindTexts(frame, name) end
+	if frame and DarkMode:DMGV("COLORMODEF", 1) ~= DarkMode:GetColorModeID("Off") then DarkMode:FindTexts(frame, name) end
 end
 
 function DarkMode:UpdateColors()
@@ -1029,7 +1029,7 @@ function DarkMode:SearchUi(from)
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
 						if btn and btnTextureFloatingBG then btn:HookScript("OnLeave", function() btnTextureNormalTexture:SetAlpha(0.5) end) end
-						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
+						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" then
 							local sw, sh = btn:GetSize()
 							sw = DarkMode:MathR(sw)
 							sh = DarkMode:MathR(sh)
@@ -1128,7 +1128,7 @@ function DarkMode:SearchUi(from)
 										DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
 									end
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" and DarkMode:DMGV("COLORMODEAB", 1) ~= "Uncolored" then
+							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
@@ -1457,7 +1457,7 @@ function DarkMode:ColorNameplate(id)
 end
 
 npf:SetScript("OnEvent", function(self, event, name, ...)
-	if DarkMode:DMGV("COLORMODENP", 1) == 9 then return end
+	if DarkMode:DMGV("COLORMODENP", 1) == DarkMode:GetColorModeID("Off") then return end
 	local id = string.sub(name, 10)
 	local worked = DarkMode:ColorNameplate(id)
 	if not worked then

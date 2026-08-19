@@ -23,6 +23,22 @@ function DarkMode:AddProfile(name)
 	DMTAB["PROFILES"][name]["ELES"]["OPTIONS"]["ACTIONBARS"] = DMTAB["PROFILES"][name]["ELES"]["OPTIONS"]["ACTIONBARS"] or {}
 end
 
+local DMDBVERSION = 1
+local DMCOLORMODEV1 = {[7] = 8, [8] = 7, [9] = 8}
+function DarkMode:MigrateDB()
+	DMTAB = DMTAB or {}
+	DMTAB["VALUES"] = DMTAB["VALUES"] or {}
+	if (DMTAB["DBVERSION"] or 0) < 1 then
+		for name, value in pairs(DMTAB["VALUES"]) do
+			if type(name) == "string" and type(value) == "number" and strfind(name, "^COLORMODE") and DMCOLORMODEV1[value] then
+				DMTAB["VALUES"][name] = DMCOLORMODEV1[value]
+			end
+		end
+	end
+
+	DMTAB["DBVERSION"] = DMDBVERSION
+end
+
 function DarkMode:InitDB()
 	-- DB
 	DMTAB = DMTAB or {}
@@ -30,6 +46,7 @@ function DarkMode:InitDB()
 	DMTAB["PROFILES"] = DMTAB["PROFILES"] or {}
 	DMTAB["CURRENTPROFILE"] = DMTAB["CURRENTPROFILE"] or "DEFAULT"
 	DarkMode:AddProfile("DEFAULT")
+	DarkMode:MigrateDB()
 end
 
 function DarkMode:GetTab(from)
