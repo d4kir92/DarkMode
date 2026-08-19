@@ -77,38 +77,44 @@ local function AddCheckBox(x, key, val, func)
 	end
 end
 
-local function AddSlider(x, key, val, func, vmin, vmax, steps, keys)
-	if sls[key] == nil then
-		sls[key] = DarkMode:CreateSlider({
-			["key"] = key,
-			["name"] = key,
-			["parent"] = DMSettings.SC,
-			["value"] = val,
-			["vmin"] = vmin,
-			["vmax"] = vmax,
-			["steps"] = steps,
-			["ptab"] = {"TOPLEFT", DMSettings.SC, "TOPLEFT", x + 5, posy},
-			["sw"] = DMSettings.SC:GetWidth() - 30 - 100 - x,
-			["sh"] = 16,
-			["decimals"] = 0,
-		})
+local function UpdateDropdownText(dd)
+	if dd == nil or dd.key == nil then return end
+	local txt = DarkMode:Trans("LID_" .. DMColorModes[DarkMode:DMGV(dd.key, 1)])
+	if dd.Dropdown then
+		dd.Dropdown:SetDefaultText(txt)
+		if dd.Dropdown.Update then dd.Dropdown:Update() end
+		if dd.Dropdown.SetText then dd.Dropdown:SetText(txt) end
+	elseif UIDropDownMenu_SetText then
+		UIDropDownMenu_SetText(dd, txt)
+	end
+end
 
-		sls[key].key = key
-		sls[key]:SetScript("OnValueChanged", function(sel, valu)
-			valu = tonumber(string.format("%0.0f", valu))
+local function AddDropdown(x, key, val, func, keys)
+	if sls[key] == nil then
+		DarkMode:DMGV(key, val)
+		DarkMode:SetAppendX(0)
+		DarkMode:SetAppendY(0)
+		DarkMode:SetAppendTab(DMTAB["VALUES"])
+		local dd
+		dd = DarkMode:CreateDropdown(key, val, DMColorModes, DMSettings.SC, function(valu)
 			DarkMode:DMSV(key, valu)
 			if keys then
 				for i, v in pairs(sliders) do
 					DarkMode:DMSV(v.key, valu)
-					v:SetValue(DarkMode:DMGV(v.key, valu))
+					UpdateDropdownText(v)
 				end
 			end
 
-			if func then func(sel, valu) end
+			if func then func(dd, valu) end
 			if DMSettings.save then DMSettings.save:Enable() end
 		end)
+
+		if dd == nil then return nil end
+		dd.key = key
+		sls[key] = dd
 	end
 
+	if strfind(strlower(key), strlower(searchStr)) then posy = posy - 16 end
 	DMSetPos(sls[key], key, x)
 	return sls[key]
 end
@@ -209,21 +215,19 @@ end
 
 local vals = {}
 function DarkMode:AddColor(px, key, value, cKey, add)
-	local slider = AddSlider(px, key, DarkMode:DMGV(key, value), function(sel, val)
+	local dd = AddDropdown(px, key, DarkMode:DMGV(key, value), function(sel, val)
 		if vals[key] ~= val then
 			vals[key] = val
-			sel:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:GetColorModes()[val])
 			DarkMode:UpdateColors()
 		end
-	end, 1, getn(DarkMode:GetColorModes()), 1)
+	end)
 
-	slider:SetText(DarkMode:Trans("LID_" .. key) .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV(key, value)])
-	if add then tinsert(sliders, slider) end
+	if add and dd then tinsert(sliders, dd) end
 	DarkMode:AddDMColorPicker(cKey, DMSettings.SC, 0, 0, key)
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.158")
+	DarkMode:SetVersion(136122, "0.7.159")
 	if not DarkMode:IsOldWow() then
 		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
 	else
@@ -288,12 +292,7 @@ function DarkMode:InitDMSettings()
 		end
 
 		posy = posy - 10
-		local gCM = AddSlider(4, "COLORMODEG", DarkMode:DMGV("COLORMODEG", 1), function(sel, val)
-			sel:SetText(DarkMode:Trans("LID_COLORMODEG") .. ": " .. DarkMode:GetColorModes()[val])
-			DarkMode:UpdateColors()
-		end, 1, getn(DarkMode:GetColorModes()), 1, {"COLORMODE", "COLORMODEUNFR", "COLORMODENP", "COLORMODETT", "COLORMODEAB", "COLORMODEBA", "COLORMODEMI", "COLORMODEBAD", "COLORMODEF", "COLORMODEFA"})
-
-		gCM:SetText(DarkMode:Trans("LID_COLORMODEG") .. ": " .. DarkMode:GetColorModes()[DarkMode:DMGV("COLORMODEG", 1)])
+		AddDropdown(4, "COLORMODEG", DarkMode:DMGV("COLORMODEG", 1), function(sel, val) DarkMode:UpdateColors() end, {"COLORMODE", "COLORMODEUNFR", "COLORMODENP", "COLORMODETT", "COLORMODEAB", "COLORMODEBA", "COLORMODEMI", "COLORMODEBAD", "COLORMODEF", "COLORMODEFA"})
 		posy = posy - 20
 		DarkMode:AddColor(4, "COLORMODE", 1, "CUSTOMUIC", true)
 		DarkMode:AddColor(30, "COLORMODENP", 1, "CUSTOMNPC", true)

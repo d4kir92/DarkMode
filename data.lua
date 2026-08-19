@@ -16,7 +16,6 @@ function DarkMode:GetColor(id, name)
 	elseif colorMode == "ClassColor" then
 		local _, PlayerClassEng, _ = UnitClass("PLAYER")
 		local r, g, b, _ = DarkMode:GetClassColor(PlayerClassEng)
-
 		return r, g, b, 1
 	elseif colorMode == "Default" then
 		return 1, 1, 1, 1
@@ -27,7 +26,6 @@ function DarkMode:GetColor(id, name)
 	else
 		DarkMode:INFO("[GetColor] Missing colorMode", colorMode)
 	end
-
 	return 1.000, 0.000, 0.000, 0.3
 end
 
@@ -55,7 +53,6 @@ end
 function DarkMode:GetBrighterColor(r, g, b, a, texture)
 	local name = DarkMode:GetName(texture)
 	if r and g and b and name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
-
 	return r, g, b, a
 end
 
@@ -63,10 +60,7 @@ function DarkMode:GetUiColor(texture, from)
 	local mode = DarkMode:DMGV("COLORMODE", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUIC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -74,10 +68,7 @@ function DarkMode:GetUFColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEUNFR", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -85,10 +76,7 @@ function DarkMode:GetBtnsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEABTNS", DarkMode:GetColorModeID("Off"))
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBTNS")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -96,10 +84,7 @@ function DarkMode:GetUFDRColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAUNFRDRA", DarkMode:GetColorModeID("Off"))
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFDRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -107,10 +92,7 @@ function DarkMode:GetUFHPColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAUNFRHPA", DarkMode:GetColorModeID("Off"))
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFHPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -118,10 +100,7 @@ function DarkMode:GetUFPORColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAUNFRPORA", DarkMode:GetColorModeID("Off"))
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFPORC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -129,10 +108,7 @@ function DarkMode:GetUFREPColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAUNFRREPA", DarkMode:GetColorModeID("Off"))
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFREC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -140,10 +116,7 @@ function DarkMode:GetNPColor(texture)
 	local mode = DarkMode:DMGV("COLORMODENP", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMNPC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -151,10 +124,7 @@ function DarkMode:GetTTColor(texture)
 	local mode = DarkMode:DMGV("COLORMODETT", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMTTC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -162,10 +132,7 @@ function DarkMode:GetActionButtonsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEAB", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMABC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -173,10 +140,7 @@ function DarkMode:GetBagsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEBA", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBAC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -184,10 +148,7 @@ function DarkMode:GetMicroMenuColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEMI", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMMIC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -195,10 +156,7 @@ function DarkMode:GetBuffsAndDebuffsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEBAD", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBADC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -206,10 +164,7 @@ function DarkMode:GetAddonsColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEFA", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRAC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -217,10 +172,7 @@ function DarkMode:GetFrameColor(texture)
 	local mode = DarkMode:DMGV("COLORMODEF", 1)
 	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRC")
 	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then
-		texture:SetDesaturated(true)
-	end
-
+	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
 	return r, g, b, a
 end
 
@@ -229,7 +181,6 @@ function DarkMode:GetTextColor(r, g, b, a)
 		local sum = r + g + b
 		if sum >= 2 then return 0, 0, 0, 1 end
 	end
-
 	return 1, 1, 1, 1
 end
 
@@ -284,7 +235,6 @@ function DarkMode:GetUiAddonsTable()
 			DMFramesUiAddonsTab[name] = name
 		end
 	end
-
 	return DMFramesUiAddonsTab
 end
 
@@ -327,32 +277,25 @@ function DarkMode:GetFrameTable()
 			DMFramesTab[name] = name
 		end
 	end
-
 	return DMFramesTab
 end
 
 local DMFramesSpecial = {}
 if CharacterMainHandSlot then
-	DarkMode:ForeachRegions(
-		CharacterMainHandSlot,
-		function(region, x)
-			if x == 14 then
-				tinsert(DMFramesSpecial, region) -- CATA
-			end
-		end, "CharacterMainHandSlot"
-	)
+	DarkMode:ForeachRegions(CharacterMainHandSlot, function(region, x)
+		if x == 14 then
+			tinsert(DMFramesSpecial, region) -- CATA
+		end
+	end, "CharacterMainHandSlot")
 end
 
 local CharacterRangedSlot = getglobal("CharacterRangedSlot")
 if CharacterRangedSlot then
-	DarkMode:ForeachRegions(
-		CharacterRangedSlot,
-		function(region, x)
-			if x == 14 then
-				tinsert(DMFramesSpecial, region) -- CATA
-			end
-		end, "CharacterRangedSlot"
-	)
+	DarkMode:ForeachRegions(CharacterRangedSlot, function(region, x)
+		if x == 14 then
+			tinsert(DMFramesSpecial, region) -- CATA
+		end
+	end, "CharacterRangedSlot")
 end
 
 function DarkMode:GetFrameTableSpecial()
@@ -386,7 +329,6 @@ function DarkMode:GetFrameAddonsTable()
 			DMFramesAddonsTab[name] = name
 		end
 	end
-
 	return DMFramesAddonsTab
 end
 
@@ -402,12 +344,9 @@ function DarkMode:GetFrameTextTable()
 	if DMFrameTextsTab == nil then
 		DMFrameTextsTab = {}
 		for x, name in ipairs(DMFrameTexts) do
-			if not string.find(name, "QuestInfo", 1, true) then
-				DMFrameTextsTab[name] = name
-			end
+			if not string.find(name, "QuestInfo", 1, true) then DMFrameTextsTab[name] = name end
 		end
 	end
-
 	return DMFrameTextsTab
 end
 
@@ -416,12 +355,9 @@ function DarkMode:GetMapFrameTextTable()
 	if DMMapFrameTextsTab == nil then
 		DMMapFrameTextsTab = {}
 		for x, name in ipairs(DMFrameTexts) do
-			if string.find(name, "QuestInfo", 1, true) then
-				DMMapFrameTextsTab[name] = name
-			end
+			if string.find(name, "QuestInfo", 1, true) then DMMapFrameTextsTab[name] = name end
 		end
 	end
-
 	return DMMapFrameTextsTab
 end
 
@@ -507,57 +443,34 @@ function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
 
-DarkMode:After(
-	1,
-	function()
-		if DarkMode:IsAddOnLoaded("DragonflightUI") then
-			if TargetFrame then
-				local texture = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBorder")
-				if texture then
-					DarkMode:UpdateColor(texture, "uf")
-				end
-
-				local texture2 = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBackground")
-				if texture2 then
-					DarkMode:UpdateColor(texture2, "uf")
-				end
-			end
-
-			if TargetFrameToT then
-				local texture = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBorder")
-				if texture then
-					DarkMode:UpdateColor(texture, "uf")
-				end
-
-				local texture2 = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBackground")
-				if texture2 then
-					DarkMode:UpdateColor(texture2, "uf")
-				end
-			end
-
-			if FocusFrame then
-				local texture = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBorder")
-				if texture then
-					DarkMode:UpdateColor(texture, "uf")
-				end
-
-				local texture2 = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBackground")
-				if texture2 then
-					DarkMode:UpdateColor(texture2, "uf")
-				end
-			end
-
-			if FocusFrameToT then
-				local texture = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBorder")
-				if texture then
-					DarkMode:UpdateColor(texture, "uf")
-				end
-
-				local texture2 = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBackground")
-				if texture2 then
-					DarkMode:UpdateColor(texture2, "uf")
-				end
-			end
+DarkMode:After(1, function()
+	if DarkMode:IsAddOnLoaded("DragonflightUI") then
+		if TargetFrame then
+			local texture = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBorder")
+			if texture then DarkMode:UpdateColor(texture, "uf") end
+			local texture2 = DarkMode:FindTextures(TargetFrame, "uf", "DragonflightUITargetFrameBackground")
+			if texture2 then DarkMode:UpdateColor(texture2, "uf") end
 		end
-	end, "DragonflightUIFix"
-)
+
+		if TargetFrameToT then
+			local texture = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBorder")
+			if texture then DarkMode:UpdateColor(texture, "uf") end
+			local texture2 = DarkMode:FindTextures(TargetFrameToT, "uf", "DragonflightUITargetFrameToTBackground")
+			if texture2 then DarkMode:UpdateColor(texture2, "uf") end
+		end
+
+		if FocusFrame then
+			local texture = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBorder")
+			if texture then DarkMode:UpdateColor(texture, "uf") end
+			local texture2 = DarkMode:FindTextures(FocusFrame, "uf", "DragonflightUIFocusFrameBackground")
+			if texture2 then DarkMode:UpdateColor(texture2, "uf") end
+		end
+
+		if FocusFrameToT then
+			local texture = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBorder")
+			if texture then DarkMode:UpdateColor(texture, "uf") end
+			local texture2 = DarkMode:FindTextures(FocusFrameToT, "uf", "DragonflightUIFocusFrameToTBackground")
+			if texture2 then DarkMode:UpdateColor(texture2, "uf") end
+		end
+	end
+end, "DragonflightUIFix")
