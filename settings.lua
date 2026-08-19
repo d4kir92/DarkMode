@@ -6,7 +6,7 @@ local cas = {}
 local cbs = {}
 local sls = {}
 local cps = {}
-local DMColorModes = {"Dark", "Dark+", "Darker", "Darker+", "Black", "ClassColor", "Custom", "Off"}
+local DMColorModes = {"Dark", "More Dark", "Darker", "More Darker", "Black", "ClassColor", "Custom", "Off"}
 local DMColorModeIDs = {}
 for i, v in pairs(DMColorModes) do
 	DMColorModeIDs[v] = i

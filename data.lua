@@ -5,11 +5,11 @@ function DarkMode:GetColor(id, name)
 		return 0.5, 0.5, 0.5, 1
 	elseif colorMode == "Dark" then
 		return 0.360, 0.360, 0.360, 1
-	elseif colorMode == "Dark+" then
+	elseif colorMode == "More Dark" then
 		return 0.200, 0.200, 0.200, 1
 	elseif colorMode == "Darker" then
 		return 0.140, 0.140, 0.140, 1
-	elseif colorMode == "Darker+" then
+	elseif colorMode == "More Darker" then
 		return 0.080, 0.080, 0.080, 1
 	elseif colorMode == "Black" then
 		return 0.000, 0.000, 0.000, 1
