@@ -80,6 +80,7 @@ function DarkMode:SetEnabled(element, value)
 
 	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element] = DarkMode:GetTab()["ELES"]["OPTIONS"][element] or {}
 	DarkMode:GetTab("SetEnabled")["ELES"]["OPTIONS"][element]["ENABLED"] = value
+	if DarkMode.InvalidateColorCache then DarkMode:InvalidateColorCache() end
 end
 
 function DarkMode:IsEnabled(element, value)
@@ -143,6 +144,7 @@ function DarkMode:DMSV(name, value)
 	DMTAB = DMTAB or {}
 	DMTAB["VALUES"] = DMTAB["VALUES"] or {}
 	DMTAB["VALUES"][name] = value
+	if DarkMode.InvalidateColorCache then DarkMode:InvalidateColorCache() end
 end
 
 function DarkMode:DMGV(name, value)

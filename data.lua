@@ -47,133 +47,107 @@ function DarkMode:SetCustomColor(name, r, g, b, a)
 	DMTAB[name .. "_g"] = g
 	DMTAB[name .. "_b"] = b
 	DMTAB[name .. "_a"] = a
+	DarkMode:InvalidateColorCache()
 	DarkMode:UpdateColors()
 end
 
 function DarkMode:GetBrighterColor(r, g, b, a, texture)
+	if r == nil or g == nil or b == nil then return r, g, b, a end
 	local name = DarkMode:GetName(texture)
-	if r and g and b and name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
+	if name and DarkMode:IsBrighterFrame(name) then return DarkMode:MClamp(r + 0.4, 0, 1), DarkMode:MClamp(g + 0.4, 0, 1), DarkMode:MClamp(b + 0.4, 0, 1), a end
 	return r, g, b, a
+end
+
+local colorCache = {}
+function DarkMode:InvalidateColorCache()
+	wipe(colorCache)
+end
+
+local function DMIsDBReady()
+	if DMTAB == nil or DMTAB["PROFILES"] == nil then return false end
+	return DMTAB["PROFILES"][DMTAB["CURRENTPROFILE"] or "DEFAULT"] ~= nil
+end
+
+local function DMGetTypeColor(key, default, customName, texture)
+	local cache = colorCache[key]
+	if cache == nil then
+		if type(default) == "string" then default = DarkMode:GetColorModeID(default) end
+		local mode = DarkMode:DMGV(key, default)
+		local r, g, b, a = DarkMode:GetColor(mode, customName)
+		cache = {
+			["r"] = r,
+			["g"] = g,
+			["b"] = b,
+			["a"] = a,
+			["colored"] = mode ~= DarkMode:GetColorModeID("Off"),
+			["desaturate"] = DarkMode:IsEnabled("DESATURATE", true)
+		}
+
+		if DMIsDBReady() then colorCache[key] = cache end
+	end
+
+	if cache["colored"] and cache["desaturate"] and texture and texture.SetDesaturated then texture:SetDesaturated(true) end
+	return DarkMode:GetBrighterColor(cache["r"], cache["g"], cache["b"], cache["a"], texture)
 end
 
 function DarkMode:GetUiColor(texture, from)
-	local mode = DarkMode:DMGV("COLORMODE", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUIC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODE", 1, "CUSTOMUIC", texture)
 end
 
 function DarkMode:GetUFColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEUNFR", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEUNFR", 1, "CUSTOMUFC", texture)
 end
 
 function DarkMode:GetBtnsColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEABTNS", DarkMode:GetColorModeID("Off"))
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBTNS")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEABTNS", "Off", "CUSTOMBTNS", texture)
 end
 
 function DarkMode:GetUFDRColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEAUNFRDRA", DarkMode:GetColorModeID("Off"))
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFDRC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEAUNFRDRA", "Off", "CUSTOMUFDRC", texture)
 end
 
 function DarkMode:GetUFHPColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEAUNFRHPA", DarkMode:GetColorModeID("Off"))
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFHPC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEAUNFRHPA", "Off", "CUSTOMUFHPC", texture)
 end
 
 function DarkMode:GetUFPORColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEAUNFRPORA", DarkMode:GetColorModeID("Off"))
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFPORC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEAUNFRPORA", "Off", "CUSTOMUFPORC", texture)
 end
 
 function DarkMode:GetUFREPColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEAUNFRREPA", DarkMode:GetColorModeID("Off"))
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMUFREC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEAUNFRREPA", "Off", "CUSTOMUFREC", texture)
 end
 
 function DarkMode:GetNPColor(texture)
-	local mode = DarkMode:DMGV("COLORMODENP", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMNPC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODENP", 1, "CUSTOMNPC", texture)
 end
 
 function DarkMode:GetTTColor(texture)
-	local mode = DarkMode:DMGV("COLORMODETT", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMTTC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODETT", 1, "CUSTOMTTC", texture)
 end
 
 function DarkMode:GetActionButtonsColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEAB", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMABC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEAB", 1, "CUSTOMABC", texture)
 end
 
 function DarkMode:GetBagsColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEBA", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBAC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEBA", 1, "CUSTOMBAC", texture)
 end
 
 function DarkMode:GetMicroMenuColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEMI", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMMIC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEMI", 1, "CUSTOMMIC", texture)
 end
 
 function DarkMode:GetBuffsAndDebuffsColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEBAD", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMBADC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEBAD", 1, "CUSTOMBADC", texture)
 end
 
 function DarkMode:GetAddonsColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEFA", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRAC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEFA", 1, "CUSTOMFRAC", texture)
 end
 
 function DarkMode:GetFrameColor(texture)
-	local mode = DarkMode:DMGV("COLORMODEF", 1)
-	local r, g, b, a = DarkMode:GetColor(mode, "CUSTOMFRC")
-	r, g, b, a = DarkMode:GetBrighterColor(r, g, b, a, texture)
-	if mode ~= DarkMode:GetColorModeID("Off") and texture and texture.SetDesaturated and DarkMode:IsEnabled("DESATURATE", true) then texture:SetDesaturated(true) end
-	return r, g, b, a
+	return DMGetTypeColor("COLORMODEF", 1, "CUSTOMFRC", texture)
 end
 
 function DarkMode:GetTextColor(r, g, b, a)
@@ -192,6 +166,21 @@ end
 
 function DarkMode:GetDMRepeatingFrames()
 	return DMRepeatingFrames
+end
+
+local DMRepeatingPaths = nil
+function DarkMode:GetDMRepeatingPaths()
+	if DMRepeatingPaths == nil then
+		DMRepeatingPaths = {}
+		for i = 1, #DMRepeatingFrames do
+			local suffix = DMRepeatingFrames[i]
+			local entry = {["suffix"] = suffix, ["skipOnLoot"] = suffix == ".Bg" or suffix == ".Background"}
+			if strsub(suffix, 1, 1) == "." then entry["path"] = {strsplit(".", strsub(suffix, 2))} end
+			DMRepeatingPaths[i] = entry
+		end
+	end
+
+	return DMRepeatingPaths
 end
 
 local DMRepeatingFrames2 = {"TopEdge", "RightEdge", "LeftEdge", "BottomEdge", "TopRightCorner", "TopLeftCorner", "BottomRightCorner", "BottomLeftCorner"}
@@ -433,7 +422,7 @@ end
 
 DMIgnoreFrames["HonorFramePvPIcon"] = true
 function DarkMode:GetIgnoreFrames(name)
-	return DMTextureBlock[name] or false
+	return DMIgnoreFrames[name] or DMTextureBlock[name] or false
 end
 
 local DMIgnoreTextureNames = {}

@@ -394,6 +394,7 @@ end
 
 local addonsDelay = 0
 local addonsRetry = false
+local retryScheduled = false
 local foundMinimapTracking = false
 local talentFrameFound = false
 function DarkMode:UpdateSpellBook()
@@ -402,8 +403,7 @@ function DarkMode:UpdateSpellBook()
 	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls, "sb")
 end
 
-function DarkMode:RetryAddonsSearch()
-	if addonsRetry and GetTime() > addonsDelay then DarkMode:AddonsSearch("RETRY") end
+function DarkMode:CheckLateFrames()
 	local MiniMapTrackingBorder = getglobal("MiniMapTrackingBorder")
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
@@ -421,17 +421,26 @@ function DarkMode:RetryAddonsSearch()
 			end
 		end
 	end
+end
 
+function DarkMode:ScheduleRetryAddonsSearch()
+	if retryScheduled then return end
+	retryScheduled = true
+	DarkMode:After(0.12, function()
+		DarkMode:Debug(7, "RetryAddonsSearch")
+		DarkMode:RetryAddonsSearch()
+	end, "RetryAddonsSearch addonsRetry")
+end
+
+function DarkMode:RetryAddonsSearch()
+	retryScheduled = false
+	DarkMode:CheckLateFrames()
 	if addonsRetry then
-		DarkMode:After(0.12, function()
-			DarkMode:Debug(7, "RetryAddonsSearch")
-			DarkMode:RetryAddonsSearch()
-		end, "RetryAddonsSearch addonsRetry")
-	else
-		DarkMode:After(0.19, function()
-			DarkMode:Debug(7, "RetryAddonsSearch")
-			DarkMode:RetryAddonsSearch()
-		end, "RetryAddonsSearch")
+		if GetTime() > addonsDelay then
+			DarkMode:AddonsSearch("RETRY")
+		else
+			DarkMode:ScheduleRetryAddonsSearch()
+		end
 	end
 end
 
@@ -452,12 +461,14 @@ function DarkMode:AddonsSearch(from)
 	if GetTime() < addonsDelay then
 		addonsRetry = true
 		addonsDelay = GetTime() + 0.11
+		DarkMode:ScheduleRetryAddonsSearch()
 		return
 	end
 
 	if not debugDisabled then DarkMode:DEB("AddonsSearch", from) end
 	addonsDelay = GetTime() + 0.11
 	addonsRetry = false
+	DarkMode:CheckLateFrames()
 	local TrinketMenu_MenuFrame = getglobal("TrinketMenu_MenuFrame")
 	if foundTrinket == false and TrinketMenu_MenuFrame then
 		foundTrinket = true
@@ -563,6 +574,7 @@ function DarkMode:FindTextsByName(name)
 end
 
 function DarkMode:UpdateColors()
+	DarkMode:InvalidateColorCache()
 	for v in pairs(DMTexturesUi) do
 		local r, g, b, a = DarkMode:GetUiColor(v, "UpdateColors")
 		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
@@ -653,14 +665,14 @@ function DarkMode:FindTextures(frame, typ, findName, show)
 
 	if frame.GetRegions then
 		local ret = DarkMode:ForeachRegions(frame, function(region, x)
-			local regionName = DarkMode:GetName(frame)
+			local regionName = DarkMode:GetName(region)
 			if (ignoreId1 == nil or ignoreId1 ~= x) and (ignoreId2 == nil or ignoreId2 ~= x) and (ignoreId3 == nil or ignoreId3 ~= x) and ((regionName or not DarkMode:GetIgnoreFrames(regionName)) or (not regionName and region.SetVertexColor)) then
 				if bShow and region.GetTexture then DarkMode:MSG(">>", regionName, region:GetTextureFilePath(), region:GetTexture(), "Size:", region:GetSize()) end
 				if not DarkMode:GetIgnoreTextureName(regionName) then
 					if findName == nil then
 						DarkMode:UpdateColor(region, typ)
 					else
-						if findName == DarkMode:GetName(region) then return region end
+						if findName == regionName then return region end
 					end
 
 					if show then DarkMode:INFO("#2", "[" .. DarkMode:GetName(region, true) .. "]") end
@@ -698,6 +710,38 @@ function DarkMode:FindTexturesByName(name, typ)
 	if frame then DarkMode:FindTextures(frame, typ) end
 end
 
+function DarkMode:FindRepeatingTextures(baseName, baseFrame, typ, isLootFrame)
+	if baseFrame == nil then baseFrame = DarkMode:GetFrameByName(baseName) end
+	if baseFrame == nil then return end
+	local paths = DarkMode:GetDMRepeatingPaths()
+	for i = 1, #paths do
+		local entry = paths[i]
+		if not (isLootFrame and entry["skipOnLoot"]) then
+			local frame = nil
+			local path = entry["path"]
+			if path then
+				frame = baseFrame
+				for p = 1, #path do
+					if type(frame) ~= "table" then
+						frame = nil
+						break
+					end
+
+					frame = frame[path[p]]
+				end
+
+				if type(frame) ~= "table" then frame = nil end
+			elseif entry["suffix"] == "" then
+				frame = baseFrame
+			else
+				frame = DarkMode:GetFrameByName(baseName .. entry["suffix"])
+			end
+
+			if frame then DarkMode:FindTextures(frame, typ) end
+		end
+	end
+end
+
 local questDelay = 0.2
 function DarkMode:InitGreetingPanel()
 	local frame = DarkMode:GetFrameByName("GossipFrame.GreetingPanel.ScrollBox.ScrollTarget")
@@ -710,9 +754,7 @@ function DarkMode:InitGreetingPanel()
 		end
 
 		for index, name in pairs(frameTab) do
-			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "frames")
-			end
+			DarkMode:FindRepeatingTextures(name, nil, "frames")
 		end
 	end
 
@@ -785,37 +827,46 @@ function DarkMode:InitQuestLogFrame()
 	local QuestLogFrame = getglobal("QuestLogFrame")
 	if WorldMapFrame or QuestLogFrame then
 		local findNames = false
+		local questMapScanning = false
 		function DarkMode:UpdateQuestMapFrame()
-			if findNames then
-				for index, name in pairs(DarkMode:GetMapFrameTextTable()) do
-					if _G[name] then
-						DarkMode:FindTextsByName(name)
-						DarkMode:GetMapFrameTextTable()[name] = nil
-					end
+			questMapScanning = false
+			if not findNames then return end
+			local tab = DarkMode:GetMapFrameTextTable()
+			if next(tab) == nil then return end
+			for index, name in pairs(tab) do
+				if _G[name] then
+					DarkMode:FindTextsByName(name)
+					tab[name] = nil
 				end
-
-				DarkMode:After(0.1, function() DarkMode:UpdateQuestMapFrame() end, "UpdateQuestMapFrame 1")
-			else
-				DarkMode:After(0.2, function() DarkMode:UpdateQuestMapFrame() end, "UpdateQuestMapFrame 2")
 			end
+
+			if next(tab) == nil then return end
+			questMapScanning = true
+			DarkMode:After(0.1, function() DarkMode:UpdateQuestMapFrame() end, "UpdateQuestMapFrame 1")
+		end
+
+		local function StartQuestMapScan()
+			findNames = true
+			if questMapScanning then return end
+			if next(DarkMode:GetMapFrameTextTable()) == nil then return end
+			questMapScanning = true
+			DarkMode:After(0.1, function() DarkMode:UpdateQuestMapFrame() end, "UpdateQuestMapFrame 1")
 		end
 
 		if QuestFrame then
-			QuestFrame:HookScript("OnShow", function(sel) findNames = true end)
+			QuestFrame:HookScript("OnShow", function(sel) StartQuestMapScan() end)
 			QuestFrame:HookScript("OnHide", function(sel) findNames = false end)
 		end
 
 		if QuestLogFrame then
-			QuestLogFrame:HookScript("OnShow", function(sel) findNames = true end)
+			QuestLogFrame:HookScript("OnShow", function(sel) StartQuestMapScan() end)
 			QuestLogFrame:HookScript("OnHide", function(sel) findNames = false end)
 		end
 
 		if WorldMapFrame then
-			WorldMapFrame:HookScript("OnShow", function(sel) findNames = true end)
+			WorldMapFrame:HookScript("OnShow", function(sel) StartQuestMapScan() end)
 			WorldMapFrame:HookScript("OnHide", function(sel) findNames = false end)
 		end
-
-		DarkMode:UpdateQuestMapFrame()
 	end
 end
 
@@ -835,24 +886,15 @@ function DarkMode:SearchFrames()
 	end
 
 	for index, name in pairs(DarkMode:GetFrameTable()) do
-		if DarkMode:GetFrameByName(name) then
+		local baseFrame = DarkMode:GetFrameByName(name)
+		if baseFrame then
 			c = c + 1
 			if c >= 30 then
 				DarkMode:After(0.22, function() DarkMode:SearchFrames() end, "Reached Limit")
 				return
 			end
 
-			if name ~= "LootFrame" then
-				for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-					DarkMode:FindTexturesByName(name .. v, "frames")
-				end
-			else
-				for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-					-- BottomLeft and BottomRight Corner 
-					if v ~= ".Bg" and v ~= ".Background" then DarkMode:FindTexturesByName(name .. v, "frames") end
-				end
-			end
-
+			DarkMode:FindRepeatingTextures(name, baseFrame, "frames", name == "LootFrame")
 			DarkMode:GetFrameTable()[name] = nil
 		end
 	end
@@ -902,6 +944,7 @@ local foundAuctionator = false
 local foundExpansion = false
 local lastAddonsSearch = 0
 local searchAddonsDelay = 0.1
+local RANKERBUTTONS = {"RankerToggleButton", "RankerWhatIfButton"}
 function DarkMode:SearchAddons(from)
 	if from == nil then
 		DarkMode:INFO("[SearchAddons] NO FROM")
@@ -942,25 +985,21 @@ function DarkMode:SearchAddons(from)
 	DarkMode:InitLeatrixDruidBar()
 	DarkMode:InitOutfitterFrame()
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
-		if DarkMode:GetFrameByName(name) then
+		local baseFrame = DarkMode:GetFrameByName(name)
+		if baseFrame then
 			c = c + 1
 			if c >= 30 then
 				DarkMode:After(0.21, function() DarkMode:SearchAddons("RETRY1" .. from) end, "Reached Limit Addon")
 				return
 			end
 
-			for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-				DarkMode:FindTexturesByName(name .. v, "addons")
-			end
-
+			DarkMode:FindRepeatingTextures(name, baseFrame, "addons")
 			DarkMode:GetFrameAddonsTable()[name] = nil
 		end
 	end
 
-	for index, name in pairs({"RankerToggleButton", "RankerWhatIfButton"}) do
-		for x, v in pairs(DarkMode:GetDMRepeatingFrames()) do
-			DarkMode:FindTexturesByName(name .. v, "btns")
-		end
+	for index, name in pairs(RANKERBUTTONS) do
+		DarkMode:FindRepeatingTextures(name, nil, "btns")
 	end
 
 	if not foundExpansion and ExpansionLandingPage and ExpansionLandingPage.Overlay then
