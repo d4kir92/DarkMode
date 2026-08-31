@@ -1,15 +1,22 @@
 local _, DarkMode = ...
-local sliders = {}
-local searchStr = ""
-local posy = -4
-local cas = {}
-local cbs = {}
-local sls = {}
-local cps = {}
 local DMColorModes = {"Dark", "More Dark", "Darker", "More Darker", "Black", "ClassColor", "Custom", "Off"}
 local DMColorModeIDs = {}
 for i, v in pairs(DMColorModes) do
 	DMColorModeIDs[v] = i
+end
+
+local DMDROPDOWNWIDTH = 140
+local DMSWATCHSIZE = 24
+local DMDEFAULTWIDTH = 620
+local dmChoices = {}
+local dmSwatches = {}
+local dmLinked = {}
+local dmSettings = nil
+for i, v in ipairs(DMColorModes) do
+	tinsert(dmChoices, {
+		["value"] = i,
+		["label"] = "LID_" .. v
+	})
 end
 
 function DarkMode:GetColorModes()
@@ -20,103 +27,69 @@ function DarkMode:GetColorModeID(name)
 	return DMColorModeIDs[name] or 1
 end
 
-local function DMSetPos(ele, key, x, y, ignoreY)
-	ignoreY = ignoreY or false
-	y = y or 0
-	if ele == nil then return false end
-	ele:ClearAllPoints()
-	if strfind(strlower(key), strlower(searchStr)) then
-		ele:Show()
-		if posy < -4 then posy = posy - 10 end
-		ele:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x or 6, posy + y)
-		if not ignoreY then posy = posy - 30 end
+local function DMSetSolidColor(texture, r, g, b, a)
+	if texture == nil then return end
+	if texture.SetColorTexture then
+		texture:SetColorTexture(r, g, b, a)
 	else
-		ele:Hide()
+		texture:SetTexture(r, g, b, a)
 	end
-	return true
 end
 
-local function AddCategory(key)
-	if cas[key] == nil then
-		cas[key] = CreateFrame("Frame", key .. "_Category", DMSettings.SC)
-		local ca = cas[key]
-		ca:SetSize(24, 24)
-		ca.f = ca:CreateFontString(nil, nil, "GameFontNormal")
-		ca.f:SetPoint("LEFT", ca, "LEFT", 0, 0)
-		ca.f:SetText(DarkMode:Trans("LID_" .. key))
-	end
-
-	DMSetPos(cas[key], key)
-end
-
-local function AddCheckBox(x, key, val, func)
-	if val == nil then val = true end
-	if cbs[key] == nil then
-		cbs[key] = CreateFrame("CheckButton", key .. "_CB", DMSettings.SC, "UICheckButtonTemplate") --CreateFrame( "CheckButton", "moversettingsmove", mover, "UICheckButtonTemplate" )
-		local cb = cbs[key]
-		cb:SetSize(24, 24)
-		cb:SetChecked(DarkMode:IsEnabled(key, val))
-		cb:SetScript("OnClick", function(sel, btn, value)
-			DarkMode:SetEnabled(key, sel:GetChecked() or false)
-			if func then func(sel, sel:GetChecked() or false) end
-			if DMSettings.save then DMSettings.save:Enable() end
-		end)
-
-		cb.f = cb:CreateFontString(nil, nil, "GameFontNormal")
-		cb.f:SetPoint("LEFT", cb, "RIGHT", 0, 0)
-		cb.f:SetText(DarkMode:Trans("LID_" .. key))
-	end
-
-	cbs[key]:ClearAllPoints()
-	if strfind(strlower(key), strlower(searchStr)) or strfind(strlower(DarkMode:Trans("LID_" .. key)), strlower(searchStr)) then
-		cbs[key]:Show()
-		cbs[key]:SetPoint("TOPLEFT", DMSettings.SC, "TOPLEFT", x, posy)
-		posy = posy - 24
+local function DMReload()
+	if C_UI then
+		C_UI.Reload()
 	else
-		cbs[key]:Hide()
+		ReloadUI()
 	end
 end
 
-local function UpdateDropdownText(dd)
-	if dd == nil or dd.key == nil then return end
-	local txt = DarkMode:Trans("LID_" .. DMColorModes[DarkMode:DMGV(dd.key, 1)])
-	if dd.Dropdown then
-		dd.Dropdown:SetDefaultText(txt)
-		if dd.Dropdown.Update then dd.Dropdown:Update() end
-		if dd.Dropdown.SetText then dd.Dropdown:SetText(txt) end
-	elseif UIDropDownMenu_SetText then
-		UIDropDownMenu_SetText(dd, txt)
+local function DMEnableSave()
+	if dmSettings == nil then return end
+	if dmSettings.DMSave == nil then return end
+	dmSettings.DMSave:Enable()
+end
+
+local function DMUpdateShowErrors()
+	if dmSettings == nil then return end
+	if dmSettings.DMShowErrors == nil then return end
+	if GetCVar("ScriptErrors") == "0" then
+		dmSettings.DMShowErrors:Show()
+	else
+		dmSettings.DMShowErrors:Hide()
 	end
 end
 
-local function AddDropdown(x, key, val, func, keys)
-	if sls[key] == nil then
-		DarkMode:DMGV(key, val)
-		DarkMode:SetAppendX(0)
-		DarkMode:SetAppendY(0)
-		DarkMode:SetAppendTab(DMTAB["VALUES"])
-		local dd
-		dd = DarkMode:CreateDropdown(key, val, DMColorModes, DMSettings.SC, function(valu)
-			DarkMode:DMSV(key, valu)
-			if keys then
-				for i, v in pairs(sliders) do
-					DarkMode:DMSV(v.key, valu)
-					UpdateDropdownText(v)
-				end
-			end
-
-			if func then func(dd, valu) end
-			if DMSettings.save then DMSettings.save:Enable() end
-		end)
-
-		if dd == nil then return nil end
-		dd.key = key
-		sls[key] = dd
+local function DMUpdateSwatches()
+	local custom = DarkMode:GetColorModeID("Custom")
+	for i = 1, #dmSwatches do
+		local btn = dmSwatches[i]
+		if DarkMode:DMGV(btn.dmkey, 1) == custom then
+			local r, g, b, a = DarkMode:GetCustomColor(btn.dmcolorkey)
+			DMSetSolidColor(btn.dmfill, r, g, b, a)
+			btn:Show()
+		else
+			btn:Hide()
+		end
 	end
+end
 
-	if strfind(strlower(key), strlower(searchStr)) then posy = posy - 16 end
-	DMSetPos(sls[key], key, x)
-	return sls[key]
+local function DMGetCollapsed(key)
+	if key == nil then return nil end
+	if type(DMTAB) ~= "table" then return nil end
+	if type(DMTAB["COLLAPSED"]) ~= "table" then return nil end
+	return DMTAB["COLLAPSED"][key]
+end
+
+local function DMSetCollapsed(key, collapsed)
+	if key == nil then return end
+	if type(DMTAB) ~= "table" then return end
+	if type(DMTAB["COLLAPSED"]) ~= "table" then DMTAB["COLLAPSED"] = {} end
+	if collapsed then
+		DMTAB["COLLAPSED"][key] = true
+	else
+		DMTAB["COLLAPSED"][key] = nil
+	end
 end
 
 function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
@@ -159,245 +132,265 @@ function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
 	end
 end
 
-function DarkMode:AddDMColorPicker(name, parent, x, y, keyMode)
-	if cps[name] == nil then
-		cps[name] = CreateFrame("Button", name, parent, "UIPanelButtonTemplate")
-		local btn = cps[name]
-		btn:SetSize(100, 25)
-		btn:SetPoint("TOPLEFT", parent, "TOPLEFT", DMSettings.SC:GetWidth() - 15 - 100, posy + 40)
-		btn:SetText(DarkMode:Trans("LID_COLOR"))
-		btn:SetScript("OnClick", function()
-			local r, g, b, a = DarkMode:GetCustomColor(name)
-			DarkMode:ShowColorPicker(r, g, b, a, function(restore)
-				local newR, newG, newB, newA
-				if restore then
-					newR, newG, newB, newA = unpack(restore)
-				else
-					local OpacitySliderFrame = getglobal("OpacitySliderFrame")
-					if OpacitySliderFrame then
-						newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
-					elseif ColorPickerFrame.Content.ColorPicker.GetColorAlpha then
-						newA, newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorAlpha(), ColorPickerFrame:GetColorRGB()
-					else
-						DarkMode:MSG("Failed ColorPicker #2")
-					end
-				end
+local function DMAddColorSwatch(holder, key, colorKey)
+	local btn = DarkMode:CreateButton("DMSettingsSwatch" .. key, holder, true)
+	btn:SetSize(DMSWATCHSIZE, DMSWATCHSIZE)
+	btn:SetPoint("RIGHT", holder, "RIGHT", 0, 0)
+	btn.dmborder = btn:CreateTexture(nil, "BACKGROUND")
+	btn.dmborder:SetAllPoints(btn)
+	DMSetSolidColor(btn.dmborder, 0.6, 0.6, 0.6, 1)
+	btn.dmfill = btn:CreateTexture(nil, "ARTWORK")
+	btn.dmfill:SetPoint("TOPLEFT", btn, "TOPLEFT", 1, -1)
+	btn.dmfill:SetPoint("BOTTOMRIGHT", btn, "BOTTOMRIGHT", -1, 1)
+	btn.dmhighlight = btn:CreateTexture(nil, "HIGHLIGHT")
+	btn.dmhighlight:SetAllPoints(btn)
+	DMSetSolidColor(btn.dmhighlight, 1, 1, 1, 0.25)
+	btn.dmkey = key
+	btn.dmcolorkey = colorKey
+	btn:SetScript("OnEnter", function(sel)
+		GameTooltip:SetOwner(sel, "ANCHOR_RIGHT")
+		GameTooltip:SetText(DarkMode:Trans("LID_COLOR"))
+		GameTooltip:Show()
+	end)
 
-				DarkMode:SetCustomColor(name, newR, newG, newB, newA)
-			end)
-		end)
-
-		btn:SetScript("OnUpdate", function()
-			if DarkMode:DMGV(keyMode) == DarkMode:GetColorModeID("Custom") then
-				btn:SetAlpha(1)
-				btn:EnableMouse(true)
+	btn:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	btn:SetScript("OnClick", function()
+		local r, g, b, a = DarkMode:GetCustomColor(colorKey)
+		DarkMode:ShowColorPicker(r, g, b, a, function(restore)
+			local newR, newG, newB, newA
+			if restore then
+				newR, newG, newB, newA = unpack(restore)
 			else
-				btn:SetAlpha(0)
-				btn:EnableMouse(false)
+				local OpacitySliderFrame = getglobal("OpacitySliderFrame")
+				if OpacitySliderFrame then
+					newA, newR, newG, newB = 1 - OpacitySliderFrame:GetValue(), ColorPickerFrame:GetColorRGB()
+				elseif ColorPickerFrame.Content.ColorPicker.GetColorAlpha then
+					newA, newR, newG, newB = ColorPickerFrame.Content.ColorPicker:GetColorAlpha(), ColorPickerFrame:GetColorRGB()
+				else
+					DarkMode:MSG("Failed ColorPicker #2")
+				end
 			end
+
+			DarkMode:SetCustomColor(colorKey, newR, newG, newB, newA)
+			DMUpdateSwatches()
 		end)
+	end)
+
+	tinsert(dmSwatches, btn)
+	return btn
+end
+
+local function DMAddCheckbox(key, default, func)
+	return dmSettings:AddCheckbox({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = DarkMode:IsEnabled(key, default),
+		["func"] = function(value)
+			DarkMode:SetEnabled(key, value)
+			if func then func(value) end
+			DMEnableSave()
+		end
+	})
+end
+
+local function DMAddColorMode(key, default, colorKey, linked)
+	local holder = dmSettings:AddDropdown({
+		["label"] = "LID_" .. key,
+		["search"] = key,
+		["value"] = DarkMode:DMGV(key, default),
+		["width"] = DMDROPDOWNWIDTH,
+		["choices"] = dmChoices,
+		["func"] = function(value)
+			DarkMode:DMSV(key, value)
+			DarkMode:UpdateColors()
+			DMUpdateSwatches()
+			DMEnableSave()
+		end
+	})
+
+	if holder == nil then return nil end
+	DMAddColorSwatch(holder, key, colorKey)
+	if linked then
+		tinsert(dmLinked, {
+			["key"] = key,
+			["holder"] = holder
+		})
+	end
+	return holder
+end
+
+local function DMAddGeneralColorMode()
+	return dmSettings:AddDropdown({
+		["label"] = "LID_COLORMODEG",
+		["search"] = "COLORMODEG",
+		["value"] = DarkMode:DMGV("COLORMODEG", 1),
+		["width"] = DMDROPDOWNWIDTH,
+		["choices"] = dmChoices,
+		["func"] = function(value)
+			DarkMode:DMSV("COLORMODEG", value)
+			for i = 1, #dmLinked do
+				DarkMode:DMSV(dmLinked[i]["key"], value)
+				dmLinked[i]["holder"]:SetValue(value)
+			end
+
+			DarkMode:UpdateColors()
+			DMUpdateSwatches()
+			DMEnableSave()
+		end
+	})
+end
+
+local function DMBuildFooter()
+	local footer = dmSettings:AddFooter({
+		["height"] = 24
+	})
+
+	dmSettings.DMSave = DarkMode:CreateButton("DMSettingsSave", footer)
+	dmSettings.DMSave:SetSize(100, 24)
+	dmSettings.DMSave:SetPoint("LEFT", footer, "LEFT", 0, 0)
+	dmSettings.DMSave:SetText(SAVE)
+	dmSettings.DMSave:SetScript("OnClick", DMReload)
+	dmSettings.DMSave:Disable()
+	dmSettings.DMReload = DarkMode:CreateButton("DMSettingsReload", footer)
+	dmSettings.DMReload:SetSize(100, 24)
+	dmSettings.DMReload:SetPoint("LEFT", dmSettings.DMSave, "RIGHT", 4, 0)
+	dmSettings.DMReload:SetText(RELOADUI or "RELOADUI")
+	dmSettings.DMReload:SetScript("OnClick", DMReload)
+	dmSettings.DMShowErrors = DarkMode:CreateButton("DMSettingsShowErrors", footer)
+	dmSettings.DMShowErrors:SetSize(110, 24)
+	dmSettings.DMShowErrors:SetPoint("LEFT", dmSettings.DMReload, "RIGHT", 4, 0)
+	dmSettings.DMShowErrors:SetText("Show Errors")
+	dmSettings.DMShowErrors:SetScript("OnClick", function()
+		if GetCVar("ScriptErrors") == "0" then
+			SetCVar("ScriptErrors", 1)
+			DMReload()
+		end
+
+		DMUpdateShowErrors()
+	end)
+
+	dmSettings.DMDiscord = CreateFrame("EditBox", "DMSettingsDiscord", footer, "InputBoxTemplate")
+	dmSettings.DMDiscord:SetText("discord.gg/AYB3qR5hQm")
+	dmSettings.DMDiscord:SetSize(160, 24)
+	dmSettings.DMDiscord:SetPoint("RIGHT", footer, "RIGHT", 0, 0)
+	dmSettings.DMDiscord:SetAutoFocus(false)
+end
+
+local function DMBuildElementList()
+	dmSettings:SuspendLayout()
+	dmSettings:AddCategory({
+		["label"] = "LID_GENERAL",
+		["key"] = "GENERAL",
+		["search"] = "GENERAL"
+	})
+
+	DMAddCheckbox("MMBTN", true, function()
+		if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
+			DarkMode:ShowMMBtn("DarkMode")
+		else
+			DarkMode:HideMMBtn("DarkMode")
+		end
+	end)
+
+	DMAddCheckbox("GRYPHONS", true)
+	dmSettings:AddCategory({
+		["label"] = "LID_BORDERS",
+		["key"] = "BORDERS",
+		["search"] = "BORDERS",
+		["level"] = 2
+	})
+
+	DMAddCheckbox("MASKMINIMAPBUTTONS", true)
+	if not getglobal("MSQ") then
+		DMAddCheckbox("MASKACTIONBUTTONS", true)
+		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true)
+		DMAddCheckbox("THINBORDERS", false)
+		DMAddCheckbox("SHADOWACTIONBARS", false)
 	end
 
-	DMSetPos(cps[name], name, DMSettings.SC:GetWidth() - 15 - 100, 40, true)
-	return cps[name]
+	dmSettings:AddCategory({
+		["label"] = "LID_COLORS",
+		["key"] = "COLORS",
+		["search"] = "COLORS"
+	})
+
+	DMAddGeneralColorMode()
+	DMAddColorMode("COLORMODE", 1, "CUSTOMUIC", true)
+	DMAddColorMode("COLORMODEUNFR", 1, "CUSTOMUFC", true)
+	DMAddColorMode("COLORMODENP", 1, "CUSTOMNPC", true)
+	DMAddColorMode("COLORMODETT", 1, "CUSTOMTTC", true)
+	DMAddColorMode("COLORMODEAB", 1, "CUSTOMABC", true)
+	DMAddColorMode("COLORMODEBA", 1, "CUSTOMBAC", true)
+	DMAddColorMode("COLORMODEMI", 1, "CUSTOMMIC", true)
+	DMAddColorMode("COLORMODEBAD", 1, "CUSTOMBADC", true)
+	DMAddColorMode("COLORMODEF", 1, "CUSTOMFRC", true)
+	DMAddColorMode("COLORMODEFA", 1, "CUSTOMFRAC", true)
+	dmSettings:AddCategory({
+		["label"] = "LID_ADVANCED",
+		["key"] = "ADVANCED",
+		["search"] = "ADVANCED",
+		["level"] = 2,
+		["collapsed"] = true
+	})
+
+	DMAddCheckbox("DESATURATE", true)
+	local off = DarkMode:GetColorModeID("Off")
+	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
+	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
+	DMAddColorMode("COLORMODEAUNFRHPA", off, "CUSTOMUFHPC", false)
+	DMAddColorMode("COLORMODEAUNFRPORA", off, "CUSTOMUFPORC", false)
+	DMAddColorMode("COLORMODEAUNFRREPA", off, "CUSTOMUFREC", false)
+	dmSettings:ResumeLayout()
+	DMUpdateSwatches()
 end
 
 function DarkMode:ToggleSettings()
-	DarkMode:SetEnabled("SETTINGS", not DarkMode:IsEnabled("SETTINGS", false))
-	if DarkMode:IsEnabled("SETTINGS", false) then
-		DMSettings:Show()
-		DMSettings:UpdateShowErrors()
+	if dmSettings == nil then return end
+	local show = not dmSettings:IsShown()
+	DarkMode:SetEnabled("SETTINGS", show)
+	if show then
+		dmSettings:Show()
 	else
-		DMSettings:Hide()
-		DMSettings:UpdateShowErrors()
+		dmSettings:Hide()
 	end
-end
 
-local vals = {}
-function DarkMode:AddColor(px, key, value, cKey, add)
-	local dd = AddDropdown(px, key, DarkMode:DMGV(key, value), function(sel, val)
-		if vals[key] ~= val then
-			vals[key] = val
-			DarkMode:UpdateColors()
-		end
-	end)
-
-	if add and dd then tinsert(sliders, dd) end
-	DarkMode:AddDMColorPicker(cKey, DMSettings.SC, 0, 0, key)
+	DMUpdateShowErrors()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.7.161")
-	if not DarkMode:IsOldWow() then
-		DMSettings = DarkMode:CreateFrame("DMSettings", UIParent, "BasicFrameTemplate")
-	else
-		DMSettings = CreateFrame("Frame", "DMSettings", UIParent)
-		DMSettings.TitleText = DMSettings:CreateFontString(nil, nil, "GameFontNormal")
-		DMSettings.TitleText:SetPoint("TOP", DMSettings, "TOP", 0, 0)
-		DMSettings.CloseButton = CreateFrame("Button", "DMSettings.CloseButton", DMSettings, "UIPanelButtonTemplate")
-		DMSettings.CloseButton:SetPoint("TOPRIGHT", DMSettings, "TOPRIGHT", 0, 0)
-		DMSettings.CloseButton:SetSize(25, 25)
-		DMSettings.CloseButton:SetText("X")
-		DMSettings.bg = DMSettings:CreateTexture("DMSettings.bg", "ARTWORK")
-		DMSettings.bg:SetAllPoints(DMSettings)
-		if DMSettings.bg.SetColorTexture then
-			DMSettings.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
-		else
-			DMSettings.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
-		end
-	end
+	DarkMode:SetVersion(136122, "0.8.0")
+	dmSettings = DarkMode:CreateUIWindow({
+		["name"] = "DMSettings",
+		["pTab"] = {"CENTER"},
+		["width"] = DarkMode:DMGV("SETTINGSWIDTH", DMDEFAULTWIDTH),
+		["height"] = DarkMode:DMGV("SETTINGSHEIGHT", DarkMode:MClamp(640, 200, GetScreenHeight())),
+		["minWidth"] = 420,
+		["minHeight"] = 300,
+		["title"] = format("|T136122:16:16:0:0|t DarkMode v%s", DarkMode:GetVersion()),
+		["onResize"] = function(width, height)
+			DarkMode:DMSV("SETTINGSWIDTH", width)
+			DarkMode:DMSV("SETTINGSHEIGHT", height)
+		end,
+		["onMove"] = function(p1, p3, p4, p5) DarkMode:SetElePoint("DMSettings", p1, nil, p3, p4, p5) end,
+		["onClose"] = function() DarkMode:ToggleSettings() end,
+		["getCollapsed"] = function(key) return DMGetCollapsed(key) end,
+		["setCollapsed"] = function(key, collapsed) DMSetCollapsed(key, collapsed) end
+	})
 
-	DMSettings:SetSize(550, DarkMode:MClamp(640, 200, GetScreenHeight()))
-	DMSettings:SetPoint("CENTER", UIParent, "CENTER", 0, 0)
-	DMSettings:SetFrameStrata("HIGH")
-	DMSettings:SetFrameLevel(99)
-	DarkMode:SetClampedToScreen(DMSettings, true)
-	DMSettings:SetMovable(true)
-	DMSettings:EnableMouse(true)
-	DMSettings:RegisterForDrag("LeftButton")
-	DMSettings:SetScript("OnDragStart", DMSettings.StartMoving)
-	DMSettings:SetScript("OnDragStop", function()
-		DMSettings:StopMovingOrSizing()
-		local p1, _, p3, p4, p5 = DMSettings:GetPoint()
-		DarkMode:SetElePoint("DMSettings", p1, _, p3, p4, p5)
-	end)
-
-	if DarkMode:IsEnabled("SETTINGS", false) then
-		DMSettings:Show()
-	else
-		DMSettings:Hide()
-	end
-
-	DMSettings.TitleText:SetText(format("|T136122:16:16:0:0|t DarkMode v%s", DarkMode:GetVersion()))
-	DMSettings.CloseButton:SetScript("OnClick", function() DarkMode:ToggleSettings() end)
-	function DarkMode:UpdateElementList()
-		posy = -8
-		AddCategory("GENERAL")
-		AddCheckBox(4, "MMBTN", true, function(sel, val)
-			DarkMode:SetEnabled("MMBTN", val)
-			if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
-				DarkMode:ShowMMBtn("DarkMode")
-			else
-				DarkMode:HideMMBtn("DarkMode")
-			end
-		end)
-
-		AddCheckBox(4, "GRYPHONS", true)
-		AddCheckBox(4, "MASKMINIMAPBUTTONS", true)
-		if not getglobal("MSQ") then
-			AddCheckBox(4, "MASKACTIONBUTTONS", true)
-			AddCheckBox(4, "MASKBUFFSANDDEBUFFS", true)
-			AddCheckBox(4, "THINBORDERS", false)
-			AddCheckBox(4, "SHADOWACTIONBARS", false)
-		end
-
-		posy = posy - 10
-		AddDropdown(4, "COLORMODEG", DarkMode:DMGV("COLORMODEG", 1), function(sel, val) DarkMode:UpdateColors() end, {"COLORMODE", "COLORMODEUNFR", "COLORMODENP", "COLORMODETT", "COLORMODEAB", "COLORMODEBA", "COLORMODEMI", "COLORMODEBAD", "COLORMODEF", "COLORMODEFA"})
-		posy = posy - 20
-		DarkMode:AddColor(4, "COLORMODE", 1, "CUSTOMUIC", true)
-		DarkMode:AddColor(30, "COLORMODENP", 1, "CUSTOMNPC", true)
-		DarkMode:AddColor(30, "COLORMODETT", 1, "CUSTOMTTC", true)
-		DarkMode:AddColor(30, "COLORMODEAB", 1, "CUSTOMABC", true)
-		DarkMode:AddColor(30, "COLORMODEBA", 1, "CUSTOMBAC", true)
-		DarkMode:AddColor(30, "COLORMODEMI", 1, "CUSTOMMIC", true)
-		DarkMode:AddColor(30, "COLORMODEBAD", 1, "CUSTOMBADC", true)
-		DarkMode:AddColor(30, "COLORMODEUNFR", 1, "CUSTOMUFC", true)
-		DarkMode:AddColor(4, "COLORMODEF", 1, "CUSTOMFRC", true)
-		DarkMode:AddColor(4, "COLORMODEFA", 1, "CUSTOMFRAC", true)
-		AddCategory("ADVANCED")
-		AddCheckBox(4, "DESATURATE", true)
-		posy = posy - 10
-		local off = DarkMode:GetColorModeID("Off")
-		DarkMode:AddColor(4, "COLORMODEABTNS", off, "CUSTOMBTNS", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRHPA", off, "CUSTOMUFHPC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRPORA", off, "CUSTOMUFPORC", false)
-		DarkMode:AddColor(4, "COLORMODEAUNFRREPA", off, "CUSTOMUFREC", false)
-	end
-
-	DMSettings.Search = CreateFrame("EditBox", "DMSettings_Search", DMSettings, "InputBoxTemplate")
-	DMSettings.Search:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 12, -26)
-	DMSettings.Search:SetSize(DMSettings:GetWidth() - 22 - 100, 24)
-	DMSettings.Search:SetAutoFocus(false)
-	DMSettings.Search:SetScript("OnTextChanged", function(sel, ...)
-		searchStr = DMSettings.Search:GetText()
-		if DarkMode.UpdateElementList then DarkMode:UpdateElementList() end
-	end)
-
-	DMSettings.SF = CreateFrame("ScrollFrame", "DMSettings_SF", DMSettings, "UIPanelScrollFrameTemplate")
-	DMSettings.SF:SetPoint("TOPLEFT", DMSettings, 8, -30 - 24)
-	DMSettings.SF:SetPoint("BOTTOMRIGHT", DMSettings, -32, 24 + 8)
-	DMSettings.SC = CreateFrame("Frame", "DMSettings_SC", DMSettings.SF)
-	DMSettings.SC:SetSize(DMSettings.SF:GetSize())
-	DMSettings.SC:SetPoint("TOPLEFT", DMSettings.SF, "TOPLEFT", 0, 0)
-	DMSettings.SF:SetScrollChild(DMSettings.SC)
-	DMSettings.SF.bg = DMSettings.SF:CreateTexture("DMSettings.SF.bg", "ARTWORK")
-	DMSettings.SF.bg:SetAllPoints(DMSettings.SF)
-	if DMSettings.SF.bg.SetColorTexture then
-		DMSettings.SF.bg:SetColorTexture(0.03, 0.03, 0.03, 0.5)
-	else
-		DMSettings.SF.bg:SetTexture(0.03, 0.03, 0.03, 0.5)
-	end
-
-	DMSettings.save = CreateFrame("BUTTON", "DMSettings" .. ".save", DMSettings, "UIPanelButtonTemplate")
-	DMSettings.save:SetSize(120, 24)
-	DMSettings.save:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 4, -DMSettings:GetHeight() + 24 + 4)
-	DMSettings.save:SetText(SAVE)
-	DMSettings.save:SetScript("OnClick", function()
-		if C_UI then
-			C_UI.Reload()
-		else
-			ReloadUI()
-		end
-	end)
-
-	DMSettings.save:Disable()
-	DMSettings.reload = CreateFrame("BUTTON", "DMSettings" .. ".reload", DMSettings, "UIPanelButtonTemplate")
-	DMSettings.reload:SetSize(120, 24)
-	DMSettings.reload:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 4 + 120 + 4, -DMSettings:GetHeight() + 24 + 4)
-	DMSettings.reload:SetText(RELOADUI or "RELOADUI")
-	DMSettings.reload:SetScript("OnClick", function()
-		if C_UI then
-			C_UI.Reload()
-		else
-			ReloadUI()
-		end
-	end)
-
-	DMSettings.showerrors = CreateFrame("BUTTON", "DMSettings" .. ".showerrors", DMSettings, "UIPanelButtonTemplate")
-	DMSettings.showerrors:SetSize(120, 24)
-	DMSettings.showerrors:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", 4 + 120 + 4 + 120 + 4, -DMSettings:GetHeight() + 24 + 4)
-	DMSettings.showerrors:SetText("Show Errors")
-	DMSettings.showerrors:SetScript("OnClick", function()
-		if GetCVar("ScriptErrors") == "0" then
-			SetCVar("ScriptErrors", 1)
-			if C_UI then
-				C_UI.Reload()
-			else
-				ReloadUI()
-			end
-		end
-
-		DMSettings:UpdateShowErrors()
-	end)
-
-	function DMSettings:UpdateShowErrors()
-		if GetCVar("ScriptErrors") == "0" then
-			DMSettings.showerrors:Show()
-		else
-			DMSettings.showerrors:Hide()
-		end
-	end
-
-	DMSettings:UpdateShowErrors()
-	DMSettings.DISCORD = CreateFrame("EditBox", "DMSettings" .. ".DISCORD", DMSettings, "InputBoxTemplate")
-	DMSettings.DISCORD:SetText("discord.gg/AYB3qR5hQm")
-	DMSettings.DISCORD:SetSize(160, 24)
-	DMSettings.DISCORD:SetPoint("TOPLEFT", DMSettings, "TOPLEFT", DMSettings:GetWidth() - 160 - 8, -DMSettings:GetHeight() + 24 + 4)
-	DMSettings.DISCORD:SetAutoFocus(false)
+	dmSettings:SetFrameLevel(99)
+	dmSettings:AddSearch()
+	DMBuildFooter()
+	DMBuildElementList()
 	local dbp1, _, dbp3, dbp4, dbp5 = DarkMode:GetElePoint("DMSettings")
 	if dbp1 and dbp3 then
-		DMSettings:ClearAllPoints()
-		DMSettings:SetPoint(dbp1, UIParent, dbp3, dbp4, dbp5)
+		dmSettings:ClearAllPoints()
+		dmSettings:SetPoint(dbp1, UIParent, dbp3, dbp4, dbp5)
+	end
+
+	DMUpdateShowErrors()
+	if DarkMode:IsEnabled("SETTINGS", false) then
+		dmSettings:Show()
+	else
+		dmSettings:Hide()
 	end
 end
