@@ -10,12 +10,21 @@ function DarkMode:Debug(num, msg, ...)
 	if debug > 0 and debug == num or debug == 11 then DarkMode:DEB("[" .. debug .. "]", msg, ...) end
 end
 
+function DarkMode:IsForbidden(obj)
+	if obj == nil then return false end
+	if type(obj) ~= "table" and type(obj) ~= "userdata" then return false end
+	local ok, forbidden = pcall(function() return obj.IsForbidden and obj:IsForbidden() end)
+	if not ok then return true end
+	return forbidden == true
+end
+
 function DarkMode:SetVertexColor(texture, r, g, b, a, from)
 	if not texture then
 		DarkMode:MSG("Texture invalid", texture, from)
 		return false
 	end
 
+	if DarkMode:IsForbidden(texture) then return false end
 	if r and g and b then
 		if a then
 			texture:SetVertexColor(r, g, b, a)
@@ -30,6 +39,7 @@ end
 
 function DarkMode:IsValidTexture(obj)
 	if obj == nil then return false end
+	if DarkMode:IsForbidden(obj) then return false end
 	if obj.GetTexture and obj:GetTexture() ~= nil then return true end
 	if obj.GetTextureFilePath and obj:GetTextureFilePath() ~= nil then return true end
 	if type(obj) == "userdata" then return true end
@@ -177,6 +187,7 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 		if texture.dm_setup_texture == nil then
 			texture.dm_setup_texture = true
 			hooksecurefunc(texture, "SetVertexColor", function(sel, olr, olg, olb, ola)
+				if DarkMode:IsForbidden(sel) then return end
 				if sel.dm_setvertexcolor then return end
 				sel.dm_setvertexcolor = true
 				if typ == "ui" then
