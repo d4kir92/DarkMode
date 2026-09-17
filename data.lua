@@ -174,12 +174,15 @@ function DarkMode:GetDMRepeatingPaths()
 		DMRepeatingPaths = {}
 		for i = 1, #DMRepeatingFrames do
 			local suffix = DMRepeatingFrames[i]
-			local entry = {["suffix"] = suffix, ["skipOnLoot"] = suffix == ".Bg" or suffix == ".Background"}
+			local entry = {
+				["suffix"] = suffix,
+				["skipOnLoot"] = suffix == ".Bg" or suffix == ".Background"
+			}
+
 			if strsub(suffix, 1, 1) == "." then entry["path"] = {strsplit(".", strsub(suffix, 2))} end
 			DMRepeatingPaths[i] = entry
 		end
 	end
-
 	return DMRepeatingPaths
 end
 
@@ -215,7 +218,7 @@ function DarkMode:GetUiTable()
 	return DMUi
 end
 
-local DMUiAddons = {"LFGListInviteDialog.Border", "LFDRoleCheckPopup.Border", "UIWidgetPowerBarContainerFrame", "TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder", "FocusFrame.FocusFrameContainer.FrameTexture", "ArenaPrepFrame1Texture", "ArenaPrepFrame2Texture", "ArenaPrepFrame3Texture", "ArenaPrepFrame4Texture", "ArenaPrepFrame5Texture", "ArenaEnemyFrame1Texture", "ArenaEnemyFrame2Texture", "ArenaEnemyFrame3Texture", "ArenaEnemyFrame4Texture", "ArenaEnemyFrame5Texture",}
+local DMUiAddons = {"ExpansionUtilsSettings", "ExpansionUtilsCharacterOverview", "LFGListInviteDialog.Border", "LFDRoleCheckPopup.Border", "UIWidgetPowerBarContainerFrame", "TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder", "FocusFrame.FocusFrameContainer.FrameTexture", "ArenaPrepFrame1Texture", "ArenaPrepFrame2Texture", "ArenaPrepFrame3Texture", "ArenaPrepFrame4Texture", "ArenaPrepFrame5Texture", "ArenaEnemyFrame1Texture", "ArenaEnemyFrame2Texture", "ArenaEnemyFrame3Texture", "ArenaEnemyFrame4Texture", "ArenaEnemyFrame5Texture",}
 local DMFramesUiAddonsTab = nil
 function DarkMode:GetUiAddonsTable()
 	if DMFramesUiAddonsTab == nil then
@@ -245,17 +248,17 @@ else
 	tinsert(DMFrames, "TaxiFrame")
 end
 
-local DMFranesBrighter = {}
+local DMFramesBrighter = {}
 for x = 1, 12 do
 	for i = 1, 32 do
 		local name = string.format("ContainerFrame%sItem%sNormalTexture", x, i)
 		tinsert(DMFrames, name)
-		DMFranesBrighter[name] = true
+		DMFramesBrighter[name] = true
 	end
 end
 
 function DarkMode:IsBrighterFrame(name)
-	return DMFranesBrighter[name] or false
+	return DMFramesBrighter[name] or false
 end
 
 local DMFramesTab = nil
