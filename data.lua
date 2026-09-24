@@ -336,7 +336,17 @@ local DMUiAddons = {
 		"ArenaEnemyFrame4Texture",
 		"ArenaEnemyFrame5Texture",
 	},
+	["SwingTimer"] = {
+		"SwingTimerMainHandFrame.Border",
+		"SwingTimerOffHandFrame.Border",
+		"SwingTimerRangedFrame.Border",
+	},
 }
+
+DMUiAddons["DamageMeter"] = {}
+for i = 1, 10 do
+	tinsert(DMUiAddons["DamageMeter"], "DamageMeterSessionWindow" .. i)
+end
 
 local DMUiAddonsTab = DMToSet(DMUiAddons)
 function DarkMode:GetUiAddonsTable()
