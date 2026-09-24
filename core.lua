@@ -425,7 +425,7 @@ function DarkMode:CheckLateFrames()
 		talentFrameFound = true
 		if PlayerSpellsFrame.TabSystem then DarkMode:ForeachChildren(PlayerSpellsFrame.TabSystem, function(child, x) DarkMode:FindTextures(child, "frames") end) end
 		if PlayerSpellsFrame.SpellBookFrame then
-			if PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem then DarkMode:ForeachChildren(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem, function(child, x) DarkMode:FindTextures(child, "frames") end) end
+			if PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem and not DarkMode:IsForever() then DarkMode:ForeachChildren(PlayerSpellsFrame.SpellBookFrame.CategoryTabSystem, function(child, x) DarkMode:FindTextures(child, "frames") end) end
 			if PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame and PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.View1 and PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls then
 				hooksecurefunc(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame, "ApplyLayout", function() DarkMode:After(0.15, function() DarkMode:UpdateSpellBook() end, "ApplyLoadout") end)
 				DarkMode:UpdateSpellBook()
