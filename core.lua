@@ -46,21 +46,11 @@ function DarkMode:IsValidTexture(obj)
 	return false
 end
 
-local DMTexturesUi = {}
-local DMTexturesUF = {}
-local DMTexturesUFDR = {}
-local DMTexturesUFHP = {}
-local DMTexturesUFPOR = {}
-local DMTexturesUFREP = {}
-local DMTexturesBtns = {}
-local DMTexturesNP = {}
-local DMTexturesTT = {}
-local DMTexturesFrames = {}
-local DMTexturesFramesAddons = {}
-local DMTexturesActionButtons = {}
-local DMTexturesBags = {}
-local DMTexturesMicroMenu = {}
-local DMTexturesBuffsAndDebuffs = {}
+local DMTextures = {}
+for _, colorType in ipairs(DarkMode:GetColorTypes()) do
+	DMTextures[colorType["name"]] = {}
+end
+
 local MMBTNSETUP = {}
 function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if not DarkMode:IsValidTexture(texture) then return false end
@@ -88,92 +78,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if textureId and type(blockTable) == "table" and blockTable[textureId] and skipIgnore == nil then return false end
 	if texture:GetAlpha() == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
-		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor(texture, "UpdateColor 1")
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "uf" then
-			local r, g, b, a = DarkMode:GetUFColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "btns" then
-			local r, g, b, a = DarkMode:GetBtnsColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "ufdr" then
-			local r, g, b, a = DarkMode:GetUFDRColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "ufhp" then
-			local r, g, b, a = DarkMode:GetUFHPColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "ufpor" then
-			local r, g, b, a = DarkMode:GetUFPORColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "ufrep" then
-			local r, g, b, a = DarkMode:GetUFREPColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "np" then
-			local r, g, b, a = DarkMode:GetNPColort(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "tt" then
-			local r, g, b, a = DarkMode:GetTTColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "actionbuttons" then
-			local r, g, b, a = DarkMode:GetActionButtonsColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "bags" then
-			local r, g, b, a = DarkMode:GetBagsColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "micromenu" then
-			local r, g, b, a = DarkMode:GetMicroMenuColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "buffsanddebuffs" then
-			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "addons" then
-			local r, g, b, a = DarkMode:GetAddonsColor(texture)
-			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
-				texture:SetColorTexture(r, g, b, a)
-			end
-		elseif typ == "frames" then
-			local r, g, b, a = DarkMode:GetFrameColor(texture)
+		if DarkMode:IsColorType(typ) then
+			local r, g, b, a = DarkMode:GetTypeColor(typ, texture)
 			if r ~= nil and g ~= nil and b ~= nil then
 				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
 				texture:SetColorTexture(r, g, b, a)
@@ -190,66 +96,10 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 				if DarkMode:IsForbidden(sel) then return end
 				if sel.dm_setvertexcolor then return end
 				sel.dm_setvertexcolor = true
-				if typ == "ui" then
-					local r, g, b, a = DarkMode:GetUiColor(sel, "UpdateColor 2")
+				if DarkMode:IsColorType(typ) then
+					local r, g, b, a = DarkMode:GetTypeColor(typ, sel)
 					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "ui")
-				elseif typ == "uf" then
-					local r, g, b, a = DarkMode:GetUFColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "uf")
-				elseif typ == "btns" then
-					local r, g, b, a = DarkMode:GetBtnsColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "btns")
-				elseif typ == "ufdr" then
-					local r, g, b, a = DarkMode:GetUFDRColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "ufdr")
-				elseif typ == "ufhp" then
-					local r, g, b, a = DarkMode:GetUFHPColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "ufhp")
-				elseif typ == "ufpor" then
-					local r, g, b, a = DarkMode:GetUFPORColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "ufpor")
-				elseif typ == "ufrep" then
-					local r, g, b, a = DarkMode:GetUFREPColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "ufrep")
-				elseif typ == "np" then
-					local r, g, b, a = DarkMode:GetNPColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "np")
-				elseif typ == "tt" then
-					local r, g, b, a = DarkMode:GetTTColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "tt")
-				elseif typ == "actionbuttons" then
-					local r, g, b, a = DarkMode:GetActionButtonsColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "actionbuttons")
-				elseif typ == "bags" then
-					local r, g, b, a = DarkMode:GetBagsColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "bags")
-				elseif typ == "micromenu" then
-					local r, g, b, a = DarkMode:GetMicroMenuColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "micromenu")
-				elseif typ == "buffsanddebuffs" then
-					local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "buffsanddebuffs")
-				elseif typ == "addons" then
-					local r, g, b, a = DarkMode:GetAddonsColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "addons")
-				elseif typ == "frames" then
-					local r, g, b, a = DarkMode:GetFrameColor(sel)
-					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, "frames")
+					DarkMode:SetVertexColor(sel, r, g, b, a, typ)
 				else
 					DarkMode:INFO("[UpdateColor] #2 Missing type", typ)
 				end
@@ -260,98 +110,11 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 
 		local ola = 1
 		if texture:GetAlpha() < 1 then ola = texture:GetAlpha() end
-		if typ == "ui" then
-			local r, g, b, a = DarkMode:GetUiColor(texture, "UpdateColor 3")
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ui 2")
-		elseif typ == "uf" then
-			local r, g, b, a = DarkMode:GetUFColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "uf 2")
-		elseif typ == "btns" then
-			local r, g, b, a = DarkMode:GetBtnsColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "btns 2")
-		elseif typ == "ufdr" then
-			local r, g, b, a = DarkMode:GetUFDRColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufdr 2")
-		elseif typ == "ufhp" then
-			local r, g, b, a = DarkMode:GetUFHPColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufhp 2")
-		elseif typ == "ufpor" then
-			local r, g, b, a = DarkMode:GetUFPORColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufpor 2")
-		elseif typ == "ufrep" then
-			local r, g, b, a = DarkMode:GetUFREPColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "ufrep 2")
-		elseif typ == "np" then
-			local r, g, b, a = DarkMode:GetNPColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "np 2")
-		elseif typ == "tt" then
-			local r, g, b, a = DarkMode:GetTTColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "tt 2")
-		elseif typ == "actionbuttons" then
-			local r, g, b, a = DarkMode:GetActionButtonsColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "actionbuttons 2")
-		elseif typ == "bags" then
-			local r, g, b, a = DarkMode:GetBagsColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "bags 2")
-		elseif typ == "micromenu" then
-			local r, g, b, a = DarkMode:GetMicroMenuColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "micromenu 2")
-		elseif typ == "buffsanddebuffs" then
-			local r, g, b, a = DarkMode:GetBuffsAndDebuffsColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "buffsanddebuffs 2")
-		elseif typ == "addons" then
-			local r, g, b, a = DarkMode:GetAddonsColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "addons 2")
-		else
-			local r, g, b, a = DarkMode:GetFrameColor(texture)
-			if ola and ola < 1 then a = ola end
-			DarkMode:SetVertexColor(texture, r, g, b, a, "else 2")
-		end
-
-		if typ == "ui" then
-			DMTexturesUi[texture] = true
-		elseif typ == "uf" then
-			DMTexturesUF[texture] = true
-		elseif typ == "btns" then
-			DMTexturesBtns[texture] = true
-		elseif typ == "ufdr" then
-			DMTexturesUFDR[texture] = true
-		elseif typ == "ufhp" then
-			DMTexturesUFHP[texture] = true
-		elseif typ == "ufpor" then
-			DMTexturesUFPOR[texture] = true
-		elseif typ == "ufrep" then
-			DMTexturesUFREP[texture] = true
-		elseif typ == "np" then
-			DMTexturesNP[texture] = true
-		elseif typ == "tt" then
-			DMTexturesTT[texture] = true
-		elseif typ == "actionbuttons" then
-			DMTexturesActionButtons[texture] = true
-		elseif typ == "bags" then
-			DMTexturesBags[texture] = true
-		elseif typ == "micromenu" then
-			DMTexturesMicroMenu[texture] = true
-		elseif typ == "buffsanddebuffs" then
-			DMTexturesBuffsAndDebuffs[texture] = true
-		elseif typ == "frames" then
-			DMTexturesFrames[texture] = true
-		elseif typ == "addons" then
-			DMTexturesFramesAddons[texture] = true
+		local r, g, b, a = DarkMode:GetTypeColor(DarkMode:IsColorType(typ) and typ or "frames", texture)
+		if ola and ola < 1 then a = ola end
+		DarkMode:SetVertexColor(texture, r, g, b, a, typ)
+		if DarkMode:IsColorType(typ) then
+			DMTextures[typ][texture] = true
 		else
 			DarkMode:MSG("[UpdateColor] Missing Type:", typ)
 		end
@@ -530,7 +293,7 @@ function DarkMode:UpdateText(text, name, layer)
 			hooksecurefunc(text, "SetTextColor", function(sel, olr, olg, olb, ola)
 				if sel.dm_settextcolor then return end
 				sel.dm_settextcolor = true
-				local r, g, b, a = DarkMode:GetFrameColor()
+				local r, g, b, a = DarkMode:GetTypeColor("frames")
 				if r ~= nil and g ~= nil and b ~= nil then
 					if a == nil then a = 1 end
 					local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
@@ -544,7 +307,7 @@ function DarkMode:UpdateText(text, name, layer)
 			end)
 		end
 
-		local r, g, b, a = DarkMode:GetFrameColor()
+		local r, g, b, a = DarkMode:GetTypeColor("frames")
 		if r ~= nil and g ~= nil and b ~= nil then
 			if a == nil then a = 1 end
 			text:SetTextColor(DarkMode:GetTextColor(r, g, b, a))
@@ -584,67 +347,21 @@ function DarkMode:FindTextsByName(name)
 	if frame and DarkMode:DMGV("COLORMODEF", 1) ~= DarkMode:GetColorModeID("Off") then DarkMode:FindTexts(frame, name) end
 end
 
+local function DMRefreshColors(textures, typ)
+	for v in pairs(textures) do
+		local r, g, b, a = DarkMode:GetTypeColor(typ, v)
+		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
+		DarkMode:SetVertexColor(v, r, g, b, a)
+	end
+end
+
 function DarkMode:UpdateColors()
 	DarkMode:InvalidateColorCache()
-	for v in pairs(DMTexturesUi) do
-		local r, g, b, a = DarkMode:GetUiColor(v, "UpdateColors")
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
+	for _, colorType in ipairs(DarkMode:GetColorTypes()) do
+		DMRefreshColors(DMTextures[colorType["name"]], colorType["name"])
 	end
 
-	for v in pairs(DMTexturesUF) do
-		local r, g, b, a = DarkMode:GetUFColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesBtns) do
-		local r, g, b, a = DarkMode:GetBtnsColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesUFDR) do
-		local r, g, b, a = DarkMode:GetUFDRColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesUFHP) do
-		local r, g, b, a = DarkMode:GetUFHPColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesUFPOR) do
-		local r, g, b, a = DarkMode:GetUFPORColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesTT) do
-		local r, g, b, a = DarkMode:GetTTColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMFS) do
-		local r, g, b, a = DarkMode:GetFrameColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesFramesAddons) do
-		local r, g, b, a = DarkMode:GetAddonsColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
-
-	for v in pairs(DMTexturesFrames) do
-		local r, g, b, a = DarkMode:GetFrameColor(v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
-		DarkMode:SetVertexColor(v, r, g, b, a)
-	end
+	DMRefreshColors(DMFS, "frames")
 end
 
 function DarkMode:FindTextures(frame, typ, findName, show)
@@ -879,6 +596,22 @@ function DarkMode:InitQuestLogFrame()
 			WorldMapFrame:HookScript("OnHide", function(sel) findNames = false end)
 		end
 	end
+end
+
+local DMFramesSpecial = {}
+for _, slotName in ipairs({"CharacterMainHandSlot", "CharacterRangedSlot"}) do
+	local slot = getglobal(slotName)
+	if slot then
+		DarkMode:ForeachRegions(slot, function(region, x)
+			if x == 14 then
+				tinsert(DMFramesSpecial, region) -- CATA
+			end
+		end, slotName)
+	end
+end
+
+function DarkMode:GetFrameTableSpecial()
+	return DMFramesSpecial
 end
 
 function DarkMode:SearchFrames()
@@ -1799,12 +1532,12 @@ function DarkMode:Event(event, ...)
 							hooksecurefunc(hp, "SetStatusBarColor", function(sel, ...)
 								if redo then return end
 								redo = true
-								local r, g, b, a = DarkMode:GetUFHPColor(hpBar)
+								local r, g, b, a = DarkMode:GetTypeColor("ufhp", hpBar)
 								if r and g and b and a then sel:SetStatusBarColor(r, g, b, a) end
 								redo = false
 							end)
 
-							local r, g, b, a = DarkMode:GetUFHPColor(hpBar)
+							local r, g, b, a = DarkMode:GetTypeColor("ufhp", hpBar)
 							if r and g and b and a then hp:SetStatusBarColor(r, g, b, a) end
 						end
 					end
@@ -2061,7 +1794,7 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(ItemTextPageText, "SetTextColor", function(sel, name, ...)
 						if sel.dm_settextcolor then return end
 						sel.dm_settextcolor = true
-						local r, g, b, a = DarkMode:GetFrameColor(sel)
+						local r, g, b, a = DarkMode:GetTypeColor("frames", sel)
 						local cr, cg, cb, ca = DarkMode:GetTextColor(r, g, b, a)
 						sel:SetTextColor(name, cr, cg, cb, ca)
 						sel.dm_settextcolor = false
@@ -2210,6 +1943,19 @@ vigor:SetScript("OnEvent", function(sel, event)
 		end, "PLAYER_MOUNT_DISPLAY_CHANGED")
 	end
 end)
+
+DarkMode:After(1, function()
+	if not DarkMode:IsAddOnLoaded("DragonflightUI") then return end
+	for _, frameName in ipairs({"TargetFrame", "TargetFrameToT", "FocusFrame", "FocusFrameToT"}) do
+		local frame = _G[frameName]
+		if frame then
+			for _, part in ipairs({"Border", "Background"}) do
+				local texture = DarkMode:FindTextures(frame, "uf", "DragonflightUI" .. frameName .. part)
+				if texture then DarkMode:UpdateColor(texture, "uf") end
+			end
+		end
+	end
+end, "DragonflightUIFix")
 
 local f = CreateFrame("Frame")
 f:SetScript("OnEvent", DarkMode.Event)

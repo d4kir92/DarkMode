@@ -57,5 +57,6 @@ locale\zhCN.lua
 locale\zhTW.lua
 
 data.lua
+colors.lua
 settings.lua
 core.lua
