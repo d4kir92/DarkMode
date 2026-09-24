@@ -782,6 +782,7 @@ function DarkMode:SearchUi(from)
 		if PersonalResourceDisplayFrame.ClassFrameContainer then DarkMode:ForeachChildren(PersonalResourceDisplayFrame.ClassFrameContainer, function(child, c) if child then DarkMode:ForeachChildren(child, function(cchild, cc) if cchild then DarkMode:ForeachRegions(cchild, function(region, r) if region and (r == 1 or r == 2 or r == 3 or r == 4 or r == 5 or r == 7 or r == 9) then DarkMode:UpdateColor(region, "ui") end end) end end) end end) end
 		if PersonalResourceDisplayFrame.HealthBarsContainer and PersonalResourceDisplayFrame.HealthBarsContainer.healthBar then DarkMode:ForeachRegions(PersonalResourceDisplayFrame.HealthBarsContainer.healthBar, function(region, r) if r == 1 then DarkMode:UpdateColor(region, "ui") end end) end
 		if PersonalResourceDisplayFrame.PowerBar then DarkMode:ForeachRegions(PersonalResourceDisplayFrame.PowerBar, function(region, r) if r == 1 then DarkMode:UpdateColor(region, "ui") end end) end
+		if PersonalResourceDisplayFrame.AlternatePowerBar then DarkMode:ForeachRegions(PersonalResourceDisplayFrame.AlternatePowerBar, function(region, r) if r == 1 then DarkMode:UpdateColor(region, "ui") end end) end
 	end
 
 	for index, tab in pairs(DarkMode:GetUiTable()) do
