@@ -1,6 +1,5 @@
 local _, DarkMode = ...
 local isRetail = DarkMode:GetWoWBuild() == "RETAIL"
-
 local function DMAppend(target, list)
 	for i = 1, #list do
 		tinsert(target, list[i])
@@ -55,6 +54,7 @@ function DarkMode:GetDMRepeatingPaths()
 	return DMRepeatingPaths
 end
 
+-- format: multiline
 local DMUi = {
 	["ActionButtons"] = {
 		"PetActionButton",
@@ -106,12 +106,24 @@ local DMUi = {
 		"CompactArenaFrame.PreMatchFramesContainer.PreMatchFrame3.SpecPortraitBorderTexture",
 		"CompactArenaFrame.PreMatchFramesContainer.PreMatchFrame4.SpecPortraitBorderTexture",
 		"CompactArenaFrame.PreMatchFramesContainer.PreMatchFrame5.SpecPortraitBorderTexture",
-		"ArenaPrepFrame1Texture", "ArenaPrepFrame2Texture", "ArenaPrepFrame3Texture", "ArenaPrepFrame4Texture", "ArenaPrepFrame5Texture",
-		"ArenaEnemyFrame1Texture", "ArenaEnemyFrame2Texture", "ArenaEnemyFrame3Texture", "ArenaEnemyFrame4Texture", "ArenaEnemyFrame5Texture",
+		"ArenaPrepFrame1Texture",
+		"ArenaPrepFrame2Texture",
+		"ArenaPrepFrame3Texture",
+		"ArenaPrepFrame4Texture",
+		"ArenaPrepFrame5Texture",
+		"ArenaEnemyFrame1Texture",
+		"ArenaEnemyFrame2Texture",
+		"ArenaEnemyFrame3Texture",
+		"ArenaEnemyFrame4Texture",
+		"ArenaEnemyFrame5Texture",
 		"PlayerFrameAlternateManaBarBorder",
 		"PlayerFrameAlternateManaBarRightBorder",
 		"PlayerFrameAlternateManaBarLeftBorder",
-		"Boss1TargetFrameTextureFrame", "Boss2TargetFrameTextureFrame", "Boss3TargetFrameTextureFrame", "Boss4TargetFrameTextureFrame", "Boss5TargetFrameTextureFrame",
+		"Boss1TargetFrameTextureFrame",
+		"Boss2TargetFrameTextureFrame",
+		"Boss3TargetFrameTextureFrame",
+		"Boss4TargetFrameTextureFrame",
+		"Boss5TargetFrameTextureFrame",
 		"PlayerFrame.ClassicFrame",
 		"PlayerFrameTexture",
 		"TargetFrame.ClassicFrame.Texture",
@@ -125,19 +137,32 @@ local DMUi = {
 		"PlayerFrame.PlayerFrameContainer.FrameTexture",
 		"TargetFrame.TargetFrameContainer.FrameTexture",
 		"FocusFrame.TargetFrameContainer.FrameTexture",
-		"PartyMemberFrame1PetFrameTexture", "PartyMemberFrame2PetFrameTexture", "PartyMemberFrame3PetFrameTexture", "PartyMemberFrame4PetFrameTexture",
-		"PartyMemberFrame1Texture", "PartyMemberFrame2Texture", "PartyMemberFrame3Texture", "PartyMemberFrame4Texture",
-		"PartyFrame.MemberFrame1.Texture", "PartyFrame.MemberFrame2.Texture", "PartyFrame.MemberFrame3.Texture", "PartyFrame.MemberFrame4.Texture",
+		"PartyMemberFrame1PetFrameTexture",
+		"PartyMemberFrame2PetFrameTexture",
+		"PartyMemberFrame3PetFrameTexture",
+		"PartyMemberFrame4PetFrameTexture",
+		"PartyMemberFrame1Texture",
+		"PartyMemberFrame2Texture",
+		"PartyMemberFrame3Texture",
+		"PartyMemberFrame4Texture",
+		"PartyFrame.MemberFrame1.Texture",
+		"PartyFrame.MemberFrame2.Texture",
+		"PartyFrame.MemberFrame3.Texture",
+		"PartyFrame.MemberFrame4.Texture",
 	},
 	["Tooltips"] = {
 		"FriendsTooltip.NineSlice",
 		"RaiderIO_ProfileTooltip.NineSlice",
 		"EmbeddedItemTooltip.NineSlice",
 		"PartyMemberBuffTooltip.NineSlice",
-		"DropDownList1MenuBackdrop.NineSlice", "DropDownList2MenuBackdrop.NineSlice", "DropDownList3MenuBackdrop.NineSlice", "DropDownList4MenuBackdrop.NineSlice",
+		"DropDownList1MenuBackdrop.NineSlice",
+		"DropDownList2MenuBackdrop.NineSlice",
+		"DropDownList3MenuBackdrop.NineSlice",
+		"DropDownList4MenuBackdrop.NineSlice",
 		"GameTooltip.NineSlice",
 		"ItemRefTooltip.NineSlice",
-		"ShoppingTooltip1.NineSlice", "ShoppingTooltip2.NineSlice",
+		"ShoppingTooltip1.NineSlice",
+		"ShoppingTooltip2.NineSlice",
 		"WhatsTrainingTooltip.NineSlice",
 	},
 	["Artworks"] = {
@@ -158,8 +183,11 @@ local DMUi = {
 		"PaladinPowerBarFrame",
 		"PaladinPowerBarFrame.ActiveTexture",
 		"PaladinPowerBarFrame.Background",
-		"TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder",
-		"MirrorTimer1", "MirrorTimer2", "MirrorTimer3",
+		"TimerTrackerTimer1StatusBarBorder",
+		"TimerTrackerTimer2StatusBarBorder",
+		"MirrorTimer1",
+		"MirrorTimer2",
+		"MirrorTimer3",
 		"MainActionBar.BorderArt",
 		"MainActionBarTextureExtender",
 		"MainMenuBar.BorderArt",
@@ -167,10 +195,20 @@ local DMUi = {
 		"StanceBarLeft",
 		"StanceBarMiddle",
 		"StanceBarRight",
-		"StanceButton1NormalTexture2", "StanceButton2NormalTexture2", "StanceButton3NormalTexture2", "StanceButton4NormalTexture2",
-		"StanceButton5NormalTexture2", "StanceButton6NormalTexture2", "StanceButton7NormalTexture2", "StanceButton8NormalTexture2",
-		"SlidingActionBarTexture0", "SlidingActionBarTexture1",
-		"MainMenuBarTexture0", "MainMenuBarTexture1", "MainMenuBarTexture2", "MainMenuBarTexture3",
+		"StanceButton1NormalTexture2",
+		"StanceButton2NormalTexture2",
+		"StanceButton3NormalTexture2",
+		"StanceButton4NormalTexture2",
+		"StanceButton5NormalTexture2",
+		"StanceButton6NormalTexture2",
+		"StanceButton7NormalTexture2",
+		"StanceButton8NormalTexture2",
+		"SlidingActionBarTexture0",
+		"SlidingActionBarTexture1",
+		"MainMenuBarTexture0",
+		"MainMenuBarTexture1",
+		"MainMenuBarTexture2",
+		"MainMenuBarTexture3",
 		"MainMenuExpBar",
 		"ReputationWatchBar.StatusBar",
 		"MainStatusTrackingBarContainer.BarFrameTexture",
@@ -195,10 +233,26 @@ local DMUi = {
 		"MainActionBar.EndCaps.RightEndCap.Texture",
 	},
 	["Chat"] = {
-		"ChatFrame1EditBox", "ChatFrame2EditBox", "ChatFrame3EditBox", "ChatFrame4EditBox", "ChatFrame5EditBox",
-		"ChatFrame6EditBox", "ChatFrame7EditBox", "ChatFrame8EditBox", "ChatFrame9EditBox", "ChatFrame10EditBox",
-		"ChatFrame1Tab", "ChatFrame2Tab", "ChatFrame3Tab", "ChatFrame4Tab", "ChatFrame5Tab",
-		"ChatFrame6Tab", "ChatFrame7Tab", "ChatFrame8Tab", "ChatFrame9Tab", "ChatFrame10Tab",
+		"ChatFrame1EditBox",
+		"ChatFrame2EditBox",
+		"ChatFrame3EditBox",
+		"ChatFrame4EditBox",
+		"ChatFrame5EditBox",
+		"ChatFrame6EditBox",
+		"ChatFrame7EditBox",
+		"ChatFrame8EditBox",
+		"ChatFrame9EditBox",
+		"ChatFrame10EditBox",
+		"ChatFrame1Tab",
+		"ChatFrame2Tab",
+		"ChatFrame3Tab",
+		"ChatFrame4Tab",
+		"ChatFrame5Tab",
+		"ChatFrame6Tab",
+		"ChatFrame7Tab",
+		"ChatFrame8Tab",
+		"ChatFrame9Tab",
+		"ChatFrame10Tab",
 	},
 	["Castbar"] = {
 		"CastingBarFrame.Border",
@@ -208,6 +262,7 @@ local DMUi = {
 	},
 }
 
+-- format: multiline
 local DMCastbarRetail = {
 	"TargetFrameSpellBar.Background",
 	"TargetFrameSpellBar.Border",
@@ -218,6 +273,7 @@ local DMCastbarRetail = {
 	"PetCastingBarFrame.Border",
 }
 
+-- format: multiline
 local DMCastbarNonRetail = {
 	"TargetFrameSpellBar.Border",
 	"FocusFrameSpellBar.Border",
@@ -232,6 +288,7 @@ function DarkMode:GetUiTable()
 	return DMUi
 end
 
+-- format: multiline
 local DMUiAddons = {
 	["OwnAddons"] = {
 		"ExpansionUtilsSettings",
@@ -265,10 +322,19 @@ local DMUiAddons = {
 		"LFGListInviteDialog.Border",
 		"LFDRoleCheckPopup.Border",
 		"UIWidgetPowerBarContainerFrame",
-		"TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder",
+		"TimerTrackerTimer1StatusBarBorder",
+		"TimerTrackerTimer2StatusBarBorder",
 		"FocusFrame.FocusFrameContainer.FrameTexture",
-		"ArenaPrepFrame1Texture", "ArenaPrepFrame2Texture", "ArenaPrepFrame3Texture", "ArenaPrepFrame4Texture", "ArenaPrepFrame5Texture",
-		"ArenaEnemyFrame1Texture", "ArenaEnemyFrame2Texture", "ArenaEnemyFrame3Texture", "ArenaEnemyFrame4Texture", "ArenaEnemyFrame5Texture",
+		"ArenaPrepFrame1Texture",
+		"ArenaPrepFrame2Texture",
+		"ArenaPrepFrame3Texture",
+		"ArenaPrepFrame4Texture",
+		"ArenaPrepFrame5Texture",
+		"ArenaEnemyFrame1Texture",
+		"ArenaEnemyFrame2Texture",
+		"ArenaEnemyFrame3Texture",
+		"ArenaEnemyFrame4Texture",
+		"ArenaEnemyFrame5Texture",
 	},
 }
 
@@ -277,17 +343,51 @@ function DarkMode:GetUiAddonsTable()
 	return DMUiAddonsTab
 end
 
-local DMEquipmentSlots = {"AmmoSlot[1]", "MainHandSlot[17]", "MainHandSlotFrame", "SecondaryHandSlot[17]", "SecondaryHandSlotFrame", "RangedSlotFrame", "HandsSlotFrame", "WaistSlotFrame", "LegsSlotFrame", "FeetSlotFrame", "Finger0SlotFrame", "Finger1SlotFrame", "Trinket0SlotFrame", "Trinket1SlotFrame", "HeadSlotFrame", "NeckSlotFrame", "ShoulderSlotFrame", "BackSlotFrame", "ChestSlotFrame", "ShirtSlotFrame", "TabardSlotFrame", "WristSlotFrame", "FrameInsetRight"}
+-- format: multiline
+local DMEquipmentSlots = {
+	"AmmoSlot[1]",
+	"MainHandSlot[17]",
+	"MainHandSlotFrame",
+	"SecondaryHandSlot[17]",
+	"SecondaryHandSlotFrame",
+	"RangedSlotFrame",
+	"HandsSlotFrame",
+	"WaistSlotFrame",
+	"LegsSlotFrame",
+	"FeetSlotFrame",
+	"Finger0SlotFrame",
+	"Finger1SlotFrame",
+	"Trinket0SlotFrame",
+	"Trinket1SlotFrame",
+	"HeadSlotFrame",
+	"NeckSlotFrame",
+	"ShoulderSlotFrame",
+	"BackSlotFrame",
+	"ChestSlotFrame",
+	"ShirtSlotFrame",
+	"TabardSlotFrame",
+	"WristSlotFrame",
+	"FrameInsetRight"
+}
+
+-- format: multiline
 local DMFrames = {
 	["Character"] = {
 		"CharacterFrame",
-		"CharacterFrameTab1", "CharacterFrameTab2", "CharacterFrameTab3", "CharacterFrameTab4", "CharacterFrameTab5",
-		"nwtab5", "nwtab6",
+		"CharacterFrameTab1",
+		"CharacterFrameTab2",
+		"CharacterFrameTab3",
+		"CharacterFrameTab4",
+		"CharacterFrameTab5",
+		"nwtab5",
+		"nwtab6",
 		"PaperDollFrame",
 		"CharacterStatsPane",
 		"CharacterModelScene",
 		"PetPaperDollFrame",
-		"PetPaperDollFrameTab1", "PetPaperDollFrameTab2", "PetPaperDollFrameTab3",
+		"PetPaperDollFrameTab1",
+		"PetPaperDollFrameTab2",
+		"PetPaperDollFrameTab3",
 		"PetPaperDollFrameExpBar",
 		"SkillFrame",
 		"SkillListScrollFrame",
@@ -319,8 +419,17 @@ local DMFrames = {
 	},
 	["Spellbook"] = {
 		"SpellBookFrame",
-		"SpellBookSkillLineTab1", "SpellBookSkillLineTab2", "SpellBookSkillLineTab3", "SpellBookSkillLineTab4", "SpellBookSkillLineTab5", "SpellBookSkillLineTab6", "SpellBookSkillLineTab7",
-		"SpellBookFrameTabButton1", "SpellBookFrameTabButton2", "SpellBookFrameTabButton3", "SpellBookFrameTabButton4",
+		"SpellBookSkillLineTab1",
+		"SpellBookSkillLineTab2",
+		"SpellBookSkillLineTab3",
+		"SpellBookSkillLineTab4",
+		"SpellBookSkillLineTab5",
+		"SpellBookSkillLineTab6",
+		"SpellBookSkillLineTab7",
+		"SpellBookFrameTabButton1",
+		"SpellBookFrameTabButton2",
+		"SpellBookFrameTabButton3",
+		"SpellBookFrameTabButton4",
 		"WhatsTrainingFrame",
 	},
 	["Quest"] = {
@@ -373,18 +482,36 @@ local DMFrames = {
 	},
 	["Merchant"] = {
 		"MerchantFrame",
-		"MerchantFrameTab1", "MerchantFrameTab2",
-		"MerchantItem1", "MerchantItem2", "MerchantItem3", "MerchantItem4", "MerchantItem5", "MerchantItem6",
-		"MerchantItem7", "MerchantItem8", "MerchantItem9", "MerchantItem10", "MerchantItem11", "MerchantItem12",
+		"MerchantFrameTab1",
+		"MerchantFrameTab2",
+		"MerchantItem1",
+		"MerchantItem2",
+		"MerchantItem3",
+		"MerchantItem4",
+		"MerchantItem5",
+		"MerchantItem6",
+		"MerchantItem7",
+		"MerchantItem8",
+		"MerchantItem9",
+		"MerchantItem10",
+		"MerchantItem11",
+		"MerchantItem12",
 		"MerchantBuyBackItem",
 		"MerchantMoney",
 		"MerchantMoneyBg",
 	},
 	["Mail"] = {
 		"MailFrame",
-		"MailFrameTab1", "MailFrameTab2",
+		"MailFrameTab1",
+		"MailFrameTab2",
 		"InboxFrame",
-		"MailItem1", "MailItem2", "MailItem3", "MailItem4", "MailItem5", "MailItem6", "MailItem7",
+		"MailItem1",
+		"MailItem2",
+		"MailItem3",
+		"MailItem4",
+		"MailItem5",
+		"MailItem6",
+		"MailItem7",
 		"OpenMailFrame",
 		"OpenMailScrollFrame",
 		"SendMail",
@@ -396,14 +523,27 @@ local DMFrames = {
 	},
 	["Bank"] = {
 		"BankFrame",
-		"BankFrameTab1", "BankFrameTab2", "BankFrameTab3", "BankFrameTab4",
+		"BankFrameTab1",
+		"BankFrameTab2",
+		"BankFrameTab3",
+		"BankFrameTab4",
 		"BankFrameMoneyFrame",
 		"BankFrameMoneyFrameBorder",
 	},
 	["Bags"] = {
 		"BackpackTokenFrame",
-		"ContainerFrame1", "ContainerFrame2", "ContainerFrame3", "ContainerFrame4", "ContainerFrame5", "ContainerFrame6",
-		"ContainerFrame7", "ContainerFrame8", "ContainerFrame9", "ContainerFrame10", "ContainerFrame11", "ContainerFrame12",
+		"ContainerFrame1",
+		"ContainerFrame2",
+		"ContainerFrame3",
+		"ContainerFrame4",
+		"ContainerFrame5",
+		"ContainerFrame6",
+		"ContainerFrame7",
+		"ContainerFrame8",
+		"ContainerFrame9",
+		"ContainerFrame10",
+		"ContainerFrame11",
+		"ContainerFrame12",
 		"ContainerFrameCombinedBags",
 	},
 	["Trade"] = {
@@ -418,7 +558,11 @@ local DMFrames = {
 	["Social"] = {
 		"FriendsFrame",
 		"FriendsFrameFriendsScrollFrame",
-		"FriendsFrameTab1", "FriendsFrameTab2", "FriendsFrameTab3", "FriendsFrameTab4", "FriendsFrameTab5",
+		"FriendsFrameTab1",
+		"FriendsFrameTab2",
+		"FriendsFrameTab3",
+		"FriendsFrameTab4",
+		"FriendsFrameTab5",
 		"WhoListScrollFrame",
 		"WhoFrameList",
 		"GuildMemberDetailFrame",
@@ -430,10 +574,14 @@ local DMFrames = {
 	},
 	["GroupFinder"] = {
 		"PVEFrame",
-		"PVEFrameTab1", "PVEFrameTab2", "PVEFrameTab3", "PVEFrameTab4",
+		"PVEFrameTab1",
+		"PVEFrameTab2",
+		"PVEFrameTab3",
+		"PVEFrameTab4",
 		"ChallengesFrame",
 		"LFGParentFrame",
-		"LFGParentFrameTab1", "LFGParentFrameTab2",
+		"LFGParentFrameTab1",
+		"LFGParentFrameTab2",
 		"LFMFrame",
 		"LFGWhoListFrame",
 		"LFGBrowseFrame",
@@ -447,16 +595,22 @@ local DMFrames = {
 	},
 	["PvP"] = {
 		"PVPFrame",
-		"PVPFrameTab1", "PVPFrameTab2", "PVPFrameTab3", "PVPFrameTab4",
+		"PVPFrameTab1",
+		"PVPFrameTab2",
+		"PVPFrameTab3",
+		"PVPFrameTab4",
 		"PVPParentFrame",
-		"PVPParentFrameTab1", "PVPParentFrameTab2",
+		"PVPParentFrameTab1",
+		"PVPParentFrameTab2",
 		"PVPReadyDialog",
 		"PVPReadyDialog.Border",
 		"BattlefieldFrame",
 		"BattlefieldListScrollFrame",
 		"BattlefieldFrameType",
 		"WorldStateScoreFrame",
-		"WorldStateScoreFrameTab1", "WorldStateScoreFrameTab2", "WorldStateScoreFrameTab3",
+		"WorldStateScoreFrameTab1",
+		"WorldStateScoreFrameTab2",
+		"WorldStateScoreFrameTab3",
 	},
 	["Dialogs"] = {
 		"StaticPopup1",
@@ -470,7 +624,8 @@ local DMFrames = {
 		"CinematicFrameCloseDialog.Border",
 	},
 	["Timers"] = {
-		"TimerTrackerTimer1StatusBarBorder", "TimerTrackerTimer2StatusBarBorder",
+		"TimerTrackerTimer1StatusBarBorder",
+		"TimerTrackerTimer2StatusBarBorder",
 	},
 	["System"] = {
 		"GameMenuFrame",
@@ -494,11 +649,24 @@ local DMFrames = {
 		"DragonflightUISpellBookProfessionFrame",
 		"DragonflightUIWhatsTrainingFrameCompatibilitySpellBookBG",
 	},
-	["CharacterSlots"] = DMPrefixed("Character", DMEquipmentSlots),
+}
+
+DMFrames["CharacterSlots"] = DMPrefixed("Character", DMEquipmentSlots)
+-- format: multiline
+local DMTaxiBorders = {
+	"TaxiFrame.TopBorder",
+	"TaxiFrame.TitleBg",
+	"TaxiFrame.RightBorder",
+	"TaxiFrame.LeftBorder",
+	"TaxiFrame.BottomBorder",
+	"TaxiFrame.TopRightCorner",
+	"TaxiFrame.TopLeftCorner",
+	"TaxiFrame.BotRightCorner",
+	"TaxiFrame.BotLeftCorner"
 }
 
 if TaxiFrame and TaxiFrame.TopBorder then
-	DMFrames["Taxi"] = {"TaxiFrame.TopBorder", "TaxiFrame.TitleBg", "TaxiFrame.RightBorder", "TaxiFrame.LeftBorder", "TaxiFrame.BottomBorder", "TaxiFrame.TopRightCorner", "TaxiFrame.TopLeftCorner", "TaxiFrame.BotRightCorner", "TaxiFrame.BotLeftCorner"}
+	DMFrames["Taxi"] = DMTaxiBorders
 else
 	DMFrames["Taxi"] = {"TaxiFrame"}
 end
@@ -522,6 +690,7 @@ function DarkMode:GetFrameTable()
 	return DMFramesTab
 end
 
+-- format: multiline
 local DMFramesAddons = {
 	["Spellbook"] = {
 		"PlayerSpellsFrame",
@@ -537,7 +706,11 @@ local DMFramesAddons = {
 	["Talents"] = {
 		"PlayerTalentFrame",
 		"PlayerTalentFramePointsBar",
-		"PlayerTalentFrameTab1", "PlayerTalentFrameTab2", "PlayerTalentFrameTab3", "PlayerTalentFrameTab4", "PlayerTalentFrameTab5",
+		"PlayerTalentFrameTab1",
+		"PlayerTalentFrameTab2",
+		"PlayerTalentFrameTab3",
+		"PlayerTalentFrameTab4",
+		"PlayerTalentFrameTab5",
 		"PlayerTalentFrameSpecializationLearnButton_LeftSeparator",
 		"PlayerTalentFrameSpecializationLearnButton_RightSeparator",
 		"ClassTalentFrame",
@@ -549,7 +722,9 @@ local DMFramesAddons = {
 	},
 	["Inspect"] = {
 		"InspectFrame",
-		"InspectFrameTab1", "InspectFrameTab2", "InspectFrameTab3",
+		"InspectFrameTab1",
+		"InspectFrameTab2",
+		"InspectFrameTab3",
 		"InspectPaperDollFrame",
 		"InspectTalentFrame",
 		"InspectTalentFramePointsBar",
@@ -580,11 +755,18 @@ local DMFramesAddons = {
 		"ReforgingFrameRestoreButton_LeftSeparator",
 		"ReforgingFrameRestoreButton_RightSeparator",
 		"VoidStorageBorderFrame",
-		"VoidStorageFrame.Page1", "VoidStorageFrame.Page2", "VoidStorageFrame.Page3",
+		"VoidStorageFrame.Page1",
+		"VoidStorageFrame.Page2",
+		"VoidStorageFrame.Page3",
 	},
 	["Collections"] = {
 		"CollectionsJournal",
-		"CollectionsJournalTab1", "CollectionsJournalTab2", "CollectionsJournalTab3", "CollectionsJournalTab4", "CollectionsJournalTab5", "CollectionsJournalTab6",
+		"CollectionsJournalTab1",
+		"CollectionsJournalTab2",
+		"CollectionsJournalTab3",
+		"CollectionsJournalTab4",
+		"CollectionsJournalTab5",
+		"CollectionsJournalTab6",
 		"MountJournalMountButton_RightSeparator",
 		"PetJournalSummonButton_RightSeparator",
 		"ToyBox",
@@ -600,8 +782,14 @@ local DMFramesAddons = {
 	["Achievements"] = {
 		"AchievementFrame",
 		"AchievementFrame.Header",
-		"AchievementFrameTab1", "AchievementFrameTab2", "AchievementFrameTab3", "AchievementFrameTab4",
-		"AchievementFrameTab5", "AchievementFrameTab6", "AchievementFrameTab7", "AchievementFrameTab8",
+		"AchievementFrameTab1",
+		"AchievementFrameTab2",
+		"AchievementFrameTab3",
+		"AchievementFrameTab4",
+		"AchievementFrameTab5",
+		"AchievementFrameTab6",
+		"AchievementFrameTab7",
+		"AchievementFrameTab8",
 		"AchievementFrameCategories",
 		"AchievementFrameSummary",
 	},
@@ -618,8 +806,18 @@ local DMFramesAddons = {
 	},
 	["Auction"] = {
 		"AuctionFrame",
-		"AuctionFrameTab1", "AuctionFrameTab2", "AuctionFrameTab3", "AuctionFrameTab4", "AuctionFrameTab5", "AuctionFrameTab6",
-		"AuctionFrameTab7", "AuctionFrameTab8", "AuctionFrameTab9", "AuctionFrameTab10", "AuctionFrameTab11", "AuctionFrameTab12",
+		"AuctionFrameTab1",
+		"AuctionFrameTab2",
+		"AuctionFrameTab3",
+		"AuctionFrameTab4",
+		"AuctionFrameTab5",
+		"AuctionFrameTab6",
+		"AuctionFrameTab7",
+		"AuctionFrameTab8",
+		"AuctionFrameTab9",
+		"AuctionFrameTab10",
+		"AuctionFrameTab11",
+		"AuctionFrameTab12",
 		"BrowseFilterScrollFrame",
 		"BrowseScrollFrame",
 		"BrowseBidButton",
@@ -697,8 +895,12 @@ local DMFramesAddons = {
 		"PVPMatchScoreboard",
 		"PVPMatchScoreboard.Content",
 		"PVPMatchScoreboard.Content.TabContainer.InsetBorderTop",
-		"PVPScoreFrameTab1", "PVPScoreFrameTab2", "PVPScoreFrameTab3",
-		"PVPScoreboardTab1", "PVPScoreboardTab2", "PVPScoreboardTab3",
+		"PVPScoreFrameTab1",
+		"PVPScoreFrameTab2",
+		"PVPScoreFrameTab3",
+		"PVPScoreboardTab1",
+		"PVPScoreboardTab2",
+		"PVPScoreboardTab3",
 	},
 	["Housing"] = {
 		"HousingDashboardFrame",
@@ -714,7 +916,8 @@ local DMFramesAddons = {
 	},
 	["Macros"] = {
 		"MacroFrame",
-		"MacroFrameTab1", "MacroFrameTab2",
+		"MacroFrameTab1",
+		"MacroFrameTab2",
 		"MacroFrameTextBackground",
 		"MacroButtonScrollFrame",
 		"MacroFrame.MacroSelector.ScrollBar.Background",
@@ -757,7 +960,9 @@ local DMFramesAddons = {
 	},
 	["Outfitter"] = {
 		"OutfitterFrame",
-		"OutfitterFrameTab1", "OutfitterFrameTab2", "OutfitterFrameTab3",
+		"OutfitterFrameTab1",
+		"OutfitterFrameTab2",
+		"OutfitterFrameTab3",
 		"OutfitterMainFrameScrollbarTrench",
 	},
 	["ArenaAnalytics"] = {
@@ -784,7 +989,8 @@ local DMFramesAddons = {
 		"ACP_AddonList",
 		"ACP_AddonList_ScrollFrame",
 		"AddonUsage",
-		"BagnonInventory1.skin", "BagnonInventory2.skin",
+		"BagnonInventory1.skin",
+		"BagnonInventory2.skin",
 		"BuyEmAllFrame",
 		"ECS_StatsFrame",
 		"FlightTimerClassic",
@@ -794,10 +1000,10 @@ local DMFramesAddons = {
 		"WeaponSwingTimerPlayerBackdropFrame",
 		"WeaponSwingTimerTargetBackdropFrame",
 	},
-	["InspectSlots"] = DMPrefixed("Inspect", DMEquipmentSlots),
-	["MinimapButtonButton"] = DMPrefixed("MinimapButtonButtonButton.", DMNineSliceParts),
 }
 
+DMFramesAddons["InspectSlots"] = DMPrefixed("Inspect", DMEquipmentSlots)
+DMFramesAddons["MinimapButtonButton"] = DMPrefixed("MinimapButtonButtonButton.", DMNineSliceParts)
 for i = 0, 19 do
 	tinsert(DMFramesAddons["ItemRack"], "ItemRackOptInv" .. i .. "NormalTexture")
 	tinsert(DMFramesAddons["ItemRack"], "ItemRackMenu" .. i .. "NormalTexture")
@@ -809,22 +1015,47 @@ function DarkMode:GetFrameAddonsTable()
 	return DMFramesAddonsTab
 end
 
+-- format: multiline
 local DMFrameTexts = {
 	["Quest"] = {
 		"QuestGreetingScrollChildFrame",
 		"QuestProgressScrollChildFrame",
 		"QuestRewardScrollChildFrame",
 		"QuestLogDetailScrollChildFrame",
-		"QuestTitleButton1", "QuestTitleButton2", "QuestTitleButton3", "QuestTitleButton4", "QuestTitleButton5",
-		"QuestTitleButton6", "QuestTitleButton7", "QuestTitleButton8", "QuestTitleButton9", "QuestTitleButton10",
-		"QuestTitleButton11", "QuestTitleButton12", "QuestTitleButton13", "QuestTitleButton14", "QuestTitleButton15",
+		"QuestTitleButton1",
+		"QuestTitleButton2",
+		"QuestTitleButton3",
+		"QuestTitleButton4",
+		"QuestTitleButton5",
+		"QuestTitleButton6",
+		"QuestTitleButton7",
+		"QuestTitleButton8",
+		"QuestTitleButton9",
+		"QuestTitleButton10",
+		"QuestTitleButton11",
+		"QuestTitleButton12",
+		"QuestTitleButton13",
+		"QuestTitleButton14",
+		"QuestTitleButton15",
 	},
 	["Gossip"] = {
 		"GossipGreetingScrollChildFrame",
 		"GossipGreetingText",
-		"GossipTitleButton1", "GossipTitleButton2", "GossipTitleButton3", "GossipTitleButton4", "GossipTitleButton5",
-		"GossipTitleButton6", "GossipTitleButton7", "GossipTitleButton8", "GossipTitleButton9", "GossipTitleButton10",
-		"GossipTitleButton11", "GossipTitleButton12", "GossipTitleButton13", "GossipTitleButton14", "GossipTitleButton15",
+		"GossipTitleButton1",
+		"GossipTitleButton2",
+		"GossipTitleButton3",
+		"GossipTitleButton4",
+		"GossipTitleButton5",
+		"GossipTitleButton6",
+		"GossipTitleButton7",
+		"GossipTitleButton8",
+		"GossipTitleButton9",
+		"GossipTitleButton10",
+		"GossipTitleButton11",
+		"GossipTitleButton12",
+		"GossipTitleButton13",
+		"GossipTitleButton14",
+		"GossipTitleButton15",
 	},
 	["PvP"] = {
 		"WarGamesFrameDescription",
@@ -834,7 +1065,8 @@ local DMFrameTexts = {
 	["Professions"] = {
 		"CraftTradeSkillFrame",
 	},
-	["Spellbook"] = {},
+	["Spellbook"] = {
+	},
 }
 
 for i = 1, 12 do
@@ -848,6 +1080,7 @@ function DarkMode:GetFrameTextTable()
 	return DMFrameTextsTab
 end
 
+-- format: multiline
 local DMMapFrameTexts = {
 	["QuestInfo"] = {
 		"QuestInfoTitleHeader",
@@ -856,9 +1089,20 @@ local DMMapFrameTexts = {
 		"QuestInfoDescriptionText",
 		"QuestInfoObjectivesHeader",
 		"QuestInfoObjectivesText",
-		"QuestInfoObjective1", "QuestInfoObjective2", "QuestInfoObjective3", "QuestInfoObjective4", "QuestInfoObjective5",
-		"QuestInfoObjective6", "QuestInfoObjective7", "QuestInfoObjective8", "QuestInfoObjective9", "QuestInfoObjective10",
-		"QuestInfoObjective11", "QuestInfoObjective12", "QuestInfoObjective13", "QuestInfoObjective14",
+		"QuestInfoObjective1",
+		"QuestInfoObjective2",
+		"QuestInfoObjective3",
+		"QuestInfoObjective4",
+		"QuestInfoObjective5",
+		"QuestInfoObjective6",
+		"QuestInfoObjective7",
+		"QuestInfoObjective8",
+		"QuestInfoObjective9",
+		"QuestInfoObjective10",
+		"QuestInfoObjective11",
+		"QuestInfoObjective12",
+		"QuestInfoObjective13",
+		"QuestInfoObjective14",
 		"QuestInfoRewardText",
 		"QuestInfoRewardsFrame",
 	},
@@ -869,10 +1113,19 @@ function DarkMode:GetMapFrameTextTable()
 	return DMMapFrameTextsTab
 end
 
+-- format: multiline
 local DMGroupLootFrames = {
 	"GroupLootContainer",
-	"GroupLootFrame1", "GroupLootFrame2", "GroupLootFrame3", "GroupLootFrame4", "GroupLootFrame5",
-	"GroupLootFrame1Corner", "GroupLootFrame2Corner", "GroupLootFrame3Corner", "GroupLootFrame4Corner", "GroupLootFrame5Corner",
+	"GroupLootFrame1",
+	"GroupLootFrame2",
+	"GroupLootFrame3",
+	"GroupLootFrame4",
+	"GroupLootFrame5",
+	"GroupLootFrame1Corner",
+	"GroupLootFrame2Corner",
+	"GroupLootFrame3Corner",
+	"GroupLootFrame4Corner",
+	"GroupLootFrame5Corner",
 }
 
 function DarkMode:GetGroupLootTable()
@@ -880,6 +1133,7 @@ function DarkMode:GetGroupLootTable()
 end
 
 -- ids: https://www.townlong-yak.com/framexml/live/Helix/ArtTextureID.lua
+-- format: multiline
 local DMTextureBlockGroups = {
 	["Paths"] = {
 		"Interface\\QuestFrame\\UI-QuestLog-BookIcon",
@@ -919,8 +1173,22 @@ local DMTextureBlockGroups = {
 		130718, -- "Interface/Buttons/ButtonHilight-Square"
 		130719, -- "Interface/Buttons/ButtonHilight-SquareQuickslot"
 	},
-	["ChatTabs"] = {374168, 374170, 374172, 374174, 374176, 374178},
-	["Other"] = {130832, 413584, 442272, 526421, 1500877, 2056011},
+	["ChatTabs"] = {
+		374168,
+		374170,
+		374172,
+		374174,
+		374176,
+		374178
+	},
+	["Other"] = {
+		130832,
+		413584,
+		442272,
+		526421,
+		1500877,
+		2056011
+	},
 }
 
 if isRetail then
@@ -938,10 +1206,18 @@ local DMIgnoreFrameGroups = {
 	["All"] = {"HonorFramePvPIcon"},
 }
 
-if not isRetail then
-	DMIgnoreFrameGroups["NonRetail"] = {"FriendsFrameIcon", "FriendsFramePortrait", "FriendsFramePortraitFrame", "FriendsTabHeader", "FriendsListFrame", "CollectionsJournalPortrait", "CollectionsJournalPortraitFrame"}
-end
+-- format: multiline
+local DMIgnoreFramesNonRetail = {
+	"FriendsFrameIcon",
+	"FriendsFramePortrait",
+	"FriendsFramePortraitFrame",
+	"FriendsTabHeader",
+	"FriendsListFrame",
+	"CollectionsJournalPortrait",
+	"CollectionsJournalPortraitFrame"
+}
 
+if not isRetail then DMIgnoreFrameGroups["NonRetail"] = DMIgnoreFramesNonRetail end
 local DMIgnoreFrames = DMToSet(DMIgnoreFrameGroups, true)
 function DarkMode:GetIgnoreFrames(name)
 	return DMIgnoreFrames[name] or DMTextureBlock[name] or false

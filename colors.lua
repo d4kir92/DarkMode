@@ -57,38 +57,35 @@ function DarkMode:GetBrighterColor(r, g, b, a, texture)
 	return r, g, b, a
 end
 
-local function DMColorType(name, key, default, custom)
-	return {
+local DMColorTypeList = {}
+local DMColorTypes = {}
+local function DMAddColorType(name, key, default, custom)
+	local colorType = {
 		["name"] = name,
 		["key"] = key,
 		["default"] = default,
 		["custom"] = custom
 	}
+
+	tinsert(DMColorTypeList, colorType)
+	DMColorTypes[name] = colorType
 end
 
-local DMColorTypeList = {
-	DMColorType("ufrep", "COLORMODEAUNFRREPA", "Off", "CUSTOMUFREC"),
-	DMColorType("np", "COLORMODENP", 1, "CUSTOMNPC"),
-	DMColorType("actionbuttons", "COLORMODEAB", 1, "CUSTOMABC"),
-	DMColorType("bags", "COLORMODEBA", 1, "CUSTOMBAC"),
-	DMColorType("micromenu", "COLORMODEMI", 1, "CUSTOMMIC"),
-	DMColorType("buffsanddebuffs", "COLORMODEBAD", 1, "CUSTOMBADC"),
-	DMColorType("ui", "COLORMODE", 1, "CUSTOMUIC"),
-	DMColorType("uf", "COLORMODEUNFR", 1, "CUSTOMUFC"),
-	DMColorType("btns", "COLORMODEABTNS", "Off", "CUSTOMBTNS"),
-	DMColorType("ufdr", "COLORMODEAUNFRDRA", "Off", "CUSTOMUFDRC"),
-	DMColorType("ufhp", "COLORMODEAUNFRHPA", "Off", "CUSTOMUFHPC"),
-	DMColorType("ufpor", "COLORMODEAUNFRPORA", "Off", "CUSTOMUFPORC"),
-	DMColorType("tt", "COLORMODETT", 1, "CUSTOMTTC"),
-	DMColorType("addons", "COLORMODEFA", 1, "CUSTOMFRAC"),
-	DMColorType("frames", "COLORMODEF", 1, "CUSTOMFRC"),
-}
-
-local DMColorTypes = {}
-for _, colorType in ipairs(DMColorTypeList) do
-	DMColorTypes[colorType["name"]] = colorType
-end
-
+DMAddColorType("ufrep", "COLORMODEAUNFRREPA", "Off", "CUSTOMUFREC")
+DMAddColorType("np", "COLORMODENP", 1, "CUSTOMNPC")
+DMAddColorType("actionbuttons", "COLORMODEAB", 1, "CUSTOMABC")
+DMAddColorType("bags", "COLORMODEBA", 1, "CUSTOMBAC")
+DMAddColorType("micromenu", "COLORMODEMI", 1, "CUSTOMMIC")
+DMAddColorType("buffsanddebuffs", "COLORMODEBAD", 1, "CUSTOMBADC")
+DMAddColorType("ui", "COLORMODE", 1, "CUSTOMUIC")
+DMAddColorType("uf", "COLORMODEUNFR", 1, "CUSTOMUFC")
+DMAddColorType("btns", "COLORMODEABTNS", "Off", "CUSTOMBTNS")
+DMAddColorType("ufdr", "COLORMODEAUNFRDRA", "Off", "CUSTOMUFDRC")
+DMAddColorType("ufhp", "COLORMODEAUNFRHPA", "Off", "CUSTOMUFHPC")
+DMAddColorType("ufpor", "COLORMODEAUNFRPORA", "Off", "CUSTOMUFPORC")
+DMAddColorType("tt", "COLORMODETT", 1, "CUSTOMTTC")
+DMAddColorType("addons", "COLORMODEFA", 1, "CUSTOMFRAC")
+DMAddColorType("frames", "COLORMODEF", 1, "CUSTOMFRC")
 function DarkMode:GetColorTypes()
 	return DMColorTypeList
 end
