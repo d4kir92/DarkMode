@@ -52,6 +52,19 @@ for _, colorType in ipairs(DarkMode:GetColorTypes()) do
 end
 
 local MMBTNSETUP = {}
+local function DMUpdateActionBarDividerPool(pool)
+	if not pool or not pool.EnumerateActive then return end
+	for divider in pool:EnumerateActive() do
+		DarkMode:FindTextures(divider, "actionbuttons")
+	end
+end
+
+local function DMUpdateMainActionBarDividers(bar)
+	if not bar then return end
+	DMUpdateActionBarDividerPool(bar.HorizontalDividersPool)
+	DMUpdateActionBarDividerPool(bar.VerticalDividersPool)
+end
+
 function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if not DarkMode:IsValidTexture(texture) then return false end
 	if texture == nil then
@@ -770,6 +783,13 @@ end
 function DarkMode:SearchUi(from)
 	if not debugDisabled then DarkMode:DEB("SearchUi", from) end
 	local raidOnly = from == "raid"
+	if MainActionBar and MainActionBar.UpdateDividers then
+		if not MainActionBar.dmDividersHooked then
+			MainActionBar.dmDividersHooked = true
+			hooksecurefunc(MainActionBar, "UpdateDividers", DMUpdateMainActionBarDividers)
+		end
+		DMUpdateMainActionBarDividers(MainActionBar)
+	end
 	if TotemFrame then
 		for i = 1, 4 do
 			local totem = _G["TotemFrameTotem" .. i]
@@ -824,6 +844,13 @@ function DarkMode:SearchUi(from)
 						end
 
 						if LibStub and MSQ == nil then MSQ = LibStub("Masque", true) end
+						if btn and btn["SlotArt"] then DarkMode:UpdateColor(btn["SlotArt"], "actionbuttons") end
+						if btn and btn["SlotBackground"] then DarkMode:UpdateColor(btn["SlotBackground"], "actionbuttons") end
+						if btn and btn["RightDivider"] then
+							DarkMode:UpdateColor(btn["RightDivider"]["TopEdge"], "actionbuttons")
+							DarkMode:UpdateColor(btn["RightDivider"]["Center"], "actionbuttons")
+							DarkMode:UpdateColor(btn["RightDivider"]["BottomEdge"], "actionbuttons")
+						end
 						if MSQ then
 							if btn then
 								if btn.__MSQ_Mask then DarkMode:UpdateColor(btn.__MSQ_Mask, "actionbuttons") end
@@ -832,12 +859,6 @@ function DarkMode:SearchUi(from)
 							end
 						else
 							if btnTextureFloatingBG then DarkMode:UpdateColor(btnTextureFloatingBG, "actionbuttons") end
-							if btn and btn["SlotBackground"] then DarkMode:UpdateColor(btn["SlotBackground"], "actionbuttons") end
-							if btn and btn["RightDivider"] then
-								DarkMode:UpdateColor(btn["RightDivider"]["TopEdge"], "actionbuttons")
-								DarkMode:UpdateColor(btn["RightDivider"]["Center"], "actionbuttons")
-								DarkMode:UpdateColor(btn["RightDivider"]["BottomEdge"], "actionbuttons")
-							end
 						end
 
 						if not MSQ then
