@@ -26,12 +26,16 @@ function DarkMode:SetVertexColor(texture, r, g, b, a, from)
 
 	if DarkMode:IsForbidden(texture) then return false end
 	if r and g and b then
+		local bbfHooked = texture.bbfHooked
+		local bbfChanging = texture.changing
+		if bbfHooked then texture.changing = true end
 		if a then
 			texture:SetVertexColor(r, g, b, a)
-			return true
+		else
+			texture:SetVertexColor(r, g, b)
 		end
 
-		texture:SetVertexColor(r, g, b)
+		if bbfHooked then texture.changing = bbfChanging end
 		return true
 	end
 	return false
@@ -1412,6 +1416,65 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
+			local dmDragonTextures = {
+				["ui-targetingframe-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
+				["ui-targetingframe-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
+				["ui-targetingframe-rare-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
+				["leatrix_plus-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
+				["leatrix_plus-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
+				["leatrix_plus"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
+			}
+
+			local function DMGetDragonTexture(texture)
+				if type(texture) ~= "string" then return "" end
+				local name = texture:lower():gsub("%.%a+$", ""):match("([^\\/]+)$") or ""
+				name = name:gsub("%-nomana$", ""):gsub("%-big$", "")
+
+				return dmDragonTextures[name] or ""
+			end
+
+			local function DMSetupClassicFrameDragon(frameName, tries)
+				local frame = _G[frameName]
+				local classicFrame = frame and frame.ClassicFrame
+				local tex = classicFrame and classicFrame.Texture
+				if not tex then
+					if tries > 0 then
+						C_Timer.After(1, function() DMSetupClassicFrameDragon(frameName, tries - 1) end)
+					end
+
+					return
+				end
+
+				if classicFrame.dmDragon or DarkMode:IsAddOnLoaded("DragonflightUi") then return end
+				local dragon = classicFrame:CreateTexture(nil, "OVERLAY")
+				classicFrame.dmDragon = dragon
+				dragon:SetAllPoints(tex)
+				dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+				DarkMode:UpdateColor(dragon, "ufdr")
+				local dmPath = tex:GetTexture()
+				local function DMUpdateDragon()
+					local layer, subLevel = tex:GetDrawLayer()
+					dragon:SetDrawLayer(layer, math.min((subLevel or 0) + 1, 7))
+					dragon:SetTexCoord(tex:GetTexCoord())
+					dragon:SetTexture(DMGetDragonTexture(dmPath))
+				end
+
+				hooksecurefunc(tex, "SetTexture", function(sel, texture)
+					dmPath = texture
+					DMUpdateDragon()
+				end)
+				hooksecurefunc(tex, "SetTexCoord", DMUpdateDragon)
+				hooksecurefunc(tex, "SetShown", function(sel, shown) dragon:SetShown(shown) end)
+				hooksecurefunc(tex, "Show", function() dragon:Show() end)
+				hooksecurefunc(tex, "Hide", function() dragon:Hide() end)
+				dragon:SetShown(tex:IsShown())
+				DMUpdateDragon()
+			end
+
+			for x, name in pairs({"PlayerFrame", "TargetFrame", "FocusFrame"}) do
+				DMSetupClassicFrameDragon(name, 30)
+			end
+
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				DarkMode:After(2, function()
@@ -1464,15 +1527,7 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(FocusFrameTextureFrameTexture, "SetTexture", function(sel, texture)
 						if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 						FocusFrameDragon:SetDrawLayer("BACKGROUND", 1)
-						if texture:dm_endswith("UI-TargetingFrame-Rare") then
-							FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
-						elseif texture:dm_endswith("UI-TargetingFrame-Elite") then
-							FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
-						elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") then
-							FocusFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-						else
-							FocusFrameDragon:SetTexture("")
-						end
+						FocusFrameDragon:SetTexture(DMGetDragonTexture(texture))
 					end)
 
 					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
@@ -1491,15 +1546,7 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(TargetFrameTextureFrameTexture, "SetTexture", function(sel, texture)
 						if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 						TargetFrameDragon:SetDrawLayer("BACKGROUND", 1)
-						if texture:dm_endswith("UI-TargetingFrame-Rare") then
-							TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
-						elseif texture:dm_endswith("UI-TargetingFrame-Elite") then
-							TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
-						elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") then
-							TargetFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-						else
-							TargetFrameDragon:SetTexture("")
-						end
+						TargetFrameDragon:SetTexture(DMGetDragonTexture(texture))
 					end)
 
 					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
@@ -1520,21 +1567,7 @@ function DarkMode:Event(event, ...)
 						hooksecurefunc(PlayerFrameTexture, "SetTexture", function(sel, texture)
 							if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 							PlayerFrameDragon:SetDrawLayer("BORDER", 1)
-							if texture:dm_endswith("UI-TargetingFrame-Rare") or texture:dm_endswith("UI-TargetingFrame-Rare.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
-							elseif texture:dm_endswith("UI-TargetingFrame-Elite") or texture:dm_endswith("UI-TargetingFrame-Elite.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
-							elseif texture:dm_endswith("UI-TargetingFrame-Rare-Elite") or texture:dm_endswith("UI-TargetingFrame-Rare-Elite.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-							elseif texture:dm_endswith("Leatrix_Plus-Rare.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon")
-							elseif texture:dm_endswith("Leatrix_Plus-Elite.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon")
-							elseif texture:dm_endswith("Leatrix_Plus.blp") then
-								PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-							else
-								PlayerFrameDragon:SetTexture("")
-							end
+							PlayerFrameDragon:SetTexture(DMGetDragonTexture(texture))
 						end)
 
 						if not DarkMode:IsAddOnLoaded("DragonflightUi") then
