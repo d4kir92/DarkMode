@@ -36,14 +36,6 @@ local function DMSetSolidColor(texture, r, g, b, a)
 	end
 end
 
-local function DMReload()
-	if C_UI then
-		C_UI.Reload()
-	else
-		ReloadUI()
-	end
-end
-
 local function DMEnableSave()
 	if dmSettings == nil then return end
 	if dmSettings.DMSave == nil then return end
@@ -245,17 +237,15 @@ local function DMBuildFooter()
 		["height"] = 24
 	})
 
-	dmSettings.DMSave = DarkMode:CreateButton("DMSettingsSave", footer)
+	dmSettings.DMSave = DarkMode:CreateReloadButton("DMSettingsSave", footer)
 	dmSettings.DMSave:SetSize(100, 24)
 	dmSettings.DMSave:SetPoint("LEFT", footer, "LEFT", 0, 0)
 	dmSettings.DMSave:SetText(SAVE)
-	dmSettings.DMSave:SetScript("OnClick", DMReload)
 	dmSettings.DMSave:Disable()
-	dmSettings.DMReload = DarkMode:CreateButton("DMSettingsReload", footer)
+	dmSettings.DMReload = DarkMode:CreateReloadButton("DMSettingsReload", footer)
 	dmSettings.DMReload:SetSize(100, 24)
 	dmSettings.DMReload:SetPoint("LEFT", dmSettings.DMSave, "RIGHT", 4, 0)
 	dmSettings.DMReload:SetText(RELOADUI or "RELOADUI")
-	dmSettings.DMReload:SetScript("OnClick", DMReload)
 	dmSettings.DMShowErrors = DarkMode:CreateButton("DMSettingsShowErrors", footer)
 	dmSettings.DMShowErrors:SetSize(110, 24)
 	dmSettings.DMShowErrors:SetPoint("LEFT", dmSettings.DMReload, "RIGHT", 4, 0)
@@ -358,7 +348,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.8.12")
+	DarkMode:SetVersion(136122, "0.8.13")
 	dmSettings = DarkMode:CreateUIWindow({
 		["name"] = "DMSettings",
 		["pTab"] = {"CENTER"},

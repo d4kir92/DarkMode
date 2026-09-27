@@ -1316,13 +1316,8 @@ function DarkMode:InitSlash()
 	DarkMode:AddSlash("dm", DarkMode.ToggleSettings)
 	DarkMode:AddSlash("dark", DarkMode.ToggleSettings)
 	DarkMode:AddSlash("darkmode", DarkMode.ToggleSettings)
-	if C_UI then
-		DarkMode:AddSlash("rl", C_UI.Reload)
-		DarkMode:AddSlash("rel", C_UI.Reload)
-	else
-		DarkMode:AddSlash("rl", ReloadUI)
-		DarkMode:AddSlash("rel", ReloadUI)
-	end
+	DarkMode:AddSlashAlias("rl", "reload")
+	DarkMode:AddSlashAlias("rel", "reload")
 end
 
 local AuraFrames = {}
