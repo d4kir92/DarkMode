@@ -358,7 +358,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.8.11")
+	DarkMode:SetVersion(136122, "0.8.12")
 	dmSettings = DarkMode:CreateUIWindow({
 		["name"] = "DMSettings",
 		["pTab"] = {"CENTER"},
