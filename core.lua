@@ -1451,12 +1451,22 @@ function DarkMode:Event(event, ...)
 				dragon:SetAllPoints(tex)
 				dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
 				DarkMode:UpdateColor(dragon, "ufdr")
+				local content = frame.TargetFrameContent or frame.PlayerFrameContent
+				local contentMain = content and (content.TargetFrameContentMain or content.PlayerFrameContentMain)
+				local contentContext = content and (content.TargetFrameContentContextual or content.PlayerFrameContentContextual)
+				local levelText = contentMain and contentMain.LevelText or frame == PlayerFrame and PlayerLevelText
+				if contentContext and contentContext:GetParent() == classicFrame and contentContext:GetFrameLevel() <= classicFrame:GetFrameLevel() and not InCombatLockdown() then contentContext:SetFrameLevel(classicFrame:GetFrameLevel() + 1) end
 				local dmPath = tex:GetTexture()
 				local function DMUpdateDragon()
 					local layer, subLevel = tex:GetDrawLayer()
-					dragon:SetDrawLayer(layer, math.min((subLevel or 0) + 1, 7))
+					local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
+					dragon:SetDrawLayer(layer, dragonSubLevel)
 					dragon:SetTexCoord(tex:GetTexCoord())
 					dragon:SetTexture(DMGetDragonTexture(dmPath))
+					if levelText and levelText:GetParent() == classicFrame then
+						local textLayer, textSubLevel = levelText:GetDrawLayer()
+						if textLayer == layer and (textSubLevel or 0) <= dragonSubLevel then levelText:SetDrawLayer(textLayer, math.min(dragonSubLevel + 1, 7)) end
+					end
 				end
 
 				hooksecurefunc(tex, "SetTexture", function(sel, texture)
