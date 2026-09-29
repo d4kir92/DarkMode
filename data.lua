@@ -1234,7 +1234,7 @@ function DarkMode:GetIgnoreFrames(name)
 end
 
 local DMIgnoreTextureNames = DMToSet({
-	["All"] = {"ContainerFrame1Portrait", "HonorFramePvPIcon"},
+	["All"] = {"ContainerFrame1Portrait", "FocusFrameToTPortrait", "HonorFramePvPIcon", "TargetFrameToTPortrait"},
 }, true)
 
 function DarkMode:GetIgnoreTextureName(name)
