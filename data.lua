@@ -1240,3 +1240,12 @@ local DMIgnoreTextureNames = DMToSet({
 function DarkMode:GetIgnoreTextureName(name)
 	return DMIgnoreTextureNames[name] or false
 end
+
+local DMIgnoreTextureKeys = {
+	["FocusFrameToT"] = "Portrait",
+	["TargetFrameToT"] = "Portrait",
+}
+
+function DarkMode:GetIgnoreTextureKey(name)
+	return DMIgnoreTextureKeys[name]
+end

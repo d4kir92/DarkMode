@@ -398,6 +398,8 @@ function DarkMode:FindTextures(frame, typ, findName, show)
 	end
 
 	if frame and frame ~= StoreFrame and name and DarkMode:GetIgnoreFrames(name) then return end
+	local ignoreKey = name and DarkMode:GetIgnoreTextureKey(name)
+	local ignoreRegion = ignoreKey and frame[ignoreKey]
 	if frame.SetVertexColor then
 		if findName == nil then
 			DarkMode:UpdateColor(frame, typ)
@@ -413,7 +415,7 @@ function DarkMode:FindTextures(frame, typ, findName, show)
 			local regionName = DarkMode:GetName(region)
 			if (ignoreId1 == nil or ignoreId1 ~= x) and (ignoreId2 == nil or ignoreId2 ~= x) and (ignoreId3 == nil or ignoreId3 ~= x) and ((regionName or not DarkMode:GetIgnoreFrames(regionName)) or (not regionName and region.SetVertexColor)) then
 				if bShow and region.GetTexture then DarkMode:MSG(">>", regionName, region:GetTextureFilePath(), region:GetTexture(), "Size:", region:GetSize()) end
-				if not DarkMode:GetIgnoreTextureName(regionName) then
+				if region ~= ignoreRegion and not DarkMode:GetIgnoreTextureName(regionName) then
 					if findName == nil then
 						DarkMode:UpdateColor(region, typ)
 					else
