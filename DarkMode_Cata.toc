@@ -1,6 +1,6 @@
 ## Interface: 40402
-## Version: 0.8.17
-## Title:  DarkMode |T136122:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
+## Version: 0.8.18
+## Title: DarkMode |T136122:16:16:0:0|t by |cff55d2ffD4KiR |T132115:16:16:0:0|t
 ## Notes: Darkens or colors the user interface/windows
 ## Notes-deDE: Verdunkelt oder färbt die Benutzeroberfläche/Fenster ein
 ## Notes-esES: Oscurece o colorea la interfaz de usuario/ventanas
