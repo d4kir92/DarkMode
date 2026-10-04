@@ -1343,16 +1343,20 @@ function DarkMode:Event(event, ...)
 		if DarkMode.Setup == nil then
 			DarkMode.Setup = true
 			local foundBugSack = false
-			hooksecurefunc("CreateFrame", function(typ, name, parent, template)
-				local BugSackFrame = getglobal("BugSackFrame")
-				if BugSackFrame and foundBugSack == false and strlower(typ) == "frame" then
+			local function StyleBugSack()
+				local BugSackFrame = _G["BugSackFrame"]
+				if BugSackFrame and foundBugSack == false then
 					foundBugSack = true
 					DarkMode:After(0.02, function()
 						DarkMode:Debug(5, "foundBugSack")
 						DarkMode:FindTextures(BugSackFrame, "addons")
 					end, "foundBugSack")
 				end
-			end)
+			end
+
+			local BugSack = _G["BugSack"]
+			if BugSack and BugSack.OpenSack then hooksecurefunc(BugSack, "OpenSack", StyleBugSack) end
+			StyleBugSack()
 
 			DarkMode:InitSlash()
 			DarkMode:InitDB()
