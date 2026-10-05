@@ -1265,6 +1265,56 @@ function DarkMode:GetClassicUIChromeRoots()
 end
 
 -- format: multiline
+local DMClassicUIBarBorders = {
+	["SwingTimerMainHandFrame.StatusBar"] = "ARTWORK",
+	["SwingTimerOffHandFrame.StatusBar"] = "ARTWORK",
+	["SwingTimerRangedFrame.StatusBar"] = "ARTWORK",
+	["PersonalResourceDisplayFrame.HealthBarsContainer.healthBar"] = "OVERLAY",
+	["PersonalResourceDisplayFrame.PowerBar"] = "OVERLAY",
+	["PersonalResourceDisplayFrame.AlternatePowerBar"] = "OVERLAY",
+}
+
+function DarkMode:GetClassicUIBarBorders()
+	return DMClassicUIBarBorders
+end
+
+-- format: multiline
+local DMClassicUIUnitArt = {
+	"TargetFrameToT.fcui.artHolder.fcui.art",
+	"FocusFrameToT.fcui.artHolder.fcui.art",
+}
+
+function DarkMode:GetClassicUIUnitArt()
+	return DMClassicUIUnitArt
+end
+
+-- format: multiline
+local DMClassicUIDragonArt = {
+	"TargetFrame.TargetFrameContainer.FrameTexture",
+	"TargetFrame.TargetFrameContainer.fcui.artFoot",
+	"FocusFrame.TargetFrameContainer.FrameTexture",
+	"FocusFrame.TargetFrameContainer.fcui.artFoot",
+}
+
+function DarkMode:GetClassicUIDragonArt()
+	return DMClassicUIDragonArt
+end
+
+-- format: multiline
+local DMDragonTextures = {
+	["ui-targetingframe-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
+	["ui-targetingframe-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
+	["ui-targetingframe-rare-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
+	["leatrix_plus-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
+	["leatrix_plus-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
+	["leatrix_plus"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
+}
+
+function DarkMode:GetDragonTextures()
+	return DMDragonTextures
+end
+
+-- format: multiline
 local DMClassicUIChromeGroups = {
 	["Dialogs"] = {
 		"ui-dialogbox-border",

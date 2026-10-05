@@ -1523,6 +1523,82 @@ function DarkMode:SetupClassicUIStatusBars()
 	end
 end
 
+function DarkMode:GetDragonTexture(texture)
+	if type(texture) ~= "string" then return "" end
+	local name = texture:lower():gsub("%.%a+$", ""):match("([^\\/]+)$") or ""
+	name = name:gsub("%-nomana$", ""):gsub("%-big$", ""):gsub("%-thickmana$", ""):gsub("%-thickname$", "")
+
+	return DarkMode:GetDragonTextures()[name] or ""
+end
+
+function DarkMode:AddDragonOverlay(tex, host, path, onUpdate)
+	local dragon = host:CreateTexture(nil, "OVERLAY")
+	dragon:SetAllPoints(tex)
+	dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
+	DarkMode:UpdateColor(dragon, "ufdr")
+	local function DMUpdateDragon()
+		local layer, subLevel = tex:GetDrawLayer()
+		local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
+		dragon:SetDrawLayer(layer, dragonSubLevel)
+		dragon:SetTexCoord(tex:GetTexCoord())
+		dragon:SetTexture(DarkMode:GetDragonTexture(path))
+		if onUpdate then onUpdate(layer, dragonSubLevel) end
+	end
+
+	hooksecurefunc(tex, "SetTexture", function(sel, texture)
+		path = texture
+		DMUpdateDragon()
+	end)
+
+	hooksecurefunc(tex, "SetAtlas", function()
+		path = nil
+		DMUpdateDragon()
+	end)
+
+	hooksecurefunc(tex, "SetTexCoord", DMUpdateDragon)
+	hooksecurefunc(tex, "SetShown", function(sel, shown) dragon:SetShown(shown) end)
+	hooksecurefunc(tex, "Show", function() dragon:Show() end)
+	hooksecurefunc(tex, "Hide", function() dragon:Hide() end)
+	dragon:SetShown(tex:IsShown())
+	DMUpdateDragon()
+
+	return dragon
+end
+
+function DarkMode:ColorClassicUIBarBorder(bar, layer)
+	local fill = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
+	local found = false
+	DarkMode:ForeachRegions(bar, function(region) if region ~= fill and region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() == layer and DarkMode:UpdateColor(region, "ui") then found = true end end, "ClassicUIBarBorder")
+
+	return found
+end
+
+function DarkMode:SetupClassicUIUnitArt()
+	if DarkMode.dmClassicUIUnitArtDone then return end
+	local pending = false
+	for path, layer in pairs(DarkMode:GetClassicUIBarBorders()) do
+		local bar = DarkMode:GetFrameByName(path)
+		if bar and bar.GetRegions and not bar.dm_classicui_border and DarkMode:ColorClassicUIBarBorder(bar, layer) then bar.dm_classicui_border = true end
+		if not (bar and bar.dm_classicui_border) then pending = true end
+	end
+
+	for _, path in ipairs(DarkMode:GetClassicUIUnitArt()) do
+		local tex = DarkMode:GetFrameByName(path)
+		if tex and not tex.dm_classicui_art and DarkMode:UpdateColor(tex, "uf") then tex.dm_classicui_art = true end
+		if not (tex and tex.dm_classicui_art) then pending = true end
+	end
+
+	if not DarkMode:IsAddOnLoaded("DragonflightUi") then
+		for _, path in ipairs(DarkMode:GetClassicUIDragonArt()) do
+			local tex = DarkMode:GetFrameByName(path)
+			if tex and tex.GetParent and not tex.dmDragon and DarkMode:UpdateColor(tex, "uf") then tex.dmDragon = DarkMode:AddDragonOverlay(tex, tex:GetParent()) end
+			if not (tex and tex.dmDragon) then pending = true end
+		end
+	end
+
+	DarkMode.dmClassicUIUnitArtDone = not pending
+end
+
 function DarkMode:WatchClassicUIForever()
 	if not DarkMode:IsClassicUIForever() then return end
 	for _, fn in ipairs({"PanelTemplates_SelectTab", "PanelTemplates_DeselectTab"}) do
@@ -1539,6 +1615,7 @@ function DarkMode:WatchClassicUIForever()
 
 		if found then DarkMode:AddonsSearch("ClassicUIForever") end
 		DarkMode:SetupClassicUIStatusBars()
+		DarkMode:SetupClassicUIUnitArt()
 		for typ, list in pairs(roots) do
 			for i = 1, #list do
 				local root = _G[list[i]]
@@ -1629,23 +1706,6 @@ function DarkMode:Event(event, ...)
 				end
 			end
 
-			local dmDragonTextures = {
-				["ui-targetingframe-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
-				["ui-targetingframe-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
-				["ui-targetingframe-rare-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
-				["leatrix_plus-rare"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
-				["leatrix_plus-elite"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
-				["leatrix_plus"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
-			}
-
-			local function DMGetDragonTexture(texture)
-				if type(texture) ~= "string" then return "" end
-				local name = texture:lower():gsub("%.%a+$", ""):match("([^\\/]+)$") or ""
-				name = name:gsub("%-nomana$", ""):gsub("%-big$", "")
-
-				return dmDragonTextures[name] or ""
-			end
-
 			local function DMSetupClassicFrameDragon(frameName, tries)
 				local frame = _G[frameName]
 				local classicFrame = frame and frame.ClassicFrame
@@ -1659,39 +1719,19 @@ function DarkMode:Event(event, ...)
 				end
 
 				if classicFrame.dmDragon or DarkMode:IsAddOnLoaded("DragonflightUi") then return end
-				local dragon = classicFrame:CreateTexture(nil, "OVERLAY")
-				classicFrame.dmDragon = dragon
-				dragon:SetAllPoints(tex)
-				dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-				DarkMode:UpdateColor(dragon, "ufdr")
 				local content = frame.TargetFrameContent or frame.PlayerFrameContent
 				local contentMain = content and (content.TargetFrameContentMain or content.PlayerFrameContentMain)
 				local contentContext = content and (content.TargetFrameContentContextual or content.PlayerFrameContentContextual)
 				local levelText = contentMain and contentMain.LevelText or frame == PlayerFrame and PlayerLevelText
 				if contentContext and contentContext:GetParent() == classicFrame and contentContext:GetFrameLevel() <= classicFrame:GetFrameLevel() and not InCombatLockdown() then contentContext:SetFrameLevel(classicFrame:GetFrameLevel() + 1) end
-				local dmPath = tex:GetTexture()
-				local function DMUpdateDragon()
-					local layer, subLevel = tex:GetDrawLayer()
-					local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
-					dragon:SetDrawLayer(layer, dragonSubLevel)
-					dragon:SetTexCoord(tex:GetTexCoord())
-					dragon:SetTexture(DMGetDragonTexture(dmPath))
+				local function DMLiftLevelText(layer, dragonSubLevel)
 					if levelText and levelText:GetParent() == classicFrame then
 						local textLayer, textSubLevel = levelText:GetDrawLayer()
 						if textLayer == layer and (textSubLevel or 0) <= dragonSubLevel then levelText:SetDrawLayer(textLayer, math.min(dragonSubLevel + 1, 7)) end
 					end
 				end
 
-				hooksecurefunc(tex, "SetTexture", function(sel, texture)
-					dmPath = texture
-					DMUpdateDragon()
-				end)
-				hooksecurefunc(tex, "SetTexCoord", DMUpdateDragon)
-				hooksecurefunc(tex, "SetShown", function(sel, shown) dragon:SetShown(shown) end)
-				hooksecurefunc(tex, "Show", function() dragon:Show() end)
-				hooksecurefunc(tex, "Hide", function() dragon:Hide() end)
-				dragon:SetShown(tex:IsShown())
-				DMUpdateDragon()
+				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, tex:GetTexture(), DMLiftLevelText)
 			end
 
 			for x, name in pairs({"PlayerFrame", "TargetFrame", "FocusFrame"}) do
@@ -1724,7 +1764,7 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(FocusFrameTextureFrameTexture, "SetTexture", function(sel, texture)
 						if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 						FocusFrameDragon:SetDrawLayer("BACKGROUND", 1)
-						FocusFrameDragon:SetTexture(DMGetDragonTexture(texture))
+						FocusFrameDragon:SetTexture(DarkMode:GetDragonTexture(texture))
 					end)
 
 					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
@@ -1743,7 +1783,7 @@ function DarkMode:Event(event, ...)
 					hooksecurefunc(TargetFrameTextureFrameTexture, "SetTexture", function(sel, texture)
 						if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 						TargetFrameDragon:SetDrawLayer("BACKGROUND", 1)
-						TargetFrameDragon:SetTexture(DMGetDragonTexture(texture))
+						TargetFrameDragon:SetTexture(DarkMode:GetDragonTexture(texture))
 					end)
 
 					if not DarkMode:IsAddOnLoaded("DragonflightUi") then
@@ -1764,7 +1804,7 @@ function DarkMode:Event(event, ...)
 						hooksecurefunc(PlayerFrameTexture, "SetTexture", function(sel, texture)
 							if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 							PlayerFrameDragon:SetDrawLayer("BORDER", 1)
-							PlayerFrameDragon:SetTexture(DMGetDragonTexture(texture))
+							PlayerFrameDragon:SetTexture(DarkMode:GetDragonTexture(texture))
 						end)
 
 						if not DarkMode:IsAddOnLoaded("DragonflightUi") then
