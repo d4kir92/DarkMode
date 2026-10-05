@@ -221,6 +221,8 @@ local DMUi = {
 		"CompactRaidFrameManager",
 		"BagsBar.BorderArt",
 		"MicroMenu.BorderArt",
+		"ForeverClassicUIBar",
+		"ForeverClassicUIMicroGroup",
 	},
 	["Gryphons"] = {
 		"MA_LeftEndCap",
@@ -231,6 +233,8 @@ local DMUi = {
 		"MainActionBar.EndCaps",
 		"MainActionBar.EndCaps.LeftEndCap.Texture",
 		"MainActionBar.EndCaps.RightEndCap.Texture",
+		"ForeverClassicUIBar.leftCap",
+		"ForeverClassicUIBar.rightCap",
 	},
 	["Chat"] = {
 		"ChatFrame1EditBox",
@@ -284,6 +288,7 @@ local DMCastbarNonRetail = {
 }
 
 DMAppend(DMUi["Castbar"], isRetail and DMCastbarRetail or DMCastbarNonRetail)
+if C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("ClassicUIForever") then DMAppend(DMUi["Minimap"], {"MinimapCluster", "MinimapBackdrop", "MinimapCluster.Tracking"}) end
 function DarkMode:GetUiTable()
 	return DMUi
 end
@@ -995,6 +1000,15 @@ local DMFramesAddons = {
 		"ItemRackMenuFrame",
 		"ItemRackOptFrame",
 	},
+	["ClassicUIForever"] = {
+		"ForeverClassicUISpellBook",
+		"ClassicUIForeverTalents",
+		"ForeverClassicUIQuestLog",
+		"ForeverClassicUIEquipmentPane",
+		"ForeverClassicUIPvPPane",
+		"ClassicUIForeverTradeSkill",
+		"ClassicUIForeverTrainer",
+	},
 	["OtherAddons"] = {
 		"ACP_AddonList",
 		"ACP_AddonList_ScrollFrame",
@@ -1023,6 +1037,361 @@ end
 local DMFramesAddonsTab = DMToSet(DMFramesAddons)
 function DarkMode:GetFrameAddonsTable()
 	return DMFramesAddonsTab
+end
+
+function DarkMode:GetClassicUIForeverFrames()
+	return DMFramesAddons["ClassicUIForever"]
+end
+
+-- format: multiline
+local DMClassicUIChromeRoots = {
+	"CharacterFrame",
+	"PaperDollFrame",
+	"ReputationFrame",
+	"TokenFrame",
+	"PetPaperDollFrame",
+	"ForeverClassicUIEquipmentPane",
+	"ForeverClassicUIPvPPane",
+	"ClassicUIForeverReputationDetail",
+	"ClassicUIForeverCurrencyDetail",
+	"ClassicUIForeverTradeSkill",
+	"ClassicUIForeverTrainer",
+	"ClassicUIForeverGuildPanel",
+	"ClassicUIForeverWhoPanel",
+	"QuestMapFrame",
+	"GameMenuFrame",
+	"WorldMapFrame",
+	"ForeverClassicUIQuestLog",
+	"ForeverClassicUISpellBook",
+	"ClassicUIForeverTalents",
+	"ForeverClassicUIMinimapBag",
+	"ForeverClassicUIBagsExtra",
+	"MailFrame",
+	"OpenMailFrame",
+	"TradeFrame",
+	"MerchantFrame",
+	"BankFrame",
+	"GossipFrame",
+	"QuestFrame",
+	"ClassTrainerFrame",
+	"LootFrame",
+	"PlayerSpellsFrame",
+	"FriendsFrame",
+	"PVEFrame",
+	"LFGParentFrame",
+	"SettingsPanel",
+	"ContainerFrameCombinedBags",
+	"ProfessionsFrame",
+	"ProfessionsBookFrame",
+	"CalendarFrame",
+	"CommunitiesFrame",
+	"AchievementFrame",
+	"MacroFrame",
+	"AddonList",
+	"InspectFrame",
+	"AuctionHouseFrame",
+	"GuildBankFrame",
+	"ItemSocketingFrame",
+	"DressUpFrame",
+	"TaxiFrame",
+	"PetStableFrame",
+	"HelpFrame",
+	"TimeManagerFrame",
+	"ChannelFrame",
+	"StaticPopup1",
+	"StaticPopup2",
+	"StaticPopup3",
+	"StaticPopup4",
+}
+
+for i = 1, 6 do
+	tinsert(DMClassicUIChromeRoots, "ContainerFrame" .. i)
+end
+
+for i = 1, 10 do
+	tinsert(DMClassicUIChromeRoots, "DamageMeterSessionWindow" .. i)
+end
+
+-- format: multiline
+local DMClassicUIOwnKeys = {
+	"trackTop",
+	"trackMiddle",
+	"trackBottom",
+	"trackFloor",
+	"trackChannel",
+	"titleStrip",
+	"eraTitleStrip",
+	"eraArt",
+	"eraSheet",
+	"footStone",
+	"insetFloor",
+	"header",
+	"plate",
+	"plateLeft",
+	"plateMiddle",
+	"plateRight",
+	"ddLeft",
+	"ddMiddle",
+	"ddRight",
+	"border",
+	"borderL",
+	"borderR",
+	"borderTop",
+	"borderLeft",
+	"borderMiddle",
+	"borderRight",
+	"nameBox",
+	"nameBoxLeft",
+	"nameBoxMiddle",
+	"nameBoxRight",
+	"petBotLeft",
+	"petBotRight",
+	"bankFloor",
+	"descBox",
+	"backing",
+	"floor",
+	"lootPanel",
+	"bottomRight",
+}
+
+function DarkMode:GetClassicUIOwnKeys()
+	return DMClassicUIOwnKeys
+end
+
+local DMClassicUITabLists = {
+	["ForeverClassicUISpellBook"] = {
+		["SkillTabs"] = "background",
+		["BookTabs"] = "states"
+	},
+	["ClassicUIForeverTalents"] = {
+		["tabs"] = "all"
+	},
+}
+
+function DarkMode:GetClassicUITabLists(rootName)
+	return DMClassicUITabLists[rootName]
+end
+
+-- format: multiline
+local DMClassicUIParentChrome = {
+	["ClassicUIForeverTalents"] = {
+		"ClassicUIForeverTalents.spent",
+		"ClassicUIForeverTalents.points",
+		"ClassicUIForeverTalents.reset",
+	},
+}
+
+function DarkMode:GetClassicUIParentChrome(rootName)
+	return DMClassicUIParentChrome[rootName]
+end
+
+local DMClassicUIRingSize = {80, 73}
+function DarkMode:GetClassicUIRingSize()
+	return DMClassicUIRingSize
+end
+
+-- format: multiline
+local DMClassicUINamedChrome = {
+	["CharacterFrame"] = {
+		"CharacterFrame.NineSlice.TopLeftCorner",
+		"CharacterFrame.NineSlice.TopRightCorner",
+		"CharacterFrame.NineSlice.BottomLeftCorner",
+		"CharacterFrame.NineSlice.BottomRightCorner",
+		"CharacterFrame.NineSlice.TopEdge",
+		"CharacterFrame.NineSlice.BottomEdge",
+		"CharacterFrame.NineSlice.LeftEdge",
+		"CharacterFrame.NineSlice.RightEdge",
+		"CharacterFrameModeTab1",
+		"CharacterFrameModeTab2",
+		"CharacterFrameModeTab3",
+		"CharacterFrameModeTab4",
+		"CharacterFrameModeTab5",
+		"CharacterFrameModeTab6",
+		"ForeverClassicUICharacterTab1",
+		"ForeverClassicUICharacterTab2",
+		"ForeverClassicUICharacterTab3",
+		"ForeverClassicUICharacterTab4",
+		"ForeverClassicUICharacterTab5",
+		"ForeverClassicUICharacterTab6",
+		"ForeverClassicUICharacterTab7",
+		"ForeverClassicUICharacterTab8",
+	},
+	["FriendsFrame"] = {
+		"FriendsFrameTab1",
+		"FriendsFrameTab2",
+		"FriendsFrameTab3",
+		"FriendsFrameTab4",
+		"ClassicUIForeverWhoTab",
+		"ClassicUIForeverGuildTab",
+		"ClassicUIForeverCommunitiesTab",
+	},
+}
+
+function DarkMode:GetClassicUINamedChrome(rootName)
+	return DMClassicUINamedChrome[rootName]
+end
+
+-- format: multiline
+local DMClassicUIStatusContainers = {
+	"MainStatusTrackingBarContainer",
+	"SecondaryStatusTrackingBarContainer",
+}
+
+function DarkMode:GetClassicUIStatusContainers()
+	return DMClassicUIStatusContainers
+end
+
+-- format: multiline
+local DMClassicUIChromeUiRoots = {
+	"MainStatusTrackingBarContainer",
+	"SecondaryStatusTrackingBarContainer",
+	"StatusTrackingBarManager",
+	"Minimap",
+	"MinimapCluster",
+	"SwingTimerMainHandFrame",
+	"SwingTimerOffHandFrame",
+	"SwingTimerRangedFrame",
+	"PlayerCastingBarFrame",
+	"PetCastingBarFrame",
+	"TargetFrameSpellBar",
+	"FocusFrameSpellBar",
+}
+
+function DarkMode:GetClassicUIChromeRoots()
+	return {
+		["frames"] = DMClassicUIChromeRoots,
+		["ui"] = DMClassicUIChromeUiRoots
+	}
+end
+
+-- format: multiline
+local DMClassicUIChromeGroups = {
+	["Dialogs"] = {
+		"ui-dialogbox-border",
+		"ui-dialogbox-gold-border",
+		"ui-dialogbox-header",
+		"ui-tooltip-border",
+		"charactercreate-labelframe",
+		"commondropdownclassic",
+		"common-input-border",
+		"ui-sliderbar-border",
+	},
+	["Windows"] = {
+		"uiframemetal",
+		"uiframemetalhorizontal",
+		"uiframemetalvertical",
+		"uiframe-htile-atlas",
+		"uiframe-inner-atlas",
+		"uiframe-vtile-atlas",
+		"_ui-frame",
+		"ui-background-rock",
+		"ui-background-marble",
+		"ui-classtrainer-horizontalbar",
+		"ui-mailframe-invoiceline",
+		"helpframetab-active",
+		"helpframetab-inactive",
+		"ui-optionsframe-activetab",
+		"ui-optionsframe-inactivetab",
+	},
+	["Character"] = {
+		"ui-character-general-topleft",
+		"ui-character-general-topright",
+		"ui-character-general-bottomleft",
+		"ui-character-general-bottomright",
+		"ui-character-charactertab-l1",
+		"ui-character-charactertab-r1",
+		"ui-character-charactertab-bottomleft",
+		"ui-character-charactertab-bottomright",
+		"ui-character-activetab",
+		"ui-character-inactivetab",
+		"ui-character-statbackground",
+		"ui-character-skills-barborder",
+		"ui-petpaperdollframe-botleft",
+		"ui-petpaperdollframe-botright",
+	},
+	["QuestLog"] = {
+		"ui-questlog-topleft",
+		"ui-questlog-topright",
+		"ui-questlog-botleft",
+		"ui-questlog-botright",
+		"ui-questlog-empty-topleft",
+		"ui-questlog-empty-topright",
+		"ui-questlog-empty-botleft",
+		"ui-questlog-empty-botright",
+		"ui-questlogdualpane-left",
+		"ui-questlogdualpane-right",
+		"ui-questlogsorttab-left",
+		"ui-questlogsorttab-middle",
+		"ui-questlogsorttab-right",
+	},
+	["Spellbook"] = {
+		"ui-spellbookpanel-topleft",
+		"ui-spellbookpanel-topright",
+		"ui-spellbookpanel-botleft",
+		"ui-spellbookpanel-botright",
+		"ui-talentframe-botleft",
+		"ui-talentframe-botright",
+	},
+	["Containers"] = {
+		"ui-lootpanel",
+		"ui-merchant-bottomborder",
+		"ui-merchant-labelslots",
+		"ui-backpackbackground",
+		"ui-bag-components",
+		"ui-bag-components-keyring",
+		"ui-bankframe-floor",
+	},
+	["ScrollBars"] = {
+		"ui-character-scrollbar",
+		"erascrollbartrack",
+		"erascrollbarthumbcaps",
+		"erascrollbararrows",
+		"ui-scrollbar-scrollupbutton-up",
+		"ui-scrollbar-scrollupbutton-down",
+		"ui-scrollbar-scrollupbutton-disabled",
+		"ui-scrollbar-scrolldownbutton-up",
+		"ui-scrollbar-scrolldownbutton-down",
+		"ui-scrollbar-scrolldownbutton-disabled",
+		"ui-mainmenu-scrollupbutton-up",
+		"ui-mainmenu-scrollupbutton-down",
+		"ui-mainmenu-scrollupbutton-disabled",
+		"ui-mainmenu-scrolldownbutton-up",
+		"ui-mainmenu-scrolldownbutton-down",
+		"ui-mainmenu-scrolldownbutton-disabled",
+	},
+	["Era"] = {
+		"eraoptions",
+		"eradropdownc",
+		"erasearchbox",
+		"eralfgframe",
+		"eralfgbrowsetop",
+	},
+	["WorldMap"] = {
+		334393,
+		334394,
+	},
+	["Minimap"] = {
+		136430,
+		"minimap-trackingborder",
+		"ui-minimap-border",
+		"clockbackground",
+		"ui-hud-minimap-frame-cycle",
+	},
+	["StatusBars"] = {
+		"ui-reputationwatchbar",
+		"ui-mainmenubar-dwarf",
+		"ui-mainmenubar-keyring",
+		"ui-mainmenubar-keyring-classic",
+		"ui-exhaustionticknormal",
+		"ui-mainmenubar-maxlevel",
+		"ui-castingbar-border",
+		"ui-castingbar-border-small",
+	},
+}
+
+local DMClassicUIChromeFiles = DMToSet(DMClassicUIChromeGroups, true)
+function DarkMode:GetClassicUIChromeFiles()
+	return DMClassicUIChromeFiles
 end
 
 -- format: multiline

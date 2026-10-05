@@ -837,6 +837,7 @@ function DarkMode:SearchUi(from)
 					for x = 1, max do
 						local btn = _G[name .. x]
 						local btnTextureNormalTexture = _G[name .. x .. "NormalTexture"]
+						if btnTextureNormalTexture == nil and btn and btn.GetNormalTexture and DarkMode:IsClassicUIForever() then btnTextureNormalTexture = btn:GetNormalTexture() end
 						local btnTextureFloatingBG = _G[name .. x .. "FloatingBG"]
 						if btn and btnTextureFloatingBG then btn:HookScript("OnLeave", function() btnTextureNormalTexture:SetAlpha(0.5) end) end
 						if name == "BT4StanceButton" and btn and _G[name .. x .. "BorderFix"] == nil and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" then
@@ -939,7 +940,7 @@ function DarkMode:SearchUi(from)
 										DarkMode:AddActionButtonBorder(btn, btn, name .. x, sw * scale, sh * scale, 0, 0, "actionbuttons", "Interface\\AddOns\\DarkMode\\media\\defaultEER", true)
 									end
 								end
-							elseif DarkMode:GetWoWBuild() ~= "RETAIL" and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" then
+							elseif (DarkMode:GetWoWBuild() ~= "RETAIL" or DarkMode:IsClassicUIForever()) and (DarkMode:IsEnabled("MASKACTIONBUTTONS", true) or name == "PetActionButton" or name == "StanceButton") and DarkMode:DMGV("COLORMODEAB", 1) ~= "Off" then
 								local icon = _G[name .. x .. "Icon"]
 								if icon then
 									local br = 0.012
@@ -1032,8 +1033,8 @@ function DarkMode:SearchUi(from)
 		end
 	end
 
-	local MinimapZoomIn = getglobal("MinimapZoomIn")
-	local MinimapZoomOut = getglobal("MinimapZoomOut")
+	local MinimapZoomIn = getglobal("MinimapZoomIn") or (DarkMode:IsClassicUIForever() and Minimap and Minimap.ZoomIn)
+	local MinimapZoomOut = getglobal("MinimapZoomOut") or (DarkMode:IsClassicUIForever() and Minimap and Minimap.ZoomOut)
 	if MinimapZoomIn and MinimapZoomOut and _G["MinimapZoomIn" .. ".DMBorder"] == nil and not DarkMode:IsAddOnLoaded("DragonflightUI") then
 		local border = MinimapZoomIn:CreateTexture("MinimapZoomIn" .. ".DMBorder", "OVERLAY")
 		border:SetTexture("Interface\\AddOns\\DarkMode\\media\\zoom_border")
@@ -1327,6 +1328,33 @@ local TargetBuffs = {}
 local FocusBuffs = {}
 local BuffFrameBuffs = {}
 local BAGS = {"MainMenuBarBackpackButton", "CharacterBag0Slot", "CharacterBag1Slot", "CharacterBag2Slot", "CharacterBag3Slot", "DominosKeyRingButton", "KeyRingButton", "CharacterReagentBag0Slot"}
+function DarkMode:AddClassicBagBorders()
+	for i, v in pairs(BAGS) do
+		local bagF = _G[v]
+		local NT = _G[v .. "NormalTexture"]
+		if bagF then
+			local sw, sh = bagF:GetSize()
+			if NT and NT.scalesetup == nil then
+				NT.scalesetup = true
+				if NT:GetTexture() == 130841 then
+					local scale = 1.66
+					NT:SetSize(sw * scale, sh * scale)
+				end
+			end
+
+			local scale = 1.1
+			if v == "KeyRingButton" then scale = 1 end
+			if false then scale = 1.18 end
+			DarkMode:AddActionButtonBorder(bagF, bagF, v, sw * scale, sh * scale, 0, 0, "bags", nil, false)
+			if LibStub and MSQ == nil then MSQ = LibStub("Masque", true) end
+			if MSQ and bagF and v ~= "BagToggle" then
+				if bagF.__MSQ_Mask then DarkMode:UpdateColor(bagF.__MSQ_Mask, "bags") end
+				if bagF.__MSQ_Normal then DarkMode:UpdateColor(bagF.__MSQ_Normal, "bags") end
+				if bagF.__MSQ_NewNormal then DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "bags") end
+			end
+		end
+	end
+end
 DarkMode:After(4, function()
 	DarkMode:Debug(3, "startSearch 1")
 	DarkMode:AddonsSearch("startSearch 1")
@@ -1337,11 +1365,195 @@ DarkMode:After(8, function()
 	DarkMode:AddonsSearch("startSearch 2")
 end, "startSearch 2")
 
+function DarkMode:IsClassicUIForever()
+	return C_AddOns and C_AddOns.IsAddOnLoaded and C_AddOns.IsAddOnLoaded("ClassicUIForever") or false
+end
+
+function DarkMode:IsClassicUIChrome(texture)
+	if texture == nil or texture.GetTexture == nil or texture.SetText then return false end
+	local files = DarkMode:GetClassicUIChromeFiles()
+	if texture.GetAtlas then
+		local okAtlas, atlas = pcall(texture.GetAtlas, texture)
+		if okAtlas and type(atlas) == "string" and not DarkMode:IsSecret(atlas) and files[atlas:lower()] then return true end
+	end
+
+	for _, getter in ipairs({"GetTextureFilePath", "GetTexture", "GetTextureFileID"}) do
+		if texture[getter] then
+			local ok, value = pcall(texture[getter], texture)
+			if ok and value ~= nil and not DarkMode:IsSecret(value) then
+				if type(value) == "number" and files[value] then return true end
+				if type(value) == "string" then
+					local base = value:match("([^\\/]+)$")
+					if base and files[base:gsub("%.%a+$", ""):lower()] then return true end
+				end
+			end
+		end
+	end
+	return false
+end
+
+function DarkMode:ColorBackdropEdges(frame)
+	if frame.backdropInfo == nil or frame.backdropInfo.edgeFile == nil then return end
+	for _, key in ipairs(DarkMode:GetDMRepeatingFrames2()) do
+		if frame[key] then DarkMode:UpdateColor(frame[key], "frames") end
+	end
+end
+
+function DarkMode:IsClassicUIRing(frame)
+	if frame.GetName == nil or frame:GetName() ~= nil or frame.GetSize == nil then return false end
+	local w, h = frame:GetSize()
+	if type(w) ~= "number" or type(h) ~= "number" or DarkMode:IsSecret(w) or DarkMode:IsSecret(h) then return false end
+	local size = DarkMode:GetClassicUIRingSize()
+	return math.abs(w - size[1]) < 0.5 and math.abs(h - size[2]) < 0.5
+end
+
+function DarkMode:ColorClassicUITab(tab, typ)
+	if type(tab) ~= "table" or DarkMode:IsForbidden(tab) or not rawget(tab, "fcuiTab") or tab.GetRegions == nil then return end
+	DarkMode:ForeachRegions(tab, function(region) if region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() ~= "HIGHLIGHT" then DarkMode:UpdateColor(region, typ or "frames") end end, "ClassicUITab")
+end
+
+function DarkMode:ColorClassicUIChrome(frame, typ, depth)
+	depth = depth or 0
+	if frame == nil or depth > 10 or DarkMode:IsForbidden(frame) then return end
+	DarkMode:ColorBackdropEdges(frame)
+	local own = rawget(frame, "fcui")
+	if type(own) == "table" then
+		for _, key in ipairs(DarkMode:GetClassicUIOwnKeys()) do
+			local tex = own[key]
+			if type(tex) == "table" and tex.SetVertexColor and tex.GetObjectType and tex:GetObjectType() == "Texture" then DarkMode:UpdateColor(tex, typ) end
+		end
+	end
+
+	local column = rawget(frame, "fcuiColumn") or rawget(frame, "fcuiTrackArt")
+	local ring = DarkMode:IsClassicUIRing(frame)
+	if rawget(frame, "fcuiTab") then DarkMode:ColorClassicUITab(frame, typ) end
+	if frame.GetRegions then DarkMode:ForeachRegions(frame, function(region) if DarkMode:IsClassicUIChrome(region) or (region.IsObjectType and region:IsObjectType("Texture") and (ring or (column and region:GetDrawLayer() == "BACKGROUND"))) then DarkMode:UpdateColor(region, typ) end end, "ClassicUIChrome") end
+	if frame.GetChildren then DarkMode:ForeachChildren(frame, function(child) DarkMode:ColorClassicUIChrome(child, typ, depth + 1) end, "ClassicUIChrome") end
+end
+
+function DarkMode:ColorClassicUIQuestText(detailChild)
+	if DarkMode:DMGV("COLORMODEF", 1) ~= DarkMode:GetColorModeID("Off") then DarkMode:FindTexts(detailChild, "ForeverClassicUIQuestLog") end
+end
+
+function DarkMode:ColorClassicUIRegions(frame, typ, layer)
+	if type(frame) ~= "table" or frame.GetRegions == nil or DarkMode:IsForbidden(frame) then return end
+	DarkMode:ForeachRegions(frame, function(region)
+		if region.IsObjectType and region:IsObjectType("Texture") then
+			local drawLayer = region:GetDrawLayer()
+			if drawLayer ~= "HIGHLIGHT" and (layer == nil or drawLayer == layer) then DarkMode:UpdateColor(region, typ) end
+		end
+	end, "ClassicUIRegions")
+end
+
+function DarkMode:ColorClassicUINamedChrome(rootName, typ)
+	for _, name in ipairs(DarkMode:GetClassicUINamedChrome(rootName) or {}) do
+		DarkMode:FindTexturesByName(name, typ)
+		local obj = DarkMode:GetFrameByName(name)
+		if type(obj) == "table" and type(rawget(obj, "SetSelected")) == "function" and not obj.dm_classicui_selected then
+			obj.dm_classicui_selected = true
+			hooksecurefunc(obj, "SetSelected", function(sel) DarkMode:After(0.05, function() DarkMode:FindTextures(sel, typ) end, "ClassicUITab") end)
+		end
+	end
+
+	for _, name in ipairs(DarkMode:GetClassicUIParentChrome(rootName) or {}) do
+		local obj = DarkMode:GetFrameByName(name)
+		if obj and obj.GetParent then DarkMode:ColorClassicUIRegions(obj:GetParent(), typ) end
+	end
+
+	local root = _G[rootName]
+	for field, mode in pairs(DarkMode:GetClassicUITabLists(rootName) or {}) do
+		local tabs = root and rawget(root, field)
+		if type(tabs) == "table" then
+			for _, tab in pairs(tabs) do
+				if mode == "background" then
+					DarkMode:ColorClassicUIRegions(tab, typ, "BACKGROUND")
+				elseif mode == "states" then
+					for _, getter in ipairs({"GetNormalTexture", "GetPushedTexture", "GetDisabledTexture"}) do
+						local tex = tab[getter] and tab[getter](tab)
+						if tex then DarkMode:UpdateColor(tex, typ) end
+					end
+				else
+					DarkMode:ColorClassicUIRegions(tab, typ)
+				end
+			end
+		end
+	end
+end
+
+function DarkMode:SetupClassicUIChromeRoot(frame, typ, rootName)
+	if frame.dm_classicui_chrome then return end
+	frame.dm_classicui_chrome = true
+	local detailChild = frame == _G["ForeverClassicUIQuestLog"] and frame.detailChild or nil
+	local function ColorRoot()
+		DarkMode:ColorClassicUIChrome(frame, typ)
+		DarkMode:ColorClassicUINamedChrome(rootName, typ)
+		DarkMode:After(0.1, function() DarkMode:ColorClassicUINamedChrome(rootName, typ) end, "ClassicUIChrome")
+		if detailChild then DarkMode:ColorClassicUIQuestText(detailChild) end
+		DarkMode:After(0.1, function() DarkMode:ColorClassicUIChrome(frame, typ) end, "ClassicUIChrome")
+		DarkMode:After(1, function() DarkMode:ColorClassicUIChrome(frame, typ) end, "ClassicUIChrome")
+		DarkMode:After(5, function() DarkMode:ColorClassicUIChrome(frame, typ) end, "ClassicUIChrome")
+		DarkMode:After(15, function() DarkMode:ColorClassicUIChrome(frame, typ) end, "ClassicUIChrome")
+	end
+
+	frame:HookScript("OnShow", ColorRoot)
+	if detailChild then hooksecurefunc(detailChild, "SetHeight", function() DarkMode:ColorClassicUIQuestText(detailChild) end) end
+	ColorRoot()
+end
+
+function DarkMode:ColorClassicUIStatusBar(status)
+	for _, strip in ipairs(status.fcuiStrips or {}) do
+		DarkMode:UpdateColor(strip, "ui")
+	end
+end
+
+function DarkMode:SetupClassicUIStatusBars()
+	for _, name in ipairs(DarkMode:GetClassicUIStatusContainers()) do
+		local container = _G[name]
+		if container and type(container.bars) == "table" then
+			for _, bar in pairs(container.bars) do
+				local status = type(bar) == "table" and bar.StatusBar
+				if status and status.HookScript and not status.dm_classicui_status then
+					status.dm_classicui_status = true
+					hooksecurefunc(status, "SetSize", function() DarkMode:After(0.05, function() DarkMode:ColorClassicUIStatusBar(status) end, "ClassicUIStatusBar") end)
+					status:HookScript("OnShow", function() DarkMode:After(0.05, function() DarkMode:ColorClassicUIStatusBar(status) end, "ClassicUIStatusBar") end)
+					DarkMode:ColorClassicUIStatusBar(status)
+				end
+			end
+		end
+	end
+end
+
+function DarkMode:WatchClassicUIForever()
+	if not DarkMode:IsClassicUIForever() then return end
+	for _, fn in ipairs({"PanelTemplates_SelectTab", "PanelTemplates_DeselectTab"}) do
+		if _G[fn] then hooksecurefunc(fn, function(tab) DarkMode:After(0.05, function() DarkMode:ColorClassicUITab(tab, "frames") end, "ClassicUITab") end) end
+	end
+
+	local names = DarkMode:GetClassicUIForeverFrames()
+	local roots = DarkMode:GetClassicUIChromeRoots()
+	C_Timer.NewTicker(0.25, function()
+		local found = false
+		for i = 1, #names do
+			if DarkMode:GetFrameAddonsTable()[names[i]] and _G[names[i]] then found = true end
+		end
+
+		if found then DarkMode:AddonsSearch("ClassicUIForever") end
+		DarkMode:SetupClassicUIStatusBars()
+		for typ, list in pairs(roots) do
+			for i = 1, #list do
+				local root = _G[list[i]]
+				if type(root) == "table" and root.HookScript and not root.dm_classicui_chrome then DarkMode:SetupClassicUIChromeRoot(root, typ, list[i]) end
+			end
+		end
+	end)
+end
+
 local inspectFound = false
 function DarkMode:Event(event, ...)
 	if event == "PLAYER_LOGIN" then
 		if DarkMode.Setup == nil then
 			DarkMode.Setup = true
+			DarkMode:WatchClassicUIForever()
 			local foundBugSack = false
 			local function StyleBugSack()
 				local BugSackFrame = _G["BugSackFrame"]
@@ -1491,33 +1703,7 @@ function DarkMode:Event(event, ...)
 				DarkMode:After(2, function()
 					DarkMode:Debug(5, "BAGS ~= RETAIL")
 					local mode = DarkMode:DMGV("COLORMODEBA", 1)
-					if mode ~= 7 and mode ~= 9 then
-						for i, v in pairs(BAGS) do
-							local bagF = _G[v]
-							local NT = _G[v .. "NormalTexture"]
-							if bagF then
-								local sw, sh = bagF:GetSize()
-								if NT and NT.scalesetup == nil then
-									NT.scalesetup = true
-									if NT:GetTexture() == 130841 then
-										local scale = 1.66
-										NT:SetSize(sw * scale, sh * scale)
-									end
-								end
-
-								local scale = 1.1
-								if v == "KeyRingButton" then scale = 1 end
-								if false then scale = 1.18 end
-								DarkMode:AddActionButtonBorder(bagF, bagF, v, sw * scale, sh * scale, 0, 0, "bags", nil, false)
-								if LibStub and MSQ == nil then MSQ = LibStub("Masque", true) end
-								if MSQ and bagF and v ~= "BagToggle" then
-									if bagF.__MSQ_Mask then DarkMode:UpdateColor(bagF.__MSQ_Mask, "bags") end
-									if bagF.__MSQ_Normal then DarkMode:UpdateColor(bagF.__MSQ_Normal, "bags") end
-									if bagF.__MSQ_NewNormal then DarkMode:UpdateColor(bagF.__MSQ_NewNormal, "bags") end
-								end
-							end
-						end
-					end
+					if mode ~= 7 and mode ~= 9 then DarkMode:AddClassicBagBorders() end
 				end, "BAGS")
 
 				local function dm_endswith(sel, suffix)
@@ -1651,7 +1837,13 @@ function DarkMode:Event(event, ...)
 				DarkMode:After(1, function()
 					DarkMode:Debug(5, "BAGS == RETAIL")
 					local mode = DarkMode:DMGV("COLORMODEBA", 1)
-					if mode ~= 7 and mode ~= 9 then
+					if mode ~= 7 and mode ~= 9 and DarkMode:IsClassicUIForever() then
+						DarkMode:AddClassicBagBorders()
+						for i, v in pairs(BAGS) do
+							local bagF = _G[v]
+							if bagF and bagF.GetNormalTexture and bagF:GetNormalTexture() then DarkMode:UpdateColor(bagF:GetNormalTexture(), "bags") end
+						end
+					elseif mode ~= 7 and mode ~= 9 then
 						for i, v in pairs(BAGS) do
 							local bagF = _G[v]
 							local NT = _G[v .. "NormalTexture"]
