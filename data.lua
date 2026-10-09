@@ -951,6 +951,15 @@ local DMFramesAddons = {
 	["LegacySystem"] = {
 		"LegacySystemFrame",
 	},
+	["SocialUI"] = {
+		"SocialUIFrame",
+		"SocialUIFrame.BattleNetBar",
+		"SocialUIFrame.IgnoreListFrame",
+		"SocialUIFrame.IgnoreListFrame.Inset",
+		"SocialUIFrame.BattleNetBroadcastFrame.Border",
+		"SocialUIFrame.BattleNetUnavailableNoticeFrame.Border",
+		"SocialUIFrame.RaidInfoFrame",
+	},
 	["Misc"] = {
 		"CalendarFrame",
 		"PlayerChoiceFrame",
