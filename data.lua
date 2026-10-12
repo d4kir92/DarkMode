@@ -135,6 +135,7 @@ local DMUi = {
 		"PetFrameTexture",
 		"PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture",
 		"PlayerFrame.PlayerFrameContainer.FrameTexture",
+		"PlayerFrame.PlayerFrameContainer.PlayerElite",
 		"TargetFrame.TargetFrameContainer.FrameTexture",
 		"FocusFrame.TargetFrameContainer.FrameTexture",
 		"PartyMemberFrame1PetFrameTexture",
