@@ -1246,6 +1246,7 @@ local npf = CreateFrame("FRAME")
 npf:RegisterEvent("NAME_PLATE_UNIT_ADDED")
 function DarkMode:ColorNameplate(id)
 	if nameplateIds[id] == nil and _G["NamePlate" .. id] then
+		DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.PlayerLevelDiffFrame", "np")
 		if _G["NamePlate" .. id]["UnitFrame"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"] and _G["NamePlate" .. id]["UnitFrame"]["HealthBarsContainer"]["border"] then
 			nameplateIds[id] = true
 			DarkMode:FindTexturesByName("NamePlate" .. id .. ".UnitFrame.HealthBarsContainer.border", "np")
