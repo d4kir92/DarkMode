@@ -348,7 +348,7 @@ function DarkMode:ToggleSettings()
 end
 
 function DarkMode:InitDMSettings()
-	DarkMode:SetVersion(136122, "0.8.27")
+	DarkMode:SetVersion()
 	dmSettings = DarkMode:CreateUIWindow({
 		["name"] = "DMSettings",
 		["pTab"] = {"CENTER"},
@@ -356,7 +356,7 @@ function DarkMode:InitDMSettings()
 		["height"] = DarkMode:DMGV("SETTINGSHEIGHT", DarkMode:MClamp(640, 200, GetScreenHeight())),
 		["minWidth"] = 420,
 		["minHeight"] = 300,
-		["title"] = format("|T136122:16:16:0:0|t DarkMode v%s", DarkMode:GetVersion()),
+		["title"] = format("|T%s:16:16:0:0|t DarkMode v%s", DarkMode:GetAddonIcon(), DarkMode:GetVersion()),
 		["onResize"] = function(width, height)
 			DarkMode:DMSV("SETTINGSWIDTH", width)
 			DarkMode:DMSV("SETTINGSHEIGHT", height)

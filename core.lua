@@ -2129,9 +2129,9 @@ function DarkMode:Event(event, ...)
 
 			DarkMode:CreateMinimapButton({
 				["name"] = "DarkMode",
-				["icon"] = 136122,
+				["icon"] = DarkMode:GetAddonIcon(),
 				["dbtab"] = DMTAB,
-				["vTT"] = {{"|T136122:16:16:0:0|t DarkMode", "v" .. DarkMode:GetVersion()}, {DarkMode:Trans("LID_LEFTCLICK"), DarkMode:Trans("LID_OPENSETTINGS")}, {DarkMode:Trans("LID_RIGHTCLICK"), DarkMode:Trans("LID_HIDEMINIMAPBUTTON")}},
+				["vTT"] = {{format("|T%s:16:16:0:0|t DarkMode", DarkMode:GetAddonIcon()),"v" .. DarkMode:GetVersion()}, {DarkMode:Trans("LID_LEFTCLICK"), DarkMode:Trans("LID_OPENSETTINGS")}, {DarkMode:Trans("LID_RIGHTCLICK"), DarkMode:Trans("LID_HIDEMINIMAPBUTTON")}},
 				["funcL"] = function() DarkMode:ToggleSettings() end,
 				["funcR"] = function()
 					DarkMode:SetEnabled("MMBTN", false)
