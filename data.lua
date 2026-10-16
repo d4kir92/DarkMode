@@ -1318,6 +1318,8 @@ end
 
 -- format: multiline
 local DMClassicUIDragonArt = {
+	"PlayerFrame.PlayerFrameContainer.FrameTexture",
+	"PlayerFrame.PlayerFrameContainer.AlternatePowerFrameTexture",
 	"TargetFrame.TargetFrameContainer.FrameTexture",
 	"TargetFrame.TargetFrameContainer.fcui.artFoot",
 	"FocusFrame.TargetFrameContainer.FrameTexture",
