@@ -980,7 +980,7 @@ function DarkMode:SearchUi(from)
 						end
 					end
 				end
-			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" then
+			elseif index == "Minimap" or index == "Artworks" or index == "Chat" or index == "Castbar" or index == "ObjectiveTracker" then
 				for ind, name in pairs(tab) do
 					if index == "Artworks" and name == "BT4BarBlizzardArt.nineSliceParent" then
 						local frame = DarkMode:GetFrameByName(name)
