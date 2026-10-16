@@ -786,6 +786,24 @@ function DarkMode:SearchAddons(from)
 	end
 end
 
+function DarkMode:AddMinimapHeaderIcon(btn)
+	if btn == nil or btn.dmIconOverlay or btn.StateTexture == nil or btn.StateTexture.GetAtlas == nil then return end
+	local state = btn.StateTexture
+	local atlas = state:GetAtlas()
+	if atlas == nil then return end
+	local icon = btn:CreateTexture(nil, "ARTWORK", nil, 1)
+	icon:SetAtlas(atlas)
+	icon:SetAllPoints(state)
+	local inset = state:GetWidth() * 0.22
+	local mask = btn:CreateMaskTexture()
+	mask:SetTexture("Interface\\BUTTONS\\WHITE8X8", "CLAMPTOBLACKADDITIVE", "CLAMPTOBLACKADDITIVE")
+	mask:SetPoint("TOPLEFT", state, "TOPLEFT", inset, -inset)
+	mask:SetPoint("BOTTOMRIGHT", state, "BOTTOMRIGHT", -inset, inset)
+	icon:AddMaskTexture(mask)
+	btn.dmIconOverlay = icon
+	hooksecurefunc(state, "SetAtlas", function(_, newAtlas) icon:SetAtlas(newAtlas) end)
+end
+
 function DarkMode:SearchUi(from)
 	if not debugDisabled then DarkMode:DEB("SearchUi", from) end
 	local raidOnly = from == "raid"
@@ -1047,6 +1065,9 @@ function DarkMode:SearchUi(from)
 		border2:SetDrawLayer("OVERLAY", 3)
 		DarkMode:UpdateColor(border2, "ui")
 	end
+
+	DarkMode:AddMinimapHeaderIcon(MinimapCluster and MinimapCluster.Tracking and MinimapCluster.Tracking.Button)
+	DarkMode:AddMinimapHeaderIcon(getglobal("GameTimeFrame"))
 
 	local MiniMapTrackingFrame = getglobal("MiniMapTrackingFrame")
 	if MiniMapTrackingFrame and _G["MiniMapTrackingFrame" .. ".DMBorder"] == nil then

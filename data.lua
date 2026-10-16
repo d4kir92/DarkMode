@@ -97,6 +97,10 @@ local DMUi = {
 		"TimeManagerClockButton",
 		"MinimapCompassTexture",
 		"MinimapCluster.BorderTop",
+		"MinimapCluster.ZoneTextButton.StateTexture",
+		"MinimapCluster.Tracking.Button.StateTexture",
+		"GameTimeFrame.StateTexture",
+		"AddonCompartmentFrame.StateTexture",
 	},
 	["UnitFrames"] = {
 		"FocusFrameToT",
