@@ -69,8 +69,24 @@ local function DMUpdateMainActionBarDividers(bar, typ)
 	DMUpdateActionBarDividerPool(bar.VerticalDividersPool, typ)
 end
 
+function DarkMode:LockColorType(texture, typ)
+	if not DarkMode:IsValidTexture(texture) or texture.dmLockType == typ then return end
+	texture.dmLockType = typ
+	for _, list in pairs(DMTextures) do
+		list[texture] = nil
+	end
+
+	if not DarkMode:UpdateColor(texture, typ) and not texture.dm_lock_alpha_hook and texture.SetAlpha then
+		texture.dm_lock_alpha_hook = true
+		hooksecurefunc(texture, "SetAlpha", function(sel, alpha)
+			if alpha and alpha > 0 and not DMTextures[sel.dmLockType][sel] then DarkMode:UpdateColor(sel, sel.dmLockType) end
+		end)
+	end
+end
+
 function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if not DarkMode:IsValidTexture(texture) then return false end
+	if texture.dmLockType then typ = texture.dmLockType end
 	if texture == nil then
 		DarkMode:MSG("[UpdateColor] INVALID TEXTURE OBJECT")
 		return false
@@ -113,10 +129,11 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 				if DarkMode:IsForbidden(sel) then return end
 				if sel.dm_setvertexcolor then return end
 				sel.dm_setvertexcolor = true
-				if DarkMode:IsColorType(typ) then
-					local r, g, b, a = DarkMode:GetTypeColor(typ, sel)
+				local hookTyp = sel.dmLockType or typ
+				if DarkMode:IsColorType(hookTyp) then
+					local r, g, b, a = DarkMode:GetTypeColor(hookTyp, sel)
 					if ola and ola < 1 then a = ola end
-					DarkMode:SetVertexColor(sel, r, g, b, a, typ)
+					DarkMode:SetVertexColor(sel, r, g, b, a, hookTyp)
 				else
 					DarkMode:INFO("[UpdateColor] #2 Missing type", typ)
 				end
@@ -1567,7 +1584,7 @@ function DarkMode:AddDragonOverlay(tex, host, path, onUpdate, coordFn)
 	local dragon = host:CreateTexture(nil, "OVERLAY")
 	dragon:SetAllPoints(tex)
 	dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
-	DarkMode:UpdateColor(dragon, "ufdr")
+	DarkMode:LockColorType(dragon, "ufdr")
 	local function DMUpdateDragon()
 		local layer, subLevel = tex:GetDrawLayer()
 		local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
@@ -1821,6 +1838,15 @@ function DarkMode:Event(event, ...)
 				end
 
 				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, tex:GetTexture(), DMLiftLevelText)
+				local container = frame.PlayerFrameContainer
+				if container then
+					local function DMLockPlayerElite()
+						if container.PlayerElite then DarkMode:LockColorType(container.PlayerElite, "ufdr") end
+					end
+
+					DMLockPlayerElite()
+					if type(BBF) == "table" and type(BBF.PlayerElite) == "function" then hooksecurefunc(BBF, "PlayerElite", DMLockPlayerElite) end
+				end
 			end
 
 			for x, name in pairs({"PlayerFrame", "TargetFrame", "FocusFrame"}) do
