@@ -77,11 +77,7 @@ local function DMSetCollapsed(key, collapsed)
 	if key == nil then return end
 	if type(DMTAB) ~= "table" then return end
 	if type(DMTAB["COLLAPSED"]) ~= "table" then DMTAB["COLLAPSED"] = {} end
-	if collapsed then
-		DMTAB["COLLAPSED"][key] = true
-	else
-		DMTAB["COLLAPSED"][key] = nil
-	end
+	DMTAB["COLLAPSED"][key] = collapsed == true
 end
 
 function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)

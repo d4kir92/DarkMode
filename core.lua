@@ -56,17 +56,17 @@ for _, colorType in ipairs(DarkMode:GetColorTypes()) do
 end
 
 local MMBTNSETUP = {}
-local function DMUpdateActionBarDividerPool(pool)
+local function DMUpdateActionBarDividerPool(pool, typ)
 	if not pool or not pool.EnumerateActive then return end
 	for divider in pool:EnumerateActive() do
-		DarkMode:FindTextures(divider, "actionbuttons")
+		DarkMode:FindTextures(divider, typ or "actionbuttons")
 	end
 end
 
-local function DMUpdateMainActionBarDividers(bar)
+local function DMUpdateMainActionBarDividers(bar, typ)
 	if not bar then return end
-	DMUpdateActionBarDividerPool(bar.HorizontalDividersPool)
-	DMUpdateActionBarDividerPool(bar.VerticalDividersPool)
+	DMUpdateActionBarDividerPool(bar.HorizontalDividersPool, typ)
+	DMUpdateActionBarDividerPool(bar.VerticalDividersPool, typ)
 end
 
 function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
@@ -814,6 +814,14 @@ function DarkMode:SearchUi(from)
 		end
 		DMUpdateMainActionBarDividers(MainActionBar)
 	end
+	if BagsBar and BagsBar.UpdateDividers then
+		if not BagsBar.dmDividersHooked then
+			BagsBar.dmDividersHooked = true
+			hooksecurefunc(BagsBar, "UpdateDividers", function(bar) DMUpdateMainActionBarDividers(bar, "bags") end)
+		end
+		DMUpdateMainActionBarDividers(BagsBar, "bags")
+	end
+	if MinimapCluster and MinimapCluster.DielFrame then DarkMode:ForeachRegions(MinimapCluster.DielFrame, function(region) if region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() == "OVERLAY" then DarkMode:UpdateColor(region, "ui") end end, "DielFrame") end
 	if TotemFrame then
 		for i = 1, 4 do
 			local totem = _G["TotemFrameTotem" .. i]
@@ -1151,6 +1159,8 @@ function DarkMode:SearchUi(from)
 		if Lib_GPI_Minimap_LFGBulletinBoard then DarkMode:ForeachRegions(Lib_GPI_Minimap_LFGBulletinBoard, function(region, x) if x == 2 then DarkMode:UpdateColor(region, "ui") end end, "Lib_GPI_Minimap_LFGBulletinBoard") end
 		local PeggledMinimapIcon = getglobal("PeggledMinimapIcon")
 		if PeggledMinimapIcon and PeggledMinimapIcon.border then DarkMode:UpdateColor(PeggledMinimapIcon.border, "ui") end
+		local MBB_MinimapButtonFrame = getglobal("MBB_MinimapButtonFrame")
+		if MBB_MinimapButtonFrame then DarkMode:ForeachRegions(MBB_MinimapButtonFrame, function(region) if region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() == "OVERLAY" then DarkMode:UpdateColor(region, "ui") end end, "MBB_MinimapButtonFrame") end
 	end, "SearchUi")
 
 	local btwQ = _G["BtWQuestsMinimapButton"]
@@ -1553,7 +1563,7 @@ function DarkMode:GetDragonTexture(texture)
 	return DarkMode:GetDragonTextures()[name] or ""
 end
 
-function DarkMode:AddDragonOverlay(tex, host, path, onUpdate)
+function DarkMode:AddDragonOverlay(tex, host, path, onUpdate, coordFn)
 	local dragon = host:CreateTexture(nil, "OVERLAY")
 	dragon:SetAllPoints(tex)
 	dragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
@@ -1562,7 +1572,11 @@ function DarkMode:AddDragonOverlay(tex, host, path, onUpdate)
 		local layer, subLevel = tex:GetDrawLayer()
 		local dragonSubLevel = math.min((subLevel or 0) + 1, 7)
 		dragon:SetDrawLayer(layer, dragonSubLevel)
-		dragon:SetTexCoord(tex:GetTexCoord())
+		if coordFn then
+			dragon:SetTexCoord(coordFn(path, tex:GetTexCoord()))
+		else
+			dragon:SetTexCoord(tex:GetTexCoord())
+		end
 		dragon:SetTexture(DarkMode:GetDragonTexture(path))
 		if onUpdate then onUpdate(layer, dragonSubLevel) end
 	end
@@ -1585,6 +1599,59 @@ function DarkMode:AddDragonOverlay(tex, host, path, onUpdate)
 	DMUpdateDragon()
 
 	return dragon
+end
+
+function DarkMode:LeatrixChainCoords(path, ...)
+	local coords = {...}
+	if type(path) == "string" and path:lower():find("leatrix_plus") then
+		for i = 1, #coords, 2 do
+			coords[i] = 1 - coords[i]
+			coords[i + 1] = coords[i + 1] * 2 - 0.25
+		end
+	end
+
+	return unpack(coords)
+end
+
+function DarkMode:ApplyLeatrixChain(tex, container, path)
+	local atlas = tex:GetAtlas()
+	if type(atlas) == "string" and atlas:lower():find("portraiton%-boss") then
+		DarkMode:UpdateColor(tex, "ufdr")
+	elseif not tex.dmDragon and DarkMode:GetDragonTexture(path) ~= "" and DarkMode:UpdateColor(tex, "uf") then
+		tex.dmDragon = DarkMode:AddDragonOverlay(tex, container, path, nil, function(p, ...) return DarkMode:LeatrixChainCoords(p, ...) end)
+	end
+end
+
+function DarkMode:SetupLeatrixPlayerChain(tries)
+	if not DarkMode:IsAddOnLoaded("Leatrix_Plus") or DarkMode:IsAddOnLoaded("DragonflightUi") then return end
+	if type(LeaPlusDB) ~= "table" or LeaPlusDB["ShowPlayerChain"] ~= "On" then return end
+	local container = PlayerFrame and PlayerFrame.PlayerFrameContainer
+	if not container or not container.GetRegions then return end
+	local keyed = {}
+	for _, v in pairs(container) do
+		if type(v) == "table" then keyed[v] = true end
+	end
+
+	local classicPaths = {
+		[4] = "Interface\\TargetingFrame\\UI-TargetingFrame-Rare.blp",
+		[5] = "Interface\\TargetingFrame\\UI-TargetingFrame-Elite.blp",
+		[6] = "Interface\\AddOns\\Leatrix_Plus\\Leatrix_Plus.blp",
+	}
+
+	local found = 0
+	for _, region in ipairs({container:GetRegions()}) do
+		if not keyed[region] and not region.dmLeatrixChain and region:IsObjectType("Texture") and region:GetDrawLayer() == "OVERLAY" and region:GetBlendMode() ~= "ADD" then
+			region.dmLeatrixChain = true
+			found = found + 1
+			hooksecurefunc(region, "SetAtlas", function(sel) DarkMode:ApplyLeatrixChain(sel, container) end)
+			hooksecurefunc(region, "SetTexture", function(sel, path) DarkMode:ApplyLeatrixChain(sel, container, path) end)
+			local path = nil
+			if region:GetAtlas() == nil and region:GetTexture() ~= nil then path = classicPaths[LeaPlusDB["PlayerChainMenu"]] end
+			DarkMode:ApplyLeatrixChain(region, container, path)
+		end
+	end
+
+	if found == 0 and (tries or 0) > 0 then DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(tries - 1) end, "LeatrixChain") end
 end
 
 function DarkMode:ColorClassicUIBarBorder(bar, layer)
@@ -1760,6 +1827,8 @@ function DarkMode:Event(event, ...)
 				DMSetupClassicFrameDragon(name, 30)
 			end
 
+			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
+
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
 				DarkMode:After(2, function()
@@ -1909,8 +1978,9 @@ function DarkMode:Event(event, ...)
 						for i, v in pairs(BAGS) do
 							local bagF = _G[v]
 							local NT = _G[v .. "NormalTexture"]
+							if NT == nil and bagF and bagF.GetNormalTexture and DarkMode:IsForever() then NT = bagF:GetNormalTexture() end
 							if bagF and NT then
-								if MainMenuBarBackpackButton ~= bagF then
+								if MainMenuBarBackpackButton ~= bagF or DarkMode:IsForever() then
 									if DarkMode:IsEnabled("DESATURATE", true) then NT:SetDesaturated(true) end
 									DarkMode:UpdateColor(NT, "bags")
 								elseif not DarkMode:IsAddOnLoaded("DragonflightUi") then
