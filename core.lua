@@ -1853,6 +1853,18 @@ function DarkMode:Event(event, ...)
 				DMSetupClassicFrameDragon(name, 30)
 			end
 
+			if type(BBF) == "table" and type(BBF.SetClassicHDLevelRing) == "function" then
+				local function DMLockHDLevelRing(frame)
+					local classicFrame = frame and frame.ClassicFrame
+					if classicFrame and classicFrame.HDLevelCircle then DarkMode:LockColorType(classicFrame.HDLevelCircle, "uf") end
+				end
+
+				hooksecurefunc(BBF, "SetClassicHDLevelRing", DMLockHDLevelRing)
+				for x, frame in pairs({PlayerFrame, TargetFrame, FocusFrame}) do
+					DMLockHDLevelRing(frame)
+				end
+			end
+
 			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
