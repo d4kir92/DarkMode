@@ -345,6 +345,12 @@ function DarkMode:ToggleSettings()
 		end
 
 		dmSettings.combatToggle:RegisterEvent("PLAYER_REGEN_ENABLED")
+		if dmSettings:IsShown() then
+			DarkMode:INFO(DarkMode:Trans("LID_SETTINGSCLOSEAFTERCOMBAT"))
+		else
+			DarkMode:INFO(DarkMode:Trans("LID_SETTINGSOPENAFTERCOMBAT"))
+		end
+
 		return
 	end
 
