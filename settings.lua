@@ -332,6 +332,22 @@ end
 
 function DarkMode:ToggleSettings()
 	if dmSettings == nil then return end
+	if InCombatLockdown() and dmSettings:IsProtected() then
+		if dmSettings.combatToggle == nil then
+			dmSettings.combatToggle = CreateFrame("Frame")
+			dmSettings.combatToggle:SetScript(
+				"OnEvent",
+				function(sel)
+					sel:UnregisterEvent("PLAYER_REGEN_ENABLED")
+					DarkMode:ToggleSettings()
+				end
+			)
+		end
+
+		dmSettings.combatToggle:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
+	end
+
 	local show = not dmSettings:IsShown()
 	DarkMode:SetEnabled("SETTINGS", show)
 	if show then
