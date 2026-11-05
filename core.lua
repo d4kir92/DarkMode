@@ -800,7 +800,14 @@ function DarkMode:SearchAddons(from)
 				return
 			end
 
-			DarkMode:FindRepeatingTextures(name, baseFrame, "addons")
+			if baseFrame.Background and baseFrame.Icon and baseFrame.Mask then
+				for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
+					if baseFrame[key] then DarkMode:UpdateColor(baseFrame[key], "addons") end
+				end
+			else
+				DarkMode:FindRepeatingTextures(name, baseFrame, "addons")
+			end
+
 			DarkMode:GetFrameAddonsTable()[name] = nil
 		end
 	end
