@@ -1722,6 +1722,19 @@ function DarkMode:SetupLeatrixMapsBorder()
 	end
 end
 
+function DarkMode:SetupMapUtilsSimpleMapFrame()
+	if not WorldMapFrame or not WorldMapFrame.HookScript then return end
+	if not WorldMapFrame.dmMapUtilsSimpleHook then
+		WorldMapFrame.dmMapUtilsSimpleHook = true
+		WorldMapFrame:HookScript("OnShow", function() DarkMode:SetupMapUtilsSimpleMapFrame() end)
+	end
+
+	local frame = _G["MapUtilsSimpleMapFrame"]
+	if frame == nil or frame.dmMapUtilsSimple then return end
+	frame.dmMapUtilsSimple = true
+	DarkMode:ForeachRegions(frame, function(region) if region.IsObjectType and region:IsObjectType("Texture") then DarkMode:UpdateColor(region, "frames") end end, "MapUtilsSimpleMapFrame")
+end
+
 function DarkMode:ColorClassicUIBarBorder(bar, layer)
 	local fill = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
 	local found = false
@@ -1918,6 +1931,7 @@ function DarkMode:Event(event, ...)
 
 			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
 			DarkMode:After(1, function() DarkMode:SetupLeatrixMapsBorder() end, "LeatrixMapsBorder")
+			DarkMode:After(1, function() DarkMode:SetupMapUtilsSimpleMapFrame() end, "MapUtilsSimpleMapFrame")
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
