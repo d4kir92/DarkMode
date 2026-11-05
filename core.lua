@@ -211,7 +211,23 @@ function DarkMode:UpdateSpellBook()
 	DarkMode:FindTexts(PlayerSpellsFrame.SpellBookFrame.PagedSpellsFrame.PagingControls, "sb")
 end
 
+function DarkMode:ColorCharacterBorders(frame, depth)
+	depth = depth or 0
+	if frame == nil or depth > 10 or DarkMode:IsForbidden(frame) then return end
+	DarkMode:ForeachRegions(frame, function(region)
+		if DarkMode:IsForbidden(region) or not region.GetAtlas then return end
+		local atlas = region:GetAtlas()
+		if type(atlas) == "string" and not DarkMode:IsSecret(atlas) and DarkMode.CharacterBorderAtlases[atlas] then DarkMode:UpdateColor(region, "frames") end
+	end, "CharacterBorders")
+	DarkMode:ForeachChildren(frame, function(child) DarkMode:ColorCharacterBorders(child, depth + 1) end, "CharacterBorders")
+end
+
 function DarkMode:CheckLateFrames()
+	if CharacterFrame and DarkMode:IsForever() and not CharacterFrame.dmBordersHooked then
+		CharacterFrame.dmBordersHooked = true
+		CharacterFrame:HookScript("OnShow", function(frame) DarkMode:ColorCharacterBorders(frame) end)
+		DarkMode:ColorCharacterBorders(CharacterFrame)
+	end
 	local MiniMapTrackingBorder = getglobal("MiniMapTrackingBorder")
 	if not foundMinimapTracking and MiniMapTrackingBorder then
 		foundMinimapTracking = true
