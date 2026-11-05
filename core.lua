@@ -1687,6 +1687,30 @@ function DarkMode:SetupLeatrixPlayerChain(tries)
 	if found == 0 and (tries or 0) > 0 then DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(tries - 1) end, "LeatrixChain") end
 end
 
+function DarkMode:ColorLeatrixMapsBorder(frame)
+	DarkMode:ForeachRegions(frame, function(region) if region.IsObjectType and region:IsObjectType("Texture") and region:GetDrawLayer() == "BORDER" then DarkMode:UpdateColor(region, "frames") end end, "LeatrixMapsBorder")
+	for _, child in ipairs({frame:GetChildren()}) do
+		DarkMode:ColorBackdropEdges(child)
+	end
+end
+
+function DarkMode:SetupLeatrixMapsBorder()
+	if not DarkMode:IsAddOnLoaded("Leatrix_Maps") or not WorldMapFrame or not WorldMapFrame.GetChildren then return end
+	if not WorldMapFrame.dmLeatrixMapsHook then
+		WorldMapFrame.dmLeatrixMapsHook = true
+		WorldMapFrame:HookScript("OnShow", function() DarkMode:SetupLeatrixMapsBorder() end)
+	end
+
+	for _, child in ipairs({WorldMapFrame:GetChildren()}) do
+		local info = child.backdropInfo
+		if not child.dmLeatrixMapsBorder and child:GetName() == nil and type(info) == "table" and info.bgFile == "Interface\\Buttons\\WHITE8X8" and info.edgeFile == nil and child:GetFrameStrata() == WorldMapFrame:GetFrameStrata() then
+			child.dmLeatrixMapsBorder = true
+			hooksecurefunc(child, "CreateTexture", function() DarkMode:After(0.1, function() DarkMode:ColorLeatrixMapsBorder(child) end, "LeatrixMapsBorder") end)
+			DarkMode:ColorLeatrixMapsBorder(child)
+		end
+	end
+end
+
 function DarkMode:ColorClassicUIBarBorder(bar, layer)
 	local fill = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
 	local found = false
@@ -1882,6 +1906,7 @@ function DarkMode:Event(event, ...)
 			end
 
 			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
+			DarkMode:After(1, function() DarkMode:SetupLeatrixMapsBorder() end, "LeatrixMapsBorder")
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
