@@ -223,6 +223,17 @@ function DarkMode:ColorCharacterBorders(frame, depth)
 end
 
 function DarkMode:CheckLateFrames()
+	if ProfessionsFrame and DarkMode:IsForever() and not ProfessionsFrame.dmTabBordersHooked then
+		ProfessionsFrame.dmTabBordersHooked = true
+		for index = 0, 7 do
+			local tab = index == 0 and ProfessionsFrame.ProfessionsOverviewTab or ProfessionsFrame["Professions" .. index .. "Tab"]
+			if tab then
+				for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
+					DarkMode:LockColorType(tab[key], "frames")
+				end
+			end
+		end
+	end
 	if CharacterFrame and DarkMode:IsForever() and not CharacterFrame.dmBordersHooked then
 		CharacterFrame.dmBordersHooked = true
 		CharacterFrame:HookScript("OnShow", function(frame) DarkMode:ColorCharacterBorders(frame) end)
