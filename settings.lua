@@ -279,6 +279,36 @@ local function DMBuildElementList()
 	end)
 
 	DMAddCheckbox("GRYPHONS", true)
+	dmSettings:AddDropdown({
+		["label"] = "LID_PLAYERDRAGON",
+		["search"] = "PLAYERDRAGON",
+		["value"] = DarkMode:DMGV("PLAYERDRAGON", 1),
+		["width"] = DMDROPDOWNWIDTH,
+		["choices"] = {
+			{
+				["value"] = 1,
+				["label"] = "LID_Off"
+			},
+			{
+				["value"] = 2,
+				["label"] = "LID_PLAYERDRAGONELITE"
+			},
+			{
+				["value"] = 3,
+				["label"] = "LID_PLAYERDRAGONRARE"
+			},
+			{
+				["value"] = 4,
+				["label"] = "LID_PLAYERDRAGONRAREELITE"
+			}
+		},
+		["func"] = function(value)
+			DarkMode:DMSV("PLAYERDRAGON", value)
+			DarkMode:UpdatePlayerDragon()
+			DMEnableSave()
+		end
+	})
+
 	dmSettings:AddCategory({
 		["label"] = "LID_BORDERS",
 		["key"] = "BORDERS",

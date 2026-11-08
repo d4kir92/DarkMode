@@ -1359,6 +1359,70 @@ function DarkMode:GetDragonTextures()
 end
 
 -- format: multiline
+local DMPlayerDragons = {
+	[2] = {
+		["file"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Elite_Dragon",
+		["atlases"] = {
+			"UI-HUD-UnitFrame-Target-PortraitOn-Boss-Gold"
+		}
+	},
+	[3] = {
+		["file"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare_Dragon",
+		["atlases"] = {
+			"UI-HUD-UnitFrame-Target-PortraitOn-Boss-Rare-Silver",
+			"UI-HUD-UnitFrame-Target-PortraitOn-Boss-Rare-Silver-Winged"
+		}
+	},
+	[4] = {
+		["file"] = "Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon",
+		["atlases"] = {
+			"UI-HUD-UnitFrame-Target-PortraitOn-Boss-Rare-Silver-Winged",
+			"UI-HUD-UnitFrame-Target-PortraitOn-Boss-Gold-Winged"
+		}
+	},
+}
+
+-- format: multiline
+local DMPlayerDragonOffsets = {
+	["ui-hud-unitframe-target-portraiton-boss-gold"] = {
+		9,
+		-8,
+		-2,
+		1
+	},
+	["ui-hud-unitframe-target-portraiton-boss-rare-silver"] = {
+		9,
+		-8,
+		-2,
+		1
+	},
+	["ui-hud-unitframe-target-portraiton-boss-rare-silver-winged"] = {
+		-10,
+		-7,
+		-10,
+		-7
+	},
+	["ui-hud-unitframe-target-portraiton-boss-gold-winged"] = {
+		-10,
+		-8,
+		-13,
+		-4
+	},
+}
+
+function DarkMode:GetPlayerDragons()
+	return DMPlayerDragons
+end
+
+function DarkMode:GetPlayerDragonOffsets()
+	return DMPlayerDragonOffsets
+end
+
+function DarkMode:IsPlayerDragonMirrored(atlas)
+	return atlas:lower():find("%-c60$") == nil
+end
+
+-- format: multiline
 local DMClassicUIChromeGroups = {
 	["Dialogs"] = {
 		"ui-dialogbox-border",

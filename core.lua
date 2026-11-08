@@ -1652,6 +1652,88 @@ function DarkMode:AddDragonOverlay(tex, host, path, onUpdate, coordFn, typ)
 	return dragon
 end
 
+function DarkMode:GetPlayerDragonEntry()
+	return DarkMode:GetPlayerDragons()[DarkMode:DMGV("PLAYERDRAGON", 1)]
+end
+
+function DarkMode:GetPlayerDragonFile(texture)
+	local dragon = DarkMode:GetDragonTexture(texture)
+	if dragon ~= "" then return dragon end
+	local entry = DarkMode:GetPlayerDragonEntry()
+
+	return entry and entry.file or ""
+end
+
+function DarkMode:GetPlayerDragonAtlas()
+	local entry = DarkMode:GetPlayerDragonEntry()
+	if entry == nil or C_Texture == nil or C_Texture.GetAtlasInfo == nil then return nil end
+	for _, atlas in ipairs(entry.atlases) do
+		if DarkMode:IsForever() and C_Texture.GetAtlasInfo(atlas .. "-c60") then return atlas, atlas .. "-c60" end
+		if C_Texture.GetAtlasInfo(atlas) then return atlas, atlas end
+	end
+
+	return nil
+end
+
+function DarkMode:IsPlayerDragonBaseShown(tex)
+	return tex ~= nil and tex:IsShown() and tex:GetAtlas() ~= nil
+end
+
+function DarkMode:UpdatePlayerDragon()
+	local PlayerFrameTexture = getglobal("PlayerFrameTexture")
+	if PlayerFrameDragon and PlayerFrameTexture then
+		PlayerFrameDragon:SetTexture(DarkMode:GetPlayerDragonFile(PlayerFrameTexture:GetTexture()))
+		return
+	end
+
+	local dragons = DarkMode.dmPlayerDragons
+	if dragons == nil then return end
+	local container = PlayerFrame.PlayerFrameContainer
+	local atlas, shownAtlas = DarkMode:GetPlayerDragonAtlas()
+	if atlas == nil or not (DarkMode:IsPlayerDragonBaseShown(container.FrameTexture) or DarkMode:IsPlayerDragonBaseShown(container.AlternatePowerFrameTexture)) then shownAtlas = nil end
+	for name, tex in pairs(dragons) do
+		if name ~= shownAtlas then tex:Hide() end
+	end
+
+	if shownAtlas == nil then return end
+	local dragon = dragons[shownAtlas]
+	if dragon == nil then
+		local offset = DarkMode:GetPlayerDragonOffsets()[atlas:lower()] or {9, -8, -2, 1}
+		local x, y = offset[1], offset[2]
+		if DarkMode:IsForever() then x, y = offset[3], offset[4] end
+		dragon = container:CreateTexture(nil, "ARTWORK", nil, 2)
+		dragon:SetAtlas(shownAtlas, true)
+		if DarkMode:IsPlayerDragonMirrored(shownAtlas) then
+			local ulX, ulY, llX, llY, urX, urY, lrX, lrY = dragon:GetTexCoord()
+			dragon:SetTexCoord(urX, urY, lrX, lrY, ulX, ulY, llX, llY)
+		end
+
+		dragon:SetPoint("TOPLEFT", container, "TOPLEFT", x, y)
+		dragons[shownAtlas] = dragon
+		DarkMode:LockColorType(dragon, "ufdrp")
+	end
+
+	dragon:Show()
+	DarkMode:UpdateColor(dragon, "ufdrp")
+end
+
+function DarkMode:SetupPlayerDragon()
+	local container = PlayerFrame and PlayerFrame.PlayerFrameContainer
+	if DarkMode.dmPlayerDragons or container == nil or container.FrameTexture == nil or DarkMode:IsAddOnLoaded("DragonflightUi") then return end
+	DarkMode.dmPlayerDragons = {}
+	local function DMRefreshPlayerDragon()
+		DarkMode:UpdatePlayerDragon()
+	end
+
+	for _, tex in pairs({container.FrameTexture, container.AlternatePowerFrameTexture}) do
+		for _, method in pairs({"Show", "Hide", "SetShown", "SetAtlas", "SetTexture"}) do
+			hooksecurefunc(tex, method, DMRefreshPlayerDragon)
+		end
+	end
+
+	DMRefreshPlayerDragon()
+end
+
 function DarkMode:LeatrixChainCoords(path, ...)
 	local coords = {...}
 	if type(path) == "string" and path:lower():find("leatrix_plus") then
@@ -1937,6 +2019,7 @@ function DarkMode:Event(event, ...)
 			end
 
 			DarkMode:After(1, function() DarkMode:SetupLeatrixPlayerChain(10) end, "LeatrixChain")
+			if DarkMode:GetWoWBuild() == "RETAIL" then DarkMode:After(1, function() DarkMode:SetupPlayerDragon() end, "PlayerDragon") end
 			DarkMode:After(1, function() DarkMode:SetupLeatrixMapsBorder() end, "LeatrixMapsBorder")
 			DarkMode:After(1, function() DarkMode:SetupMapUtilsSimpleMapFrame() end, "MapUtilsSimpleMapFrame")
 
@@ -2006,13 +2089,18 @@ function DarkMode:Event(event, ...)
 						hooksecurefunc(PlayerFrameTexture, "SetTexture", function(sel, texture)
 							if DarkMode:IsAddOnLoaded("DragonflightUi") then return end
 							PlayerFrameDragon:SetDrawLayer("BORDER", 1)
-							PlayerFrameDragon:SetTexture(DarkMode:GetDragonTexture(texture))
+							PlayerFrameDragon:SetTexture(DarkMode:GetPlayerDragonFile(texture))
 						end)
 
+						hooksecurefunc(PlayerFrameTexture, "Show", function() PlayerFrameDragon:Show() end)
+						hooksecurefunc(PlayerFrameTexture, "Hide", function() PlayerFrameDragon:Hide() end)
+						hooksecurefunc(PlayerFrameTexture, "SetShown", function(sel, shown) PlayerFrameDragon:SetShown(shown) end)
 						if not DarkMode:IsAddOnLoaded("DragonflightUi") then
+							PlayerFrameDragon:SetDrawLayer("BORDER", 1)
 							PlayerFrameDragon:SetTexture("Interface\\AddOns\\DarkMode\\media\\UI-TargetingFrame-Rare-Elite_Dragon")
 							DarkMode:UpdateColor(PlayerFrameDragon, "ufdrp")
-							PlayerFrameDragon:SetTexture("")
+							PlayerFrameDragon:SetShown(PlayerFrameTexture:IsShown())
+							DarkMode:UpdatePlayerDragon()
 						end
 					end
 				end
