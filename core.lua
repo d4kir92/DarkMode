@@ -488,7 +488,9 @@ function DarkMode:UpdateColors()
 		DMRefreshColors(DMTextures[colorType["name"]], colorType["name"])
 	end
 
-	DMRefreshColors(DMFS, "frames")
+	for text in pairs(DMFS) do
+		if not DarkMode:IsForbidden(text) then DarkMode:UpdateText(text) end
+	end
 	DarkMode:UpdateObjectiveTrackerButton()
 	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
 end
