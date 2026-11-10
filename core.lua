@@ -416,12 +416,32 @@ local function DMRefreshColors(textures, typ)
 	end
 end
 
-function DarkMode:UpdateObjectiveTrackerButtonBorder()
+function DarkMode:UpdateButtonSurfaceColors(textures, r, g, b, a)
+	for _, texture in pairs(textures) do
+		if r ~= nil then
+			if not texture.dmOriginalButtonColor then
+				texture.dmOriginalButtonColor = {texture:GetVertexColor()}
+				texture.dmOriginalButtonDesaturation = texture:IsDesaturated()
+			end
+			texture:SetDesaturated(true)
+			texture:SetVertexColor(r, g, b, a)
+		elseif texture.dmOriginalButtonColor then
+			texture:SetDesaturated(texture.dmOriginalButtonDesaturation)
+			texture:SetVertexColor(unpack(texture.dmOriginalButtonColor))
+			texture.dmOriginalButtonColor = nil
+			texture.dmOriginalButtonDesaturation = nil
+		end
+	end
+end
+
+function DarkMode:UpdateObjectiveTrackerButton()
 	local header = ObjectiveTrackerFrame and ObjectiveTrackerFrame.Header
 	local button = header and header.MinimizeButton
 	if not button or DarkMode:IsForbidden(button) or not button.GetNormalTexture then return end
 	local normal = button:GetNormalTexture()
 	if not normal then return end
+
+	DarkMode:UpdateButtonSurfaceColors({normal, button:GetPushedTexture()}, DarkMode:GetTypeColor("btns"))
 
 	local r, g, b, a = DarkMode:GetTypeColor("ui")
 	local enabled = r ~= nil and g ~= nil and b ~= nil
@@ -439,11 +459,15 @@ function DarkMode:UpdateObjectiveTrackerButtonBorder()
 	end
 end
 
-function DarkMode:UpdateGameMenuButtonBorders(menu)
+function DarkMode:UpdateGameMenuButtons(menu)
 	local r, g, b, a = DarkMode:GetTypeColor("frames")
 	local enabled = r ~= nil and g ~= nil and b ~= nil
+	local buttonR, buttonG, buttonB, buttonA = DarkMode:GetTypeColor("btns")
 	DarkMode:ForeachChildren(menu, function(button)
 		if not button:IsObjectType("Button") then return end
+		local textures = {button.Left, button.Middle, button.Center, button.Right, button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture()}
+		DarkMode:UpdateButtonSurfaceColors(textures, buttonR, buttonG, buttonB, buttonA)
+
 		if enabled and not button.DMBorder then
 			local border = button:CreateTexture(nil, "OVERLAY", nil, 7)
 			border:SetTexture("Interface\\AddOns\\DarkMode\\GameMenuButtonBorder.blp")
@@ -466,8 +490,8 @@ function DarkMode:UpdateColors()
 	end
 
 	DMRefreshColors(DMFS, "frames")
-	DarkMode:UpdateObjectiveTrackerButtonBorder()
-	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtonBorders(GameMenuFrame) end
+	DarkMode:UpdateObjectiveTrackerButton()
+	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
 end
 
 function DarkMode:FindTextures(frame, typ, findName, show)
@@ -2422,7 +2446,7 @@ function DarkMode:Event(event, ...)
 			DarkMode:After(0.1, function()
 				DarkMode:Debug(5, "setup")
 				DarkMode:SearchUi("setup")
-				DarkMode:UpdateObjectiveTrackerButtonBorder()
+				DarkMode:UpdateObjectiveTrackerButton()
 				DarkMode:SearchFrames()
 				DarkMode:SearchForTexts("INIT")
 				if ItemTextPageText then
@@ -2478,7 +2502,7 @@ function DarkMode:Event(event, ...)
 
 			if GameMenuFrame then
 				GameMenuFrame:HookScript("OnShow", function(menu)
-					DarkMode:UpdateGameMenuButtonBorders(menu)
+					DarkMode:UpdateGameMenuButtons(menu)
 					DarkMode:FindTextures(menu, "frames")
 				end)
 			end
