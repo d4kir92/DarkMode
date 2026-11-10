@@ -41,6 +41,7 @@ DarkMode:AddTrans("ruRU", "LID_CUSTOMUIC", "Пользовательский ц�
 DarkMode:AddTrans("ruRU", "LID_ClassColor", "Цвет класса")
 DarkMode:AddTrans("ruRU", "LID_Custom", "Пользовательский")
 DarkMode:AddTrans("ruRU", "LID_DESATURATE", "Оттенки серого")
+DarkMode:AddTrans("ruRU", "LID_DESATURATE_TOOLTIP", "Убирает исходные цвета текстур, которые окрашивает DarkMode. Выбранный цвет по-прежнему применяется. В режиме «Чёрный» разница может быть незаметна.")
 DarkMode:AddTrans("ruRU", "LID_Dark", "Тёмный")
 DarkMode:AddTrans("ruRU", "LID_Darker", "Очень тёмный")
 DarkMode:AddTrans("ruRU", "LID_FRAMES", "Фреймы")

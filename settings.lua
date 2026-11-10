@@ -363,7 +363,16 @@ local function DMBuildElementList()
 		["collapsed"] = true
 	})
 
-	DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end)
+	local grayscale = DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end)
+	grayscale:HookScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+		GameTooltip:SetText(DarkMode:Trans("LID_DESATURATE"))
+		GameTooltip:AddLine(DarkMode:Trans("LID_DESATURATE_TOOLTIP"), 1, 1, 1, true)
+		GameTooltip:Show()
+	end)
+	grayscale:HookScript("OnLeave", function(self)
+		if GameTooltip:IsOwned(self) then GameTooltip:Hide() end
+	end)
 	local off = DarkMode:GetColorModeID("Off")
 	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
 	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)

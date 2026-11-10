@@ -41,6 +41,7 @@ DarkMode:AddTrans("frFR", "LID_CUSTOMUIC", "Couleur personnalisée de l'interfac
 DarkMode:AddTrans("frFR", "LID_ClassColor", "Couleur de classe")
 DarkMode:AddTrans("frFR", "LID_Custom", "Personnalisé")
 DarkMode:AddTrans("frFR", "LID_DESATURATE", "Niveaux de gris")
+DarkMode:AddTrans("frFR", "LID_DESATURATE_TOOLTIP", "Retire les couleurs d’origine des textures teintées par DarkMode. La couleur choisie reste appliquée. En mode Noir, la différence peut être invisible.")
 DarkMode:AddTrans("frFR", "LID_Dark", "Sombre")
 DarkMode:AddTrans("frFR", "LID_Darker", "Très sombre")
 DarkMode:AddTrans("frFR", "LID_FRAMES", "Fenêtres")
