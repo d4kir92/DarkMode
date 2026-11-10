@@ -39,7 +39,14 @@ end
 local function DMEnableSave()
 	if dmSettings == nil then return end
 	if dmSettings.DMSave == nil then return end
-	dmSettings.DMSave:Enable()
+	local save = dmSettings.DMSave
+	if save:IsEnabled() then return end
+	if InCombatLockdown() then
+		save.dmEnableAfterCombat:RegisterEvent("PLAYER_REGEN_ENABLED")
+		return
+	end
+
+	save:Enable()
 end
 
 local function DMUpdateShowErrors()
@@ -238,6 +245,12 @@ local function DMBuildFooter()
 	dmSettings.DMSave:SetPoint("LEFT", footer, "LEFT", 0, 0)
 	dmSettings.DMSave:SetText(SAVE)
 	dmSettings.DMSave:Disable()
+	local enableAfterCombat = CreateFrame("Frame")
+	enableAfterCombat:SetScript("OnEvent", function(frame)
+		frame:UnregisterEvent("PLAYER_REGEN_ENABLED")
+		DMEnableSave()
+	end)
+	dmSettings.DMSave.dmEnableAfterCombat = enableAfterCombat
 	dmSettings.DMReload = DarkMode:CreateReloadButton("DMSettingsReload", footer)
 	dmSettings.DMReload:SetSize(100, 24)
 	dmSettings.DMReload:SetPoint("LEFT", dmSettings.DMSave, "RIGHT", 4, 0)
