@@ -182,8 +182,11 @@ local function DMAddCheckbox(key, default, func)
 		["value"] = DarkMode:IsEnabled(key, default),
 		["func"] = function(value)
 			DarkMode:SetEnabled(key, value)
-			if func then func(value) end
-			DMEnableSave()
+			if func then
+				func(value)
+			else
+				DMEnableSave()
+			end
 		end
 	})
 end
@@ -199,7 +202,7 @@ local function DMAddColorMode(key, default, colorKey, linked)
 			DarkMode:DMSV(key, value)
 			DarkMode:UpdateColors()
 			DMUpdateSwatches()
-			DMEnableSave()
+			if key ~= "COLORMODEABTNS" then DMEnableSave() end
 		end
 	})
 
@@ -262,7 +265,6 @@ local function DMBuildFooter()
 	dmSettings.DMShowErrors:SetScript("OnClick", function()
 		if GetCVar("ScriptErrors") == "0" then
 			SetCVar("ScriptErrors", 1)
-			DMReload()
 		end
 
 		DMUpdateShowErrors()
@@ -318,7 +320,6 @@ local function DMBuildElementList()
 		["func"] = function(value)
 			DarkMode:DMSV("PLAYERDRAGON", value)
 			DarkMode:UpdatePlayerDragon()
-			DMEnableSave()
 		end
 	})
 
@@ -362,7 +363,7 @@ local function DMBuildElementList()
 		["collapsed"] = true
 	})
 
-	DMAddCheckbox("DESATURATE", true)
+	DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end)
 	local off = DarkMode:GetColorModeID("Off")
 	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
 	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)

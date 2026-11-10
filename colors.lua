@@ -105,6 +105,36 @@ local function DMIsDBReady()
 	return DMTAB["PROFILES"][DMTAB["CURRENTPROFILE"] or "DEFAULT"] ~= nil
 end
 
+local dmDesaturation = setmetatable({}, {__mode = "k"})
+
+function DarkMode:SetTextureDesaturation(texture, source, enabled)
+	if not texture.SetDesaturated or not texture.IsDesaturated or DarkMode:IsForbidden(texture) then return end
+	local state = dmDesaturation[texture]
+	if not state then
+		if not enabled then return end
+		state = {["original"] = texture:IsDesaturated()}
+		dmDesaturation[texture] = state
+	end
+
+	state[source] = enabled
+	if state["grayscale"] or state["button"] then
+		if not texture:IsDesaturated() then texture:SetDesaturated(true) end
+	else
+		texture:SetDesaturated(state["original"])
+		dmDesaturation[texture] = nil
+	end
+end
+
+function DarkMode:UpdateGrayscale(enabled)
+	if not enabled then
+		for texture in pairs(dmDesaturation) do
+			DarkMode:SetTextureDesaturation(texture, "grayscale", false)
+		end
+	end
+
+	DarkMode:UpdateColors()
+end
+
 function DarkMode:GetTypeColor(typ, texture)
 	local colorType = DMColorTypes[typ]
 	if colorType == nil then return nil, nil, nil, nil end
@@ -126,7 +156,7 @@ function DarkMode:GetTypeColor(typ, texture)
 		if DMIsDBReady() then colorCache[typ] = cache end
 	end
 
-	if cache["colored"] and cache["desaturate"] and texture and texture.SetDesaturated then texture:SetDesaturated(true) end
+	if cache["colored"] and cache["desaturate"] and texture then DarkMode:SetTextureDesaturation(texture, "grayscale", true) end
 	return DarkMode:GetBrighterColor(cache["r"], cache["g"], cache["b"], cache["a"], texture)
 end
 

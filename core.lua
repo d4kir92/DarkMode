@@ -417,19 +417,18 @@ local function DMRefreshColors(textures, typ)
 end
 
 function DarkMode:UpdateButtonSurfaceColors(textures, r, g, b, a)
+	local desaturate = DarkMode:IsEnabled("DESATURATE", true)
 	for _, texture in pairs(textures) do
 		if r ~= nil then
 			if not texture.dmOriginalButtonColor then
 				texture.dmOriginalButtonColor = {texture:GetVertexColor()}
-				texture.dmOriginalButtonDesaturation = texture:IsDesaturated()
 			end
-			texture:SetDesaturated(true)
+			DarkMode:SetTextureDesaturation(texture, "button", desaturate)
 			texture:SetVertexColor(r, g, b, a)
 		elseif texture.dmOriginalButtonColor then
-			texture:SetDesaturated(texture.dmOriginalButtonDesaturation)
+			DarkMode:SetTextureDesaturation(texture, "button", false)
 			texture:SetVertexColor(unpack(texture.dmOriginalButtonColor))
 			texture.dmOriginalButtonColor = nil
-			texture.dmOriginalButtonDesaturation = nil
 		end
 	end
 end
@@ -2249,14 +2248,14 @@ function DarkMode:Event(event, ...)
 							if NT == nil and bagF and bagF.GetNormalTexture and DarkMode:IsForever() then NT = bagF:GetNormalTexture() end
 							if bagF and NT then
 								if MainMenuBarBackpackButton ~= bagF or DarkMode:IsForever() then
-									if DarkMode:IsEnabled("DESATURATE", true) then NT:SetDesaturated(true) end
+									if DarkMode:IsEnabled("DESATURATE", true) then DarkMode:SetTextureDesaturation(NT, "grayscale", true) end
 									DarkMode:UpdateColor(NT, "bags")
 								elseif not DarkMode:IsAddOnLoaded("DragonflightUi") then
 									bagF.border = bagF:CreateTexture(v .. ".BagBorder", "ARTWORK")
 									bagF.border:SetTexture("Interface\\AddOns\\DarkMode\\media\\bag-main-border")
 									bagF.border:SetSize(bagF:GetSize())
 									bagF.border:SetPoint("CENTER", bagF, "CENTER", -1, 1)
-									if DarkMode:IsEnabled("DESATURATE", true) then bagF.border:SetDesaturated(true) end
+									if DarkMode:IsEnabled("DESATURATE", true) then DarkMode:SetTextureDesaturation(bagF.border, "grayscale", true) end
 									DarkMode:UpdateColor(bagF.border, "bags")
 								end
 							end
