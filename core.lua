@@ -223,6 +223,7 @@ function DarkMode:ColorCharacterBorders(frame, depth)
 end
 
 function DarkMode:CheckLateFrames()
+	DarkMode:UpdateWindowButtons()
 	if ProfessionsFrame and DarkMode:IsForever() and not ProfessionsFrame.dmTabBordersHooked then
 		ProfessionsFrame.dmTabBordersHooked = true
 		for index = 0, 7 do
@@ -482,6 +483,40 @@ function DarkMode:UpdateGameMenuButtons(menu)
 	end)
 end
 
+function DarkMode:UpdateWindowButtons()
+	local r, g, b, a = DarkMode:GetTypeColor("btns")
+	local function updateButton(button, includeArtwork)
+		if not button or not button.GetNormalTexture or DarkMode:IsForbidden(button) then return end
+		local textures = {button.Left, button.Middle, button.Center, button.Right, button:GetNormalTexture(), button:GetPushedTexture(), button:GetDisabledTexture()}
+		DarkMode:UpdateButtonSurfaceColors(textures, r, g, b, a)
+		if includeArtwork then
+			for _, region in ipairs({button:GetRegions()}) do
+				if region:IsObjectType("Texture") and region:GetDrawLayer() == "ARTWORK" then DarkMode:UpdateButtonSurfaceColors({region}, r, g, b, a) end
+			end
+		end
+	end
+
+	for _, button in pairs({QuestFrameAcceptButton, QuestFrameDeclineButton, QuestFrameCompleteButton, QuestFrameGoodbyeButton, QuestFrameCompleteQuestButton, QuestFrameGreetingGoodbyeButton}) do
+		updateButton(button)
+	end
+
+	for _, name in ipairs({"QuestFrame", "CharacterFrame", "PlayerSpellsFrame", "SpellBookFrame", "ClassTalentFrame", "PlayerTalentFrame", "ProfessionsBookFrame", "ProfessionsFrame", "TradeSkillFrame", "WorldMapFrame", "LFGParentFrame", "PVEFrame", "CollectionsJournal", "WardrobeFrame", "CommunitiesFrame"}) do
+		local frame = _G[name]
+		if frame then updateButton(frame.CloseButton or _G[name .. "CloseButton"]) end
+	end
+
+	local mapBorder = WorldMapFrame and WorldMapFrame.BorderFrame
+	if mapBorder then updateButton(mapBorder.CloseButton) end
+	local mapResize = mapBorder and mapBorder.MaximizeMinimizeFrame
+	local spellBookResize = PlayerSpellsFrame and PlayerSpellsFrame.MaximizeMinimizeButton
+	local guildResize = CommunitiesFrame and CommunitiesFrame.MaximizeMinimizeFrame
+	for _, controls in pairs({mapResize, spellBookResize, guildResize}) do
+		updateButton(controls.MaximizeButton)
+		updateButton(controls.MinimizeButton)
+	end
+	if mapResize then updateButton(mapResize.MapUtilsFullscreenButton, true) end
+end
+
 function DarkMode:UpdateColors()
 	DarkMode:InvalidateColorCache()
 	for _, colorType in ipairs(DarkMode:GetColorTypes()) do
@@ -492,6 +527,7 @@ function DarkMode:UpdateColors()
 		if not DarkMode:IsForbidden(text) then DarkMode:UpdateText(text) end
 	end
 	DarkMode:UpdateObjectiveTrackerButton()
+	DarkMode:UpdateWindowButtons()
 	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
 end
 
@@ -1443,6 +1479,36 @@ npf:SetScript("OnEvent", function(self, event, name, ...)
 	end
 end)
 
+function DarkMode:InitQuestBackgrounds()
+	local panels = {}
+	local function updatePanel(panel)
+		local name = panels[panel]
+		if not name then return end
+		for _, key in ipairs({"Bg", "MaterialTopLeft", "MaterialTopRight", "MaterialBotLeft", "MaterialBotRight", "SealMaterialBG"}) do
+			local texture = panel[key] or _G[name .. key]
+			if texture and texture:GetTexture() then
+				if texture.dmLockType == "questbackground" then
+					DarkMode:UpdateColor(texture, "questbackground")
+				else
+					texture.dmQuestBackgroundColor = {texture:GetVertexColor()}
+					DarkMode:LockColorType(texture, "questbackground")
+				end
+			end
+		end
+	end
+
+	for _, name in ipairs({"QuestFrameDetailPanel", "QuestFrameGreetingPanel", "QuestFrameProgressPanel", "QuestFrameRewardPanel"}) do
+		local panel = _G[name]
+		if panel then
+			panels[panel] = name
+			panel:HookScript("OnShow", updatePanel)
+			updatePanel(panel)
+		end
+	end
+
+	if QuestFrame_SetMaterial then hooksecurefunc("QuestFrame_SetMaterial", updatePanel) end
+end
+
 function DarkMode:InitQuestFrameGreetingPanel()
 	local frame = DarkMode:GetFrameByName("QuestFrameGreetingPanel")
 	function DarkMode:UpdateQuestFrameGreetingPanel()
@@ -1978,6 +2044,11 @@ function DarkMode:Event(event, ...)
 
 			DarkMode:InitSlash()
 			DarkMode:InitDB()
+			DarkMode:InitQuestBackgrounds()
+			if QuestFrame then
+				QuestFrame:HookScript("OnShow", function() DarkMode:UpdateWindowButtons() end)
+				DarkMode:UpdateWindowButtons()
+			end
 			DarkMode:InitDMSettings()
 			DarkMode:InitGreetingPanel()
 			DarkMode:InitQuestLogFrame()

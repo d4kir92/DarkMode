@@ -87,6 +87,7 @@ DMAddColorType("ufpor", "COLORMODEAUNFRPORA", "Off", "CUSTOMUFPORC")
 DMAddColorType("tt", "COLORMODETT", 1, "CUSTOMTTC")
 DMAddColorType("addons", "COLORMODEFA", 1, "CUSTOMFRAC")
 DMAddColorType("frames", "COLORMODEF", 1, "CUSTOMFRC")
+DMAddColorType("questbackground", "COLORMODEQUESTBACKGROUND", 0, "CUSTOMQUESTBACKGROUNDC")
 function DarkMode:GetColorTypes()
 	return DMColorTypeList
 end
@@ -136,6 +137,8 @@ function DarkMode:UpdateGrayscale(enabled)
 end
 
 function DarkMode:GetTypeColor(typ, texture)
+	local questBackground = typ == "questbackground"
+	if questBackground and DarkMode:DMGV("COLORMODEQUESTBACKGROUND", 0) == 0 then typ = "frames" end
 	local colorType = DMColorTypes[typ]
 	if colorType == nil then return nil, nil, nil, nil end
 	local cache = colorCache[typ]
@@ -154,6 +157,12 @@ function DarkMode:GetTypeColor(typ, texture)
 		}
 
 		if DMIsDBReady() then colorCache[typ] = cache end
+	end
+
+	if questBackground and not cache["colored"] then
+		if texture then DarkMode:SetTextureDesaturation(texture, "grayscale", false) end
+		if texture and texture.dmQuestBackgroundColor then return unpack(texture.dmQuestBackgroundColor) end
+		return 1, 1, 1, 1
 	end
 
 	if cache["colored"] and cache["desaturate"] and texture then DarkMode:SetTextureDesaturation(texture, "grayscale", true) end

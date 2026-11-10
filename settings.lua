@@ -191,13 +191,13 @@ local function DMAddCheckbox(key, default, func)
 	})
 end
 
-local function DMAddColorMode(key, default, colorKey, linked)
+local function DMAddColorMode(key, default, colorKey, linked, choices)
 	local holder = dmSettings:AddDropdown({
 		["label"] = "LID_" .. key,
 		["search"] = key,
 		["value"] = DarkMode:DMGV(key, default),
 		["width"] = DMDROPDOWNWIDTH,
-		["choices"] = dmChoices,
+		["choices"] = choices or dmChoices,
 		["func"] = function(value)
 			DarkMode:DMSV(key, value)
 			DarkMode:UpdateColors()
@@ -373,6 +373,12 @@ local function DMBuildElementList()
 	grayscale:HookScript("OnLeave", function(self)
 		if GameTooltip:IsOwned(self) then GameTooltip:Hide() end
 	end)
+	local questChoices = {{["value"] = 0, ["label"] = "LID_QUESTBACKGROUNDWINDOWCOLOR"}}
+	for _, choice in ipairs(dmChoices) do
+		tinsert(questChoices, choice)
+	end
+
+	DMAddColorMode("COLORMODEQUESTBACKGROUND", 0, "CUSTOMQUESTBACKGROUNDC", false, questChoices)
 	local off = DarkMode:GetColorModeID("Off")
 	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
 	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
