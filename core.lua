@@ -588,6 +588,28 @@ function DarkMode:UpdateBBFCastbarBorders()
 	for _, name in ipairs({"PlayerCastingBarFrame", "CastingBarFrame", "TargetFrameSpellBar", "FocusFrameSpellBar"}) do
 		DarkMode:ColorBBFCastbarBorder(_G[name])
 	end
+
+	DarkMode:UpdateBBFCustomCastbars()
+end
+
+function DarkMode:UpdateBBFCustomCastbars()
+	if BBF == nil then return end
+	if not DarkMode.dmBBFCustomHooked then
+		DarkMode.dmBBFCustomHooked = true
+		for _, func in ipairs({"CreateCastbars", "UpdateCastbars", "UpdatePetCastbar"}) do
+			if type(BBF[func]) == "function" then hooksecurefunc(BBF, func, function() DarkMode:UpdateBBFCustomCastbars() end) end
+		end
+	end
+
+	for _, name in ipairs({"Party1SpellBar", "Party2SpellBar", "Party3SpellBar", "Party4SpellBar", "Party5SpellBar", "PetSpellBar"}) do
+		local bar = _G[name]
+		if bar then
+			DarkMode:ColorBBFCastbarBorder(bar)
+			for _, key in ipairs({"Border", "TextBorder", "BorderShield", "Background"}) do
+				if bar[key] then DarkMode:UpdateColor(bar[key], "ui") end
+			end
+		end
+	end
 end
 
 function DarkMode:FindTextures(frame, typ, findName, show)
