@@ -235,6 +235,28 @@ function DarkMode:CheckLateFrames()
 			end
 		end
 	end
+	for _, name in ipairs({"TrainerSpellsFrame", "TrainerSpellsProfessionFrame"}) do
+		local tsFrame = _G[name]
+		if tsFrame and not tsFrame.dmPageHooked then
+			tsFrame.dmPageHooked = true
+			tsFrame:HookScript("OnShow", function(frame) DarkMode:FindTextures(frame, "ui") end)
+			DarkMode:FindTextures(tsFrame, "ui")
+		end
+	end
+
+	local tsProfessionScrollBox = _G["TrainerSpellsProfessionScrollBox"]
+	if tsProfessionScrollBox and tsProfessionScrollBox.tsLightBackground then tsProfessionScrollBox.tsLightBackground = false end
+
+	for index = 0, 8 do
+		local tab = _G[index == 0 and "TrainerSpellsProfessionsTab" or ("TrainerSpellsProfessionsViewTab" .. index)]
+		if tab and not tab.dmTabBordersHooked then
+			tab.dmTabBordersHooked = true
+			for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
+				DarkMode:LockColorType(tab[key], "frames")
+			end
+		end
+	end
+
 	if CharacterFrame and DarkMode:IsForever() and not CharacterFrame.dmBordersHooked then
 		CharacterFrame.dmBordersHooked = true
 		CharacterFrame:HookScript("OnShow", function(frame) DarkMode:ColorCharacterBorders(frame) end)
