@@ -551,6 +551,43 @@ function DarkMode:UpdateColors()
 	DarkMode:UpdateObjectiveTrackerButton()
 	DarkMode:UpdateWindowButtons()
 	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
+	DarkMode:UpdateBBFCastbarBorders()
+end
+
+function DarkMode:ColorBBFCastbarBorder(frame)
+	if frame == nil or type(frame.borders) ~= "table" or type(frame.SetBorderColor) ~= "function" then return end
+	if not frame.dmBBFBorderHooked then
+		frame.dmBBFBorderHooked = true
+		hooksecurefunc(frame, "SetBorderColor", function(sel)
+			if sel.dmBBFBorderSetting then return end
+			DarkMode:ColorBBFCastbarBorder(sel)
+		end)
+	end
+
+	local r, g, b = DarkMode:GetTypeColor("ui", frame)
+	if r == nil or g == nil or b == nil then return end
+	frame.dmBBFBorderSetting = true
+	frame:SetBorderColor(r, g, b, 1)
+	frame.dmBBFBorderSetting = false
+end
+
+function DarkMode:UpdateTotemPoolBorders()
+	if TotemFrame == nil or TotemFrame.GetChildren == nil then return end
+	for _, child in ipairs({TotemFrame:GetChildren()}) do
+		if child and child.Border and child.Border.SetVertexColor then DarkMode:UpdateColor(child.Border, "ui") end
+	end
+end
+
+function DarkMode:UpdateBBFCastbarBorders()
+	if BBF == nil or type(BBF.SetupBorderOnFrame) ~= "function" then return end
+	if not DarkMode.dmBBFSetupHooked then
+		DarkMode.dmBBFSetupHooked = true
+		hooksecurefunc(BBF, "SetupBorderOnFrame", function(frame) DarkMode:ColorBBFCastbarBorder(frame) end)
+	end
+
+	for _, name in ipairs({"PlayerCastingBarFrame", "CastingBarFrame", "TargetFrameSpellBar", "FocusFrameSpellBar"}) do
+		DarkMode:ColorBBFCastbarBorder(_G[name])
+	end
 end
 
 function DarkMode:FindTextures(frame, typ, findName, show)
@@ -1005,6 +1042,12 @@ function DarkMode:SearchUi(from)
 		for i = 1, 4 do
 			local totem = _G["TotemFrameTotem" .. i]
 			if totem then DarkMode:ForeachChildren(totem, function(child, c) if child and DarkMode:GetName(child) == nil then DarkMode:ForeachRegions(child, function(region, r) if region and r == 1 then DarkMode:UpdateColor(region, "ui") end end) end end) end
+		end
+
+		DarkMode:UpdateTotemPoolBorders()
+		if TotemFrame.Update and not TotemFrame.dmTotemUpdateHooked then
+			TotemFrame.dmTotemUpdateHooked = true
+			hooksecurefunc(TotemFrame, "Update", function() DarkMode:UpdateTotemPoolBorders() end)
 		end
 	end
 
@@ -2540,6 +2583,7 @@ function DarkMode:Event(event, ...)
 			DarkMode:After(0.1, function()
 				DarkMode:Debug(5, "setup")
 				DarkMode:SearchUi("setup")
+				DarkMode:UpdateBBFCastbarBorders()
 				DarkMode:UpdateObjectiveTrackerButton()
 				DarkMode:SearchFrames()
 				DarkMode:SearchForTexts("INIT")
