@@ -323,6 +323,8 @@ local function DMBuildElementList()
 		end
 	})
 
+	DMAddCheckbox("HIDENAMEBACKGROUND", false, function() DarkMode:UpdateNameBackgrounds() end)
+
 	dmSettings:AddCategory({
 		["label"] = "LID_BORDERS",
 		["key"] = "BORDERS",

@@ -28,7 +28,10 @@ function DarkMode:SetVertexColor(texture, r, g, b, a, from)
 	if r and g and b then
 		local bbfHooked = texture.bbfHooked
 		local bbfChanging = texture.changing
+		local bbfBronze = texture.bbfBronzeHooked
+		local bbfBronzeChanging = texture.bbfBronzeChanging
 		if bbfHooked then texture.changing = true end
+		if bbfBronze then texture.bbfBronzeChanging = true end
 		if a then
 			texture:SetVertexColor(r, g, b, a)
 		else
@@ -36,6 +39,7 @@ function DarkMode:SetVertexColor(texture, r, g, b, a, from)
 		end
 
 		if bbfHooked then texture.changing = bbfChanging end
+		if bbfBronze then texture.bbfBronzeChanging = bbfBronzeChanging end
 		return true
 	end
 	return false
@@ -571,6 +575,40 @@ function DarkMode:ColorBBFCastbarBorder(frame)
 	frame.dmBBFBorderSetting = false
 end
 
+function DarkMode:GetNameBackgroundNames()
+	return {"TargetFrameNameBackground", "FocusFrameNameBackground", "TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor", "FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor"}
+end
+
+function DarkMode:UpdateNameBackgrounds()
+	local hide = DarkMode:IsEnabled("HIDENAMEBACKGROUND", false)
+	for _, name in ipairs(DarkMode:GetNameBackgroundNames()) do
+		local bg = DarkMode:GetFrameByName(name)
+		if bg and bg.SetAlpha and not DarkMode:IsForbidden(bg) then
+			if hide and not bg.dmNameBgHooked then
+				bg.dmNameBgHooked = true
+				hooksecurefunc(bg, "SetAlpha", function(sel, alpha)
+					if sel.dmNameBgSetting or not DarkMode:IsEnabled("HIDENAMEBACKGROUND", false) then return end
+					if alpha and alpha > 0 then
+						sel.dmNameBgSetting = true
+						sel:SetAlpha(0)
+						sel.dmNameBgSetting = false
+					end
+				end)
+			end
+
+			if hide then
+				bg.dmNameBgHidden = true
+				bg.dmNameBgSetting = true
+				bg:SetAlpha(0)
+				bg.dmNameBgSetting = false
+			elseif bg.dmNameBgHidden then
+				bg.dmNameBgHidden = nil
+				bg:SetAlpha(1)
+			end
+		end
+	end
+end
+
 function DarkMode:UpdateTotemPoolBorders()
 	if TotemFrame == nil or TotemFrame.GetChildren == nil then return end
 	for _, child in ipairs({TotemFrame:GetChildren()}) do
@@ -596,7 +634,7 @@ function DarkMode:UpdateBBFCustomCastbars()
 	if BBF == nil then return end
 	if not DarkMode.dmBBFCustomHooked then
 		DarkMode.dmBBFCustomHooked = true
-		for _, func in ipairs({"CreateCastbars", "UpdateCastbars", "UpdatePetCastbar"}) do
+		for _, func in ipairs({"CreateCastbars", "UpdateCastbars", "UpdatePetCastbar", "ClassicCastbar", "ClassicMirrorTimers", "ChangeCastbarSizes", "UpdateBronzeTint", "DarkModeCastbars"}) do
 			if type(BBF[func]) == "function" then hooksecurefunc(BBF, func, function() DarkMode:UpdateBBFCustomCastbars() end) end
 		end
 	end
@@ -608,6 +646,28 @@ function DarkMode:UpdateBBFCustomCastbars()
 			for _, key in ipairs({"Border", "TextBorder", "BorderShield", "Background"}) do
 				if bar[key] then DarkMode:UpdateColor(bar[key], "ui") end
 			end
+		end
+	end
+
+	for _, name in ipairs({"PlayerCastingBarFrame", "PetCastingBarFrame", "TargetFrameSpellBar", "FocusFrameSpellBar"}) do
+		local bar = _G[name]
+		if bar then
+			for _, key in ipairs({"Border", "TextBorder", "BorderShield"}) do
+				if bar[key] then DarkMode:LockColorType(bar[key], "ui") end
+			end
+		end
+	end
+
+	DarkMode:UpdateMirrorTimerBorders()
+end
+
+function DarkMode:UpdateMirrorTimerBorders()
+	local container = MirrorTimerContainer
+	if container == nil or type(container.mirrorTimers) ~= "table" then return end
+	for _, timerFrame in ipairs(container.mirrorTimers) do
+		DarkMode:ColorBBFCastbarBorder(timerFrame)
+		for _, key in ipairs({"Border", "TextBorder"}) do
+			if timerFrame[key] then DarkMode:LockColorType(timerFrame[key], "ui") end
 		end
 	end
 end
@@ -2047,6 +2107,35 @@ function DarkMode:SetupMapUtilsSimpleMapFrame()
 	DarkMode:ForeachRegions(frame, function(region) if region.IsObjectType and region:IsObjectType("Texture") then DarkMode:UpdateColor(region, "frames") end end, "MapUtilsSimpleMapFrame")
 end
 
+function DarkMode:ColorGamepadButtons(frame, depth)
+	if frame == nil or depth > 6 or DarkMode:IsForbidden(frame) then return end
+	if frame.GetNormalTexture and (frame.SetShapeToSquare or frame.SetShapeToCircle or frame.Border) then
+		local nt = frame:GetNormalTexture()
+		if nt then DarkMode:LockColorType(nt, "actionbuttons") end
+		if frame.Border and frame.Border.SetVertexColor then DarkMode:LockColorType(frame.Border, "actionbuttons") end
+	end
+
+	if frame.GetChildren then
+		for _, child in ipairs({frame:GetChildren()}) do
+			DarkMode:ColorGamepadButtons(child, depth + 1)
+		end
+	end
+end
+
+function DarkMode:SetupGamepadActionBars()
+	for _, name in ipairs({"GamepadMainActionBarFrame", "GamepadSpellFlyout", "GamepadPetActionFlyout", "GamepadPetSpellFlyout"}) do
+		local root = _G[name]
+		if root and not DarkMode:IsForbidden(root) then
+			if not root.dmGamepadHooked and root.HookScript then
+				root.dmGamepadHooked = true
+				root:HookScript("OnShow", function(sel) DarkMode:After(0.1, function() DarkMode:ColorGamepadButtons(sel, 0) end, "GamepadActionBars") end)
+			end
+
+			DarkMode:ColorGamepadButtons(root, 0)
+		end
+	end
+end
+
 function DarkMode:ColorClassicUIBarBorder(bar, layer)
 	local fill = bar.GetStatusBarTexture and bar:GetStatusBarTexture()
 	local found = false
@@ -2250,6 +2339,7 @@ function DarkMode:Event(event, ...)
 			if DarkMode:GetWoWBuild() == "RETAIL" then DarkMode:After(1, function() DarkMode:SetupPlayerDragon() end, "PlayerDragon") end
 			DarkMode:After(1, function() DarkMode:SetupLeatrixMapsBorder() end, "LeatrixMapsBorder")
 			DarkMode:After(1, function() DarkMode:SetupMapUtilsSimpleMapFrame() end, "MapUtilsSimpleMapFrame")
+			DarkMode:After(1, function() DarkMode:SetupGamepadActionBars() end, "GamepadActionBars")
 
 			if DarkMode:GetWoWBuild() ~= "RETAIL" then
 				-- delay for other addons changing
@@ -2424,9 +2514,8 @@ function DarkMode:Event(event, ...)
 				end, "OtherAddons")
 			end
 
-			local reputations = {"TargetFrameNameBackground", "FokusFrameNameBackground", "TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor", "FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor"}
-			for i, v in pairs(reputations) do
-				local reputation = _G[v]
+			for i, v in pairs(DarkMode:GetNameBackgroundNames()) do
+				local reputation = DarkMode:GetFrameByName(v)
 				if reputation then
 					local redo = false
 					hooksecurefunc(reputation, "SetVertexColor", function(sel, ...)
@@ -2439,6 +2528,8 @@ function DarkMode:Event(event, ...)
 					DarkMode:UpdateColor(reputation, "ufrep", "reputation1", true)
 				end
 			end
+
+			DarkMode:UpdateNameBackgrounds()
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
@@ -2671,6 +2762,7 @@ function DarkMode:Event(event, ...)
 		end
 	elseif event == "ADDON_LOADED" then
 		local from = ...
+		if from == "Blizzard_GamepadActionBars" then DarkMode:After(0.1, function() DarkMode:SetupGamepadActionBars() end, "GamepadActionBars") end
 		if InspectFrame and not inspectFound then
 			inspectFound = true
 			DarkMode:After(0.1, function()
