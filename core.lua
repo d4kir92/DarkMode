@@ -90,6 +90,17 @@ end
 
 function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 	if not DarkMode:IsValidTexture(texture) then return false end
+	if ProfessionsFrame and texture.GetParent then
+		local tab = texture:GetParent()
+		if tab and (texture == tab.SelectedTexture or texture == tab.HighlightTexture or texture == tab.TabGlow) and DarkMode:IsForever() then
+			local tabName = tab:GetName()
+			if tabName and (tabName == "TrainerSpellsProfessionsTab" or tabName:match("^TrainerSpellsProfessionsViewTab%d+$")) then return false end
+			if tab == ProfessionsFrame.ProfessionsOverviewTab then return false end
+			for index = 1, 7 do
+				if tab == ProfessionsFrame["Professions" .. index .. "Tab"] then return false end
+			end
+		end
+	end
 	if texture.dmLockType then typ = texture.dmLockType end
 	if texture == nil then
 		DarkMode:MSG("[UpdateColor] INVALID TEXTURE OBJECT")
@@ -233,9 +244,7 @@ function DarkMode:CheckLateFrames()
 		for index = 0, 7 do
 			local tab = index == 0 and ProfessionsFrame.ProfessionsOverviewTab or ProfessionsFrame["Professions" .. index .. "Tab"]
 			if tab then
-				for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
-					DarkMode:LockColorType(tab[key], "frames")
-				end
+				DarkMode:LockColorType(tab.Background, "frames")
 			end
 		end
 	end
@@ -255,9 +264,7 @@ function DarkMode:CheckLateFrames()
 		local tab = _G[index == 0 and "TrainerSpellsProfessionsTab" or ("TrainerSpellsProfessionsViewTab" .. index)]
 		if tab and not tab.dmTabBordersHooked then
 			tab.dmTabBordersHooked = true
-			for _, key in ipairs({"Background", "SelectedTexture", "HighlightTexture", "TabGlow"}) do
-				DarkMode:LockColorType(tab[key], "frames")
-			end
+			DarkMode:LockColorType(tab.Background, "frames")
 		end
 	end
 
