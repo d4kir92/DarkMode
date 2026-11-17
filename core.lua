@@ -124,12 +124,14 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 
 	local blockTable = DarkMode:GetTextureBlockTable()
 	if textureId and type(blockTable) == "table" and blockTable[textureId] and skipIgnore == nil then return false end
-	if texture:GetAlpha() == 0 then return false end
+	local alpha = texture:GetAlpha()
+	local readableAlpha = not DarkMode:IsSecret(alpha)
+	if readableAlpha and alpha == 0 then return false end
 	if textureId == nil and texture.SetColorTexture then
 		if DarkMode:IsColorType(typ) then
 			local r, g, b, a = DarkMode:GetTypeColor(typ, texture)
 			if r ~= nil and g ~= nil and b ~= nil then
-				if texture:GetAlpha() < 1 then a = texture:GetAlpha() end
+				if readableAlpha and alpha < 1 then a = alpha end
 				texture:SetColorTexture(r, g, b, a)
 			end
 		else
@@ -147,7 +149,7 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 				local hookTyp = sel.dmLockType or typ
 				if DarkMode:IsColorType(hookTyp) then
 					local r, g, b, a = DarkMode:GetTypeColor(hookTyp, sel)
-					if ola and ola < 1 then a = ola end
+					if not DarkMode:IsSecret(ola) and ola and ola < 1 then a = ola end
 					DarkMode:SetVertexColor(sel, r, g, b, a, hookTyp)
 				else
 					DarkMode:INFO("[UpdateColor] #2 Missing type", typ)
@@ -157,10 +159,8 @@ function DarkMode:UpdateColor(texture, typ, from, skipIgnore)
 			end)
 		end
 
-		local ola = 1
-		if texture:GetAlpha() < 1 then ola = texture:GetAlpha() end
 		local r, g, b, a = DarkMode:GetTypeColor(DarkMode:IsColorType(typ) and typ or "frames", texture)
-		if ola and ola < 1 then a = ola end
+		if readableAlpha and alpha < 1 then a = alpha end
 		DarkMode:SetVertexColor(texture, r, g, b, a, typ)
 		if DarkMode:IsColorType(typ) then
 			DMTextures[typ][texture] = true
