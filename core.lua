@@ -1006,6 +1006,36 @@ local foundExpansion = false
 local lastAddonsSearch = 0
 local searchAddonsDelay = 0.1
 local RANKERBUTTONS = {"RankerToggleButton", "RankerWhatIfButton"}
+function DarkMode:ColorPersonalResourceBorders(frame)
+	if not frame then return end
+	local childCount = frame:GetNumChildren()
+	if frame.dmPersonalResourceChildCount == childCount then return end
+	frame.dmPersonalResourceChildCount = childCount
+
+	for _, child in ipairs({frame:GetChildren()}) do
+		DarkMode:ForeachRegions(child, function(region)
+			if region.GetAtlas and region:GetAtlas() == "ui-hud-nameplates-deselected-overlay" and region:GetDrawLayer() == "ARTWORK" then
+				DarkMode:UpdateColor(region, "addons")
+			end
+		end, "PersonalResource")
+	end
+end
+
+function DarkMode:SetupPersonalResourceBorders()
+	if not DarkMode:IsAddOnLoaded("PersonalResource") then return end
+	DarkMode:ColorPersonalResourceBorders(PersonalResourceFrame)
+	DarkMode:ColorPersonalResourceBorders(PersonalResourcePetFrame)
+
+	local _, class = UnitClass("player")
+	if class ~= "DRUID" then return end
+	DarkMode:ColorPersonalResourceBorders(PersonalResourceDisplayFrame)
+	if not DarkMode.dmPersonalResourceTicker then
+		DarkMode.dmPersonalResourceTicker = C_Timer.NewTicker(0.5, function()
+			DarkMode:ColorPersonalResourceBorders(PersonalResourceFrame or PersonalResourceDisplayFrame)
+		end)
+	end
+end
+
 function DarkMode:SearchAddons(from)
 	if from == nil then
 		DarkMode:INFO("[SearchAddons] NO FROM")
@@ -1045,6 +1075,7 @@ function DarkMode:SearchAddons(from)
 	if AuctionatorCancellingFrame and AuctionatorCancellingFrame.ResultsListing and AuctionatorCancellingFrame.ResultsListing.ScrollArea and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar and AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background then DarkMode:FindTextures(AuctionatorCancellingFrame.ResultsListing.ScrollArea.ScrollBar.Background, "addons") end
 	DarkMode:InitLeatrixDruidBar()
 	DarkMode:InitOutfitterFrame()
+	DarkMode:SetupPersonalResourceBorders()
 	for index, name in pairs(DarkMode:GetFrameAddonsTable()) do
 		local baseFrame = DarkMode:GetFrameByName(name)
 		if baseFrame then
