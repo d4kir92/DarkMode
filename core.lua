@@ -1013,9 +1013,30 @@ function DarkMode:ColorPersonalResourceBorders(frame)
 	frame.dmPersonalResourceChildCount = childCount
 
 	for _, child in ipairs({frame:GetChildren()}) do
+		if child.PersonalResourceBorder then
+			DarkMode:UpdateColor(child.PersonalResourceBorder, frame == PersonalResourceDisplayFrame and "ui" or "addons")
+		end
 		DarkMode:ForeachRegions(child, function(region)
 			if region.GetAtlas and region:GetAtlas() == "ui-hud-nameplates-deselected-overlay" and region:GetDrawLayer() == "ARTWORK" then
 				DarkMode:UpdateColor(region, "addons")
+			end
+		end, "PersonalResource")
+	end
+end
+
+function DarkMode:ColorPersonalResourceComboPoints()
+	local frame = PersonalResourceComboFrame
+	if not frame then return end
+	local count = frame:GetNumChildren()
+	if frame.dmPersonalResourceComboCount == count then return end
+	frame.dmPersonalResourceComboCount = count
+	local native = frame:GetParent() == PersonalResourceDisplayFrame
+	for _, point in ipairs({frame:GetChildren()}) do
+		DarkMode:ForeachRegions(point, function(region, index)
+			if native and (index == 1 or index == 2 or index == 3 or index == 4 or index == 5 or index == 7 or index == 9) then
+				DarkMode:UpdateColor(region, "ui")
+			elseif not native and region.GetDrawLayer and region:GetDrawLayer() == "BORDER" then
+				DarkMode:UpdateColor(region, "ui")
 			end
 		end, "PersonalResource")
 	end
@@ -1032,6 +1053,7 @@ function DarkMode:SetupPersonalResourceBorders()
 	if not DarkMode.dmPersonalResourceTicker then
 		DarkMode.dmPersonalResourceTicker = C_Timer.NewTicker(0.5, function()
 			DarkMode:ColorPersonalResourceBorders(PersonalResourceFrame or PersonalResourceDisplayFrame)
+			DarkMode:ColorPersonalResourceComboPoints()
 		end)
 	end
 end
