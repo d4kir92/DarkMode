@@ -83,7 +83,7 @@ function DarkMode:LockColorType(texture, typ)
 	if not DarkMode:UpdateColor(texture, typ) and not texture.dm_lock_alpha_hook and texture.SetAlpha then
 		texture.dm_lock_alpha_hook = true
 		hooksecurefunc(texture, "SetAlpha", function(sel, alpha)
-			if alpha and alpha > 0 and not DMTextures[sel.dmLockType][sel] then DarkMode:UpdateColor(sel, sel.dmLockType) end
+			if not DarkMode:IsSecret(alpha) and alpha and alpha > 0 and not DMTextures[sel.dmLockType][sel] then DarkMode:UpdateColor(sel, sel.dmLockType) end
 		end)
 	end
 end
@@ -445,7 +445,8 @@ end
 local function DMRefreshColors(textures, typ)
 	for v in pairs(textures) do
 		local r, g, b, a = DarkMode:GetTypeColor(typ, v)
-		if v:GetAlpha() and v:GetAlpha() < 1 then a = v:GetAlpha() end
+		local alpha = v:GetAlpha()
+		if not DarkMode:IsSecret(alpha) and alpha and alpha < 1 then a = alpha end
 		DarkMode:SetVertexColor(v, r, g, b, a)
 	end
 end
