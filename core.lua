@@ -564,6 +564,31 @@ function DarkMode:UpdateColors()
 	DarkMode:UpdateWindowButtons()
 	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
 	DarkMode:UpdateBBFCastbarBorders()
+	DarkMode:UpdateAuraButtonTooltip()
+end
+
+function DarkMode:UpdateAuraButtonTooltip()
+	local inbound = AuraContainerInbound
+	if inbound == nil or type(inbound.SetTooltipNineSlice) ~= "function" or CreateColor == nil then return end
+	local r, g, b = DarkMode:GetTypeColor("tt")
+	if r == nil or g == nil or b == nil then
+		if DarkMode.dmAuraTooltipStyled and type(inbound.ResetTooltipStyle) == "function" then
+			DarkMode.dmAuraTooltipStyled = nil
+			pcall(inbound.ResetTooltipStyle)
+		end
+
+		return
+	end
+
+	DarkMode.dmAuraTooltipStyled = true
+	pcall(
+		inbound.SetTooltipNineSlice,
+		{
+			layoutName = "TooltipDefaultLayout",
+			borderColor = CreateColor(r, g, b, 1),
+			centerColor = TOOLTIP_DEFAULT_BACKGROUND_COLOR or CreateColor(0.09, 0.09, 0.19, 1)
+		}
+	)
 end
 
 function DarkMode:ColorBBFCastbarBorder(frame)
@@ -587,6 +612,13 @@ function DarkMode:GetNameBackgroundNames()
 	return {"TargetFrameNameBackground", "FocusFrameNameBackground", "TargetFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor", "FocusFrame.TargetFrameContent.TargetFrameContentMain.ReputationColor"}
 end
 
+function DarkMode:HideNameBackground(bg)
+	if bg.dmNameBgSetting or not bg.dmNameBgHidden or not DarkMode:IsEnabled("HIDENAMEBACKGROUND", false) then return end
+	bg.dmNameBgSetting = true
+	bg:SetAlpha(0)
+	bg.dmNameBgSetting = false
+end
+
 function DarkMode:UpdateNameBackgrounds()
 	local hide = DarkMode:IsEnabled("HIDENAMEBACKGROUND", false)
 	for _, name in ipairs(DarkMode:GetNameBackgroundNames()) do
@@ -595,25 +627,23 @@ function DarkMode:UpdateNameBackgrounds()
 			if hide and not bg.dmNameBgHooked then
 				bg.dmNameBgHooked = true
 				hooksecurefunc(bg, "SetAlpha", function(sel, alpha)
-					if sel.dmNameBgSetting or not DarkMode:IsEnabled("HIDENAMEBACKGROUND", false) then return end
-					if not DarkMode:IsSecret(alpha) and alpha and alpha > 0 then
-						sel.dmNameBgOriginalAlpha = alpha
-						sel.dmNameBgSetting = true
-						sel:SetAlpha(0)
-						sel.dmNameBgSetting = false
-					end
+					if sel.dmNameBgSetting then return end
+					if not DarkMode:IsSecret(alpha) and alpha and alpha > 0 then sel.dmNameBgOriginalAlpha = alpha end
+					DarkMode:HideNameBackground(sel)
 				end)
+
+				for _, func in ipairs({"SetVertexColor", "Show", "SetShown", "SetAtlas", "SetTexture"}) do
+					if bg[func] then hooksecurefunc(bg, func, function(sel) DarkMode:HideNameBackground(sel) end) end
+				end
 			end
 
 			if hide then
-				bg.dmNameBgHidden = true
 				if bg.dmNameBgOriginalAlpha == nil then
 					local alpha = bg:GetAlpha()
-					if not DarkMode:IsSecret(alpha) then bg.dmNameBgOriginalAlpha = alpha end
+					if not DarkMode:IsSecret(alpha) and alpha and alpha > 0 then bg.dmNameBgOriginalAlpha = alpha end
 				end
-				bg.dmNameBgSetting = true
-				bg:SetAlpha(0)
-				bg.dmNameBgSetting = false
+				bg.dmNameBgHidden = true
+				DarkMode:HideNameBackground(bg)
 			elseif bg.dmNameBgHidden then
 				bg.dmNameBgHidden = nil
 				bg:SetAlpha(bg.dmNameBgOriginalAlpha or 1)
@@ -2655,6 +2685,7 @@ function DarkMode:Event(event, ...)
 			DarkMode:UpdateNameBackgrounds()
 			DarkMode:SetupUnitMenuBorder()
 			DarkMode:SetupUnitFrameBuffBorders()
+			DarkMode:UpdateAuraButtonTooltip()
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
