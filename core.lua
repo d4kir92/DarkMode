@@ -595,7 +595,8 @@ function DarkMode:UpdateNameBackgrounds()
 				bg.dmNameBgHooked = true
 				hooksecurefunc(bg, "SetAlpha", function(sel, alpha)
 					if sel.dmNameBgSetting or not DarkMode:IsEnabled("HIDENAMEBACKGROUND", false) then return end
-					if alpha and alpha > 0 then
+					if not DarkMode:IsSecret(alpha) and alpha and alpha > 0 then
+						sel.dmNameBgOriginalAlpha = alpha
 						sel.dmNameBgSetting = true
 						sel:SetAlpha(0)
 						sel.dmNameBgSetting = false
@@ -605,12 +606,18 @@ function DarkMode:UpdateNameBackgrounds()
 
 			if hide then
 				bg.dmNameBgHidden = true
+				if bg.dmNameBgOriginalAlpha == nil then
+					local alpha = bg:GetAlpha()
+					if not DarkMode:IsSecret(alpha) then bg.dmNameBgOriginalAlpha = alpha end
+				end
 				bg.dmNameBgSetting = true
 				bg:SetAlpha(0)
 				bg.dmNameBgSetting = false
 			elseif bg.dmNameBgHidden then
 				bg.dmNameBgHidden = nil
-				bg:SetAlpha(1)
+				bg:SetAlpha(bg.dmNameBgOriginalAlpha or 1)
+				bg.dmNameBgOriginalAlpha = nil
+				DarkMode:UpdateColor(bg, "ufrep", nil, true)
 			end
 		end
 	end
@@ -1583,55 +1590,110 @@ tf:SetScript("OnEvent", function()
 	for i, name in pairs(tab) do
 		DarkMode:FindTexturesByName(name, "uf")
 	end
+
+	DarkMode:UpdateNameBackgrounds()
 end)
 
-function DarkMode:ColorAuraButton(btn, index, btnName, from)
-	if btn == nil then return end
-	local name = DarkMode:GetName(btn)
-	if name == nil then name = btnName end
-	local icon = btn.Icon or btn
-	if DarkMode:IsEnabled("THINBORDERS", false) then
-		if btn and _G[name .. "Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-			if btn.Icon then
-				local br = 0.075
-				btn.Icon:SetTexCoord(br, 1 - br, br, 1 - br)
-			end
+function DarkMode:ColorAuraButton(btn, keepIconCoords)
+	if not btn or DarkMode:IsForbidden(btn) or btn.dmAuraBorder or not DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then return end
+	local icon = btn.Icon or btn.icon or btn
+	local thin = DarkMode:IsEnabled("THINBORDERS", false)
+	if thin and not keepIconCoords and icon.SetTexCoord then
+		local inset = 0.075
+		icon:SetTexCoord(inset, 1 - inset, inset, 1 - inset)
+	end
 
-			_G[name .. "Buff" .. index .. "BorderDM"] = btn:CreateTexture(name .. "Buff" .. index .. "BorderDM", "OVERLAY")
-			local border = _G[name .. "Buff" .. index .. "BorderDM"]
-			border:SetDrawLayer("OVERLAY", 7)
-			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\border_thin")
-			border:SetAllPoints(icon)
-			DarkMode:UpdateColor(border, "buffsanddebuffs")
-		end
-	else
-		if btn ~= nil and _G[name .. "Buff" .. index .. "BorderDM"] == nil and DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-			_G[name .. "Buff" .. index .. "BorderDM"] = btn:CreateTexture(name .. "Buff" .. index .. "BorderDM", "OVERLAY")
-			local border = _G[name .. "Buff" .. index .. "BorderDM"]
-			border:SetDrawLayer("OVERLAY", 7)
-			border:SetTexture("Interface\\AddOns\\DarkMode\\media\\defaultbuff2")
-			border:SetAllPoints(icon)
-			DarkMode:UpdateColor(border, "buffsanddebuffs")
+	local border = btn:CreateTexture(nil, "OVERLAY", nil, 7)
+	btn.dmAuraBorder = border
+	local texture = thin and "border_thin" or "defaultbuff2"
+	border:SetTexture("Interface\\AddOns\\DarkMode\\media\\" .. texture)
+	border:SetAllPoints(icon)
+	DarkMode:UpdateColor(border, "buffsanddebuffs")
+end
+
+function DarkMode:ColorTargetAuraChildren(parent)
+	if DarkMode:IsForbidden(parent) or not parent.GetChildren then return end
+	local children = {pcall(parent.GetChildren, parent)}
+	if not children[1] then return end
+	for index = 2, #children do
+		local child = children[index]
+		if not DarkMode:IsForbidden(child) then
+			if child:IsObjectType("AuraButton") then
+				pcall(DarkMode.ColorAuraButton, DarkMode, child, true)
+			else
+				DarkMode:ColorTargetAuraChildren(child)
+			end
 		end
 	end
 end
 
-if TargetFrame_UpdateBuffAnchor then
-	hooksecurefunc("TargetFrame_UpdateBuffAnchor", function(self, button, index)
-		local name = "Target"
-		if type(button) == "string" then
-			local btn = _G[button .. index]
-			if btn then
-				if btn.unit == "focus" then name = "Focus" end
-				DarkMode:ColorAuraButton(btn, index, name, "TargetFrame_UpdateBuffAnchor")
-			end
-		else
-			local btn = button
-			if btn then
-				if btn.unit == "focus" then name = "Focus" end
-				DarkMode:ColorAuraButton(btn, index, name, "TargetFrame_UpdateBuffAnchor")
+function DarkMode:HookTargetAuraContainer(frame, unit)
+	if not frame or not frame.GetAuraContainer then return end
+	local container = frame:GetAuraContainer()
+	if not container or DarkMode:IsForbidden(container) then return end
+	local pending = false
+	local function QueueBorders()
+		if pending then return end
+		pending = true
+		C_Timer.After(0, function()
+			pending = false
+			DarkMode:ColorTargetAuraChildren(container)
+		end)
+	end
+
+	local events = CreateFrame("Frame")
+	events:RegisterUnitEvent("UNIT_AURA", unit)
+	events:RegisterEvent("PLAYER_REGEN_ENABLED")
+	events:SetScript("OnEvent", QueueBorders)
+	if frame.UpdateAuras then hooksecurefunc(frame, "UpdateAuras", QueueBorders) end
+	QueueBorders()
+end
+
+function DarkMode:HookTargetBuffPool(frame)
+	if not frame or not frame.UpdateAuraFrames or not frame.auraPools then return end
+	local function UpdateBuffPool(owner)
+		local pool = owner.auraPools:GetPool("TargetBuffFrameTemplate")
+		if not pool then return end
+		for btn in pool:EnumerateActive() do
+			if not DarkMode:IsForbidden(btn) and not (btn.__MSQ_Mask or btn.__MSQ_Normal or btn.__MSQ_NewNormal) then
+				DarkMode:ColorAuraButton(btn)
 			end
 		end
+	end
+
+	hooksecurefunc(frame, "UpdateAuraFrames", UpdateBuffPool)
+	UpdateBuffPool(frame)
+end
+
+function DarkMode:SetupUnitFrameBuffBorders()
+	if not CompactUnitFrame_UpdateAuras or DarkMode.dmCompactAuraHooked then return end
+	DarkMode.dmCompactAuraHooked = true
+	hooksecurefunc("CompactUnitFrame_UpdateAuras", function(frame)
+		if DarkMode:IsForbidden(frame) or not frame.buffFrames then return end
+		for _, btn in ipairs(frame.buffFrames) do
+			if not DarkMode:IsForbidden(btn) and btn:IsShown() then DarkMode:ColorAuraButton(btn) end
+		end
+	end)
+end
+
+function DarkMode:SetupUnitMenuBorder()
+	if not UnitPopup_OpenMenu or not Menu or not Menu.GetManager then return end
+	hooksecurefunc("UnitPopup_OpenMenu", function()
+		local menu = Menu.GetManager():GetOpenMenu()
+		if not menu or DarkMode:IsForbidden(menu) then return end
+		for _, region in ipairs({menu:GetRegions()}) do
+			if not DarkMode:IsForbidden(region) and region.GetAtlas and region:GetAtlas() == "common-dropdown-bg" then
+				local r, g, b = DarkMode:GetTypeColor("frames", region)
+				DarkMode:SetVertexColor(region, r, g, b)
+			end
+		end
+	end)
+end
+
+if TargetFrame_UpdateBuffAnchor then
+	hooksecurefunc("TargetFrame_UpdateBuffAnchor", function(self, button, index)
+		if type(button) == "string" then button = _G[button .. index] end
+		DarkMode:ColorAuraButton(button)
 	end)
 end
 
@@ -2590,9 +2652,15 @@ function DarkMode:Event(event, ...)
 			end
 
 			DarkMode:UpdateNameBackgrounds()
+			DarkMode:SetupUnitMenuBorder()
+			DarkMode:SetupUnitFrameBuffBorders()
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
+				DarkMode:HookTargetAuraContainer(TargetFrame, "target")
+				DarkMode:HookTargetAuraContainer(FocusFrame, "focus")
+				DarkMode:HookTargetBuffPool(TargetFrame)
+				DarkMode:HookTargetBuffPool(FocusFrame)
 				if BuffFrame and BuffFrame.UpdateAuras then
 					hooksecurefunc(BuffFrame, "UpdateAuras", function(sel)
 						DarkMode:Debug(3, "BuffFrame Update")
@@ -2606,7 +2674,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, "Aura", "BuffFrame")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2626,7 +2694,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, "Aura", "AuraFrameMixin")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2647,7 +2715,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, buttonName, "BuffFrame_UpdateAllBuffAnchors")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2667,7 +2735,7 @@ function DarkMode:Event(event, ...)
 							if btn and ((frame == TargetFrame and TargetBuffs[index] == nil) or (frame == FocusFrame and FocusBuffs[index] == nil)) then
 								if frame == TargetFrame then
 									TargetBuffs[index] = true
-								elseif frame == TargetFrame then
+								elseif frame == FocusFrame then
 									FocusBuffs[index] = true
 								end
 
@@ -2677,7 +2745,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, buttonName, "TargetFrame_UpdateAuras")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2699,7 +2767,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, buttonName, "TargetFrame_UpdateAuras")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2725,7 +2793,7 @@ function DarkMode:Event(event, ...)
 									if btn.__MSQ_Normal then DarkMode:UpdateColor(btn.__MSQ_Normal, "actionbuttons") end
 									if btn.__MSQ_NewNormal then DarkMode:UpdateColor(btn.__MSQ_NewNormal, "actionbuttons") end
 								else
-									DarkMode:ColorAuraButton(btn, index, buttonName, "FocusFrame_UpdateAuras")
+									DarkMode:ColorAuraButton(btn)
 								end
 							end
 						end
@@ -2734,7 +2802,7 @@ function DarkMode:Event(event, ...)
 					local frameF = CreateFrame("Frame")
 					frameF:RegisterUnitEvent("UNIT_AURA", "focus")
 					frameF:SetScript("OnEvent", function(sel, eve, unit) if unit == "focus" then DarkMode:UpdateFocusBuffs() end end)
-					FocusFrame:HookScript("OnShow", function() DarkMode:After(0.1, function() DarkMode:UpdateFocusBuffs() end, "TargetFrameShow") end)
+					if FocusFrame then FocusFrame:HookScript("OnShow", function() DarkMode:After(0.1, function() DarkMode:UpdateFocusBuffs() end, "FocusFrameShow") end) end
 				end
 			end
 
@@ -2822,6 +2890,7 @@ function DarkMode:Event(event, ...)
 		end
 	elseif event == "ADDON_LOADED" then
 		local from = ...
+		if from == "Blizzard_CompactRaidFrames" then DarkMode:SetupUnitFrameBuffBorders() end
 		if from == "Blizzard_GamepadActionBars" then DarkMode:After(0.1, function() DarkMode:SetupGamepadActionBars() end, "GamepadActionBars") end
 		if InspectFrame and not inspectFound then
 			inspectFound = true

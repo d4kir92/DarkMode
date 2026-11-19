@@ -175,10 +175,11 @@ local function DMAddColorSwatch(holder, key, colorKey)
 	return btn
 end
 
-local function DMAddCheckbox(key, default, func)
+local function DMAddCheckbox(key, default, func, added)
 	return dmSettings:AddCheckbox({
 		["label"] = "LID_" .. key,
 		["search"] = key,
+		["added"] = added,
 		["value"] = DarkMode:IsEnabled(key, default),
 		["func"] = function(value)
 			DarkMode:SetEnabled(key, value)
@@ -323,7 +324,7 @@ local function DMBuildElementList()
 		end
 	})
 
-	DMAddCheckbox("HIDENAMEBACKGROUND", false, function() DarkMode:UpdateNameBackgrounds() end)
+	DMAddCheckbox("HIDENAMEBACKGROUND", false, function() DarkMode:UpdateNameBackgrounds() end, "2026-11-19")
 
 	dmSettings:AddCategory({
 		["label"] = "LID_BORDERS",
