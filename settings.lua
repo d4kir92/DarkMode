@@ -19,6 +19,103 @@ for i, v in ipairs(DMColorModes) do
 	})
 end
 
+DarkMode.LANGUAGES = {{"English", "enUS"}, {"Deutsch", "deDE"}, {"Español (España)", "esES"}, {"Español (México)", "esMX"}, {"Français", "frFR"}, {"Italiano", "itIT"}, {"한국어", "koKR"}, {"Português (Brasil)", "ptBR"}, {"Русский", "ruRU"}, {"简体中文", "zhCN"}, {"繁體中文", "zhTW"}}
+DarkMode.LanguageNames = {}
+for _, info in ipairs(DarkMode.LANGUAGES) do
+	DarkMode.LanguageNames[info[2]] = info[1]
+end
+
+function DarkMode:GetLanguage()
+	local lang = type(DMTAB) == "table" and DMTAB["LANGUAGE"] or nil
+	if lang ~= nil and DarkMode.LanguageNames[lang] ~= nil then return lang end
+	if DarkMode.LanguageNames[GetLocale()] ~= nil then return GetLocale() end
+	return "enUS"
+end
+
+function DarkMode:GetLanguageName(lang)
+	lang = lang or DarkMode:GetLanguage()
+	return DarkMode.LanguageNames[lang] or lang
+end
+
+DarkMode.LibTrans = DarkMode.Trans
+function DarkMode:Trans(key, lang, ...)
+	return DarkMode.LibTrans(self, key, lang or DarkMode:GetLanguage(), ...)
+end
+
+function DarkMode:SetLanguage(lang)
+	if DarkMode.LanguageNames[lang] == nil or lang == DarkMode:GetLanguage() then return end
+	DMTAB = DMTAB or {}
+	if lang == GetLocale() then
+		DMTAB["LANGUAGE"] = nil
+	else
+		DMTAB["LANGUAGE"] = lang
+	end
+
+	DarkMode:RefreshLanguage()
+end
+
+function DarkMode:AddLanguageButton(win)
+	local function SelectLanguage(lang)
+		DarkMode:SetLanguage(lang)
+	end
+
+	local function LanguageMenu(_, root)
+		root:CreateTitle(DarkMode:Trans("LID_LANGUAGE"))
+		for _, info in ipairs(DarkMode.LANGUAGES) do
+			local lang = info[2]
+			root:CreateRadio(format("%s (%s)", info[1], lang), function() return DarkMode:GetLanguage() == lang end, function() SelectLanguage(lang) end)
+		end
+	end
+
+	local parent = win.titleBar or win
+	local button
+	if DarkMode:GetWoWBuild() == "RETAIL" and DarkMode:CheckTemplates("WowStyle1DropdownTemplate") then
+		button = CreateFrame("DropdownButton", nil, parent, "WowStyle1DropdownTemplate")
+		button:SetScale(0.8)
+		button:SetSize(162.5, 25)
+		button:SetPoint("TOPLEFT", parent, "TOPLEFT", 10, -1.25)
+		button:SetSelectionText(function() return DarkMode:GetLanguageName() end)
+		button:SetTooltip(function(tooltip) tooltip:SetText(DarkMode:Trans("LID_LANGUAGE")) end)
+		button:SetupMenu(LanguageMenu)
+	else
+		button = DarkMode:CreateButton(nil, parent)
+		button:SetSize(130, 20)
+		button:SetPoint("TOPLEFT", parent, "TOPLEFT", 7, -2)
+		button.Arrow = button:CreateTexture(nil, "OVERLAY")
+		button.Arrow:SetTexture("Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Up")
+		button.Arrow:SetSize(16, 16)
+		button.Arrow:SetPoint("RIGHT", button, "RIGHT", -2, 0)
+		button:SetScript("OnClick", function(sel)
+			if MenuUtil and MenuUtil.CreateContextMenu then
+				MenuUtil.CreateContextMenu(sel, LanguageMenu)
+			else
+				local current = 1
+				for index, info in ipairs(DarkMode.LANGUAGES) do
+					if info[2] == DarkMode:GetLanguage() then current = index end
+				end
+
+				SelectLanguage(DarkMode.LANGUAGES[current % #DarkMode.LANGUAGES + 1][2])
+			end
+		end)
+
+		button:SetScript("OnEnter", function(sel)
+			GameTooltip:SetOwner(sel, "ANCHOR_RIGHT")
+			GameTooltip:SetText(DarkMode:Trans("LID_LANGUAGE"))
+			GameTooltip:Show()
+		end)
+
+		button:SetScript("OnLeave", function() GameTooltip:Hide() end)
+	end
+
+	local function RefreshButton()
+		button:SetText(DarkMode:GetLanguageName())
+	end
+
+	RefreshButton()
+	win.Language = button
+	return RefreshButton
+end
+
 function DarkMode:GetColorModes()
 	return DMColorModes
 end
@@ -175,11 +272,13 @@ local function DMAddColorSwatch(holder, key, colorKey)
 	return btn
 end
 
-local function DMAddCheckbox(key, default, func, added)
+local function DMAddCheckbox(key, default, func, added, tooltip)
 	return dmSettings:AddCheckbox({
 		["label"] = "LID_" .. key,
 		["search"] = key,
 		["added"] = added,
+		["tooltip"] = tooltip,
+		["whatsNew"] = tooltip,
 		["value"] = DarkMode:IsEnabled(key, default),
 		["func"] = function(value)
 			DarkMode:SetEnabled(key, value)
@@ -294,6 +393,8 @@ local function DMBuildElementList()
 		end
 	end)
 
+	if DarkMode.WhatsNew then DarkMode.WhatsNew:AddSettingsCheckbox(dmSettings, "2026-11-20") end
+
 	DMAddCheckbox("GRYPHONS", true)
 	dmSettings:AddDropdown({
 		["label"] = "LID_PLAYERDRAGON",
@@ -333,25 +434,16 @@ local function DMBuildElementList()
 		["level"] = 2
 	})
 
-	DMAddCheckbox("MASKMINIMAPBUTTONS", true)
+	DMAddCheckbox("MASKMINIMAPBUTTONS", true, nil, nil, "LID_MASKMINIMAPBUTTONS_TOOLTIP")
 	if not getglobal("MSQ") then
-		DMAddCheckbox("MASKACTIONBUTTONS", true)
-		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true)
+		DMAddCheckbox("MASKACTIONBUTTONS", true, nil, nil, "LID_MASKACTIONBUTTONS_TOOLTIP")
+		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, nil, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
 		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then
-			local targetAuras = DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20")
-			targetAuras:HookScript("OnEnter", function(self)
-				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-				GameTooltip:SetText(DarkMode:Trans("LID_REPLACETARGETAURAS"))
-				GameTooltip:AddLine(DarkMode:Trans("LID_REPLACETARGETAURAS_TOOLTIP"), 1, 1, 1, true)
-				GameTooltip:Show()
-			end)
-			targetAuras:HookScript("OnLeave", function(self)
-				if GameTooltip:IsOwned(self) then GameTooltip:Hide() end
-			end)
+			DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP")
 		end
 
-		DMAddCheckbox("THINBORDERS", false)
-		DMAddCheckbox("SHADOWACTIONBARS", false)
+		DMAddCheckbox("THINBORDERS", false, nil, nil, "LID_THINBORDERS_TOOLTIP")
+		DMAddCheckbox("SHADOWACTIONBARS", false, nil, nil, "LID_SHADOWACTIONBARS_TOOLTIP")
 	end
 
 	dmSettings:AddCategory({
@@ -441,8 +533,51 @@ function DarkMode:ToggleSettings()
 	DMUpdateShowErrors()
 end
 
+function DarkMode:GetSettingsTitle()
+	return format("|T%s:16:16:0:0|t DarkMode v%s", DarkMode:GetAddonIcon(), DarkMode:GetVersion())
+end
+
+function DarkMode:RefreshLanguage()
+	if dmSettings ~= nil then
+		local shown = dmSettings:IsShown()
+		dmSettings:Hide()
+		dmSettings = nil
+		wipe(dmSwatches)
+		wipe(dmLinked)
+		DarkMode:BuildDMSettings()
+		if shown then
+			dmSettings:Show()
+			dmSettings:Raise()
+		end
+	end
+
+	if DarkMode.WhatsNew then DarkMode.WhatsNew:RefreshLanguage() end
+end
+
 function DarkMode:InitDMSettings()
 	DarkMode:SetVersion()
+	DMTAB = DMTAB or {}
+	DMTAB["WHATSNEW"] = DMTAB["WHATSNEW"] or {}
+	DarkMode.WhatsNew = DarkMode:CreateUIWhatsNew({
+		["name"] = "DMWhatsNew",
+		["title"] = DarkMode:GetSettingsTitle(),
+		["db"] = DMTAB["WHATSNEW"],
+		["since"] = "2026-11-19",
+		["getSettings"] = function() return dmSettings end,
+		["addLanguageButton"] = function(win) return DarkMode:AddLanguageButton(win) end
+	})
+
+	DarkMode:BuildDMSettings()
+	if DarkMode:IsEnabled("SETTINGS", false) then
+		dmSettings:Show()
+	else
+		dmSettings:Hide()
+	end
+
+	C_Timer.After(2, function() DarkMode.WhatsNew:ShowIfNew() end)
+end
+
+function DarkMode:BuildDMSettings()
 	dmSettings = DarkMode:CreateUIWindow({
 		["name"] = "DMSettings",
 		["pTab"] = {"CENTER"},
@@ -450,7 +585,8 @@ function DarkMode:InitDMSettings()
 		["height"] = DarkMode:DMGV("SETTINGSHEIGHT", DarkMode:MClamp(640, 200, GetScreenHeight())),
 		["minWidth"] = 420,
 		["minHeight"] = 300,
-		["title"] = format("|T%s:16:16:0:0|t DarkMode v%s", DarkMode:GetAddonIcon(), DarkMode:GetVersion()),
+		["title"] = DarkMode:GetSettingsTitle(),
+		["navigation"] = true,
 		["onResize"] = function(width, height)
 			DarkMode:DMSV("SETTINGSWIDTH", width)
 			DarkMode:DMSV("SETTINGSHEIGHT", height)
@@ -462,6 +598,7 @@ function DarkMode:InitDMSettings()
 	})
 
 	dmSettings:SetFrameLevel(99)
+	DarkMode:AddLanguageButton(dmSettings)
 	dmSettings:AddSearch()
 	DMBuildFooter()
 	DMBuildElementList()
@@ -472,9 +609,4 @@ function DarkMode:InitDMSettings()
 	end
 
 	DMUpdateShowErrors()
-	if DarkMode:IsEnabled("SETTINGS", false) then
-		dmSettings:Show()
-	else
-		dmSettings:Hide()
-	end
 end
