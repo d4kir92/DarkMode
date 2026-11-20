@@ -377,14 +377,19 @@ local function DMBuildFooter()
 	dmSettings.DMDiscord:SetAutoFocus(false)
 end
 
+local function DMAddCategory(key, label)
+	return dmSettings:AddCategory({
+		["label"] = label,
+		["key"] = key,
+		["search"] = key
+	})
+end
+
 local function DMBuildElementList()
 	dmSettings:SuspendLayout()
-	dmSettings:AddCategory({
-		["label"] = "LID_GENERAL",
-		["key"] = "GENERAL",
-		["search"] = "GENERAL"
-	})
-
+	local masque = getglobal("MSQ") ~= nil
+	local off = DarkMode:GetColorModeID("Off")
+	DMAddCategory("GENERAL", "LID_GENERAL")
 	DMAddCheckbox("MMBTN", true, function()
 		if DarkMode:IsEnabled("MMBTN", DarkMode:GetWoWBuild() ~= "RETAIL") then
 			DarkMode:ShowMMBtn("DarkMode")
@@ -394,8 +399,31 @@ local function DMBuildElementList()
 	end)
 
 	if DarkMode.WhatsNew then DarkMode.WhatsNew:AddSettingsCheckbox(dmSettings, "2026-11-20") end
+	DMAddGeneralColorMode()
+	DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end, nil, "LID_DESATURATE_TOOLTIP")
+	if not masque then DMAddCheckbox("THINBORDERS", false, nil, nil, "LID_THINBORDERS_TOOLTIP") end
+	DMAddCategory("INTERFACE", "LID_INTERFACE")
+	DMAddColorMode("COLORMODE", 1, "CUSTOMUIC", true)
+	DMAddColorMode("COLORMODEMI", 1, "CUSTOMMIC", true)
+	DMAddColorMode("COLORMODEBA", 1, "CUSTOMBAC", true)
+	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
+	DMAddCheckbox("MASKMINIMAPBUTTONS", true, nil, nil, "LID_MASKMINIMAPBUTTONS_TOOLTIP")
+	DMAddCategory("WINDOWS", "LID_WINDOWS")
+	DMAddColorMode("COLORMODEF", 1, "CUSTOMFRC", true)
+	DMAddColorMode("COLORMODEFA", 1, "CUSTOMFRAC", true)
+	local questChoices = {{["value"] = 0, ["label"] = "LID_QUESTBACKGROUNDWINDOWCOLOR"}}
+	for _, choice in ipairs(dmChoices) do
+		tinsert(questChoices, choice)
+	end
 
-	DMAddCheckbox("GRYPHONS", true)
+	DMAddColorMode("COLORMODEQUESTBACKGROUND", 0, "CUSTOMQUESTBACKGROUNDC", false, questChoices)
+	DMAddCategory("UNITFRAMES", "LID_UNITFRAMES")
+	DMAddColorMode("COLORMODEUNFR", 1, "CUSTOMUFC", true)
+	DMAddColorMode("COLORMODEAUNFRHPA", off, "CUSTOMUFHPC", false)
+	DMAddColorMode("COLORMODEAUNFRPORA", off, "CUSTOMUFPORC", false)
+	DMAddColorMode("COLORMODEAUNFRREPA", off, "CUSTOMUFREC", false)
+	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
+	DMAddColorMode("COLORMODEAUNFRDRAP", off, "CUSTOMUFDRPC", false)
 	dmSettings:AddDropdown({
 		["label"] = "LID_PLAYERDRAGON",
 		["search"] = "PLAYERDRAGON",
@@ -426,74 +454,25 @@ local function DMBuildElementList()
 	})
 
 	DMAddCheckbox("HIDENAMEBACKGROUND", false, function() DarkMode:UpdateNameBackgrounds() end, "2026-11-19")
-
-	dmSettings:AddCategory({
-		["label"] = "LID_BORDERS",
-		["key"] = "BORDERS",
-		["search"] = "BORDERS",
-		["level"] = 2
-	})
-
-	DMAddCheckbox("MASKMINIMAPBUTTONS", true, nil, nil, "LID_MASKMINIMAPBUTTONS_TOOLTIP")
-	if not getglobal("MSQ") then
+	DMAddCategory("ACTIONBARS", "LID_ACTIONBARS")
+	DMAddColorMode("COLORMODEAB", 1, "CUSTOMABC", true)
+	DMAddCheckbox("GRYPHONS", true)
+	if not masque then
 		DMAddCheckbox("MASKACTIONBUTTONS", true, nil, nil, "LID_MASKACTIONBUTTONS_TOOLTIP")
-		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, nil, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
-		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then
-			DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP")
-		end
-
-		DMAddCheckbox("THINBORDERS", false, nil, nil, "LID_THINBORDERS_TOOLTIP")
 		DMAddCheckbox("SHADOWACTIONBARS", false, nil, nil, "LID_SHADOWACTIONBARS_TOOLTIP")
 	end
 
-	dmSettings:AddCategory({
-		["label"] = "LID_COLORS",
-		["key"] = "COLORS",
-		["search"] = "COLORS"
-	})
-
-	DMAddGeneralColorMode()
-	DMAddColorMode("COLORMODE", 1, "CUSTOMUIC", true)
-	DMAddColorMode("COLORMODEUNFR", 1, "CUSTOMUFC", true)
-	DMAddColorMode("COLORMODENP", 1, "CUSTOMNPC", true)
-	DMAddColorMode("COLORMODETT", 1, "CUSTOMTTC", true)
-	DMAddColorMode("COLORMODEAB", 1, "CUSTOMABC", true)
-	DMAddColorMode("COLORMODEBA", 1, "CUSTOMBAC", true)
-	DMAddColorMode("COLORMODEMI", 1, "CUSTOMMIC", true)
+	DMAddCategory("BUFFSANDDEBUFFS", "LID_BUFFSANDDEBUFFS")
 	DMAddColorMode("COLORMODEBAD", 1, "CUSTOMBADC", true)
-	DMAddColorMode("COLORMODEF", 1, "CUSTOMFRC", true)
-	DMAddColorMode("COLORMODEFA", 1, "CUSTOMFRAC", true)
-	dmSettings:AddCategory({
-		["label"] = "LID_ADVANCED",
-		["key"] = "ADVANCED",
-		["search"] = "ADVANCED",
-		["level"] = 2,
-		["collapsed"] = true
-	})
-
-	local grayscale = DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end)
-	grayscale:HookScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:SetText(DarkMode:Trans("LID_DESATURATE"))
-		GameTooltip:AddLine(DarkMode:Trans("LID_DESATURATE_TOOLTIP"), 1, 1, 1, true)
-		GameTooltip:Show()
-	end)
-	grayscale:HookScript("OnLeave", function(self)
-		if GameTooltip:IsOwned(self) then GameTooltip:Hide() end
-	end)
-	local questChoices = {{["value"] = 0, ["label"] = "LID_QUESTBACKGROUNDWINDOWCOLOR"}}
-	for _, choice in ipairs(dmChoices) do
-		tinsert(questChoices, choice)
+	if not masque then
+		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, nil, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
+		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP") end
 	end
 
-	DMAddColorMode("COLORMODEQUESTBACKGROUND", 0, "CUSTOMQUESTBACKGROUNDC", false, questChoices)
-	local off = DarkMode:GetColorModeID("Off")
-	DMAddColorMode("COLORMODEABTNS", off, "CUSTOMBTNS", false)
-	DMAddColorMode("COLORMODEAUNFRDRA", off, "CUSTOMUFDRC", false)
-	DMAddColorMode("COLORMODEAUNFRDRAP", off, "CUSTOMUFDRPC", false)
-	DMAddColorMode("COLORMODEAUNFRHPA", off, "CUSTOMUFHPC", false)
-	DMAddColorMode("COLORMODEAUNFRPORA", off, "CUSTOMUFPORC", false)
-	DMAddColorMode("COLORMODEAUNFRREPA", off, "CUSTOMUFREC", false)
+	DMAddCategory("NAMEPLATES", "LID_NAMEPLATES")
+	DMAddColorMode("COLORMODENP", 1, "CUSTOMNPC", true)
+	DMAddCategory("TOOLTIPS", "LID_Tooltips")
+	DMAddColorMode("COLORMODETT", 1, "CUSTOMTTC", true)
 	dmSettings:ResumeLayout()
 	DMUpdateSwatches()
 end
