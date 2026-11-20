@@ -466,7 +466,21 @@ local function DMBuildElementList()
 	DMAddColorMode("COLORMODEBAD", 1, "CUSTOMBADC", true)
 	if not masque then
 		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, nil, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
-		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP") end
+		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then
+			if DarkMode:IsBBFHandlingTargetAuras() then
+				local cb = dmSettings:AddCheckbox({
+					["label"] = "LID_REPLACETARGETAURAS",
+					["search"] = "REPLACETARGETAURAS",
+					["tooltip"] = "LID_REPLACETARGETAURAS_BBF_TOOLTIP",
+					["value"] = false,
+					["textFunc"] = function() return DarkMode:Trans("LID_REPLACETARGETAURAS") .. " (" .. DarkMode:Trans("LID_HANDLEDBYBBF") .. ")" end
+				})
+
+				cb:SetEnabled(false)
+			else
+				DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP")
+			end
+		end
 	end
 
 	DMAddCategory("NAMEPLATES", "LID_NAMEPLATES")

@@ -259,7 +259,12 @@ function DarkMode:CanReplaceTargetAuras()
 	return TA:IsRestricted() and TA:IsSupported() and true or false
 end
 
+function DarkMode:IsBBFHandlingTargetAuras()
+	return type(BBF) == "table" and type(BetterBlizzFramesDB) == "table" and BetterBlizzFramesDB.playerAuraFiltering and true or false
+end
+
 function DarkMode:SetupRestrictedTargetAuras()
+	if DarkMode:IsBBFHandlingTargetAuras() then return true end
 	if not DarkMode:IsEnabled("REPLACETARGETAURAS", true) or not DarkMode:CanReplaceTargetAuras() then return false end
 	pcall(TA.Setup, TA, TargetFrame, "target")
 	pcall(TA.Setup, TA, FocusFrame, "focus")

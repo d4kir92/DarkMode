@@ -1403,6 +1403,12 @@ function DarkMode:SearchUi(from)
 						end
 					end
 
+					if index == "Artworks" and _G[name] and _G[name].dividers and strfind(name, "^BT4StatusTrackingBarContainer") then
+						for _, divider in ipairs(_G[name].dividers) do
+							DarkMode:FindTextures(divider, "ui")
+						end
+					end
+
 					if name ~= "MainMenuBarBackpackButtonNormalTexture" or DarkMode:GetWoWBuild() ~= "RETAIL" then DarkMode:FindTexturesByName(name, "ui") end
 				end
 			elseif index == "Gryphons" then

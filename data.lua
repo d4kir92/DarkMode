@@ -224,6 +224,8 @@ local DMUi = {
 		"MainMenuBarMaxLevelBar",
 		"BT4BarBlizzardArt",
 		"BT4BarBlizzardArt.nineSliceParent",
+		"BT4StatusTrackingBarContainer1",
+		"BT4StatusTrackingBarContainer2",
 		"BlizzardArtLeftCap",
 		"BlizzardArtRightCap",
 		"CompactRaidFrameManager",
