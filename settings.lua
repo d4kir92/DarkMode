@@ -545,6 +545,7 @@ function DarkMode:RefreshLanguage()
 		wipe(dmSwatches)
 		wipe(dmLinked)
 		DarkMode:BuildDMSettings()
+		DarkMode:FindRepeatingTextures("DMSettings", dmSettings, "frames", false)
 		if shown then
 			dmSettings:Show()
 			dmSettings:Raise()
