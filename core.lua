@@ -1707,18 +1707,31 @@ function DarkMode:SetupUnitFrameBuffBorders()
 	end)
 end
 
+function DarkMode:ColorUnitMenu(menu)
+	if not menu or DarkMode:IsForbidden(menu) then return end
+	for _, region in ipairs({menu:GetRegions()}) do
+		if not DarkMode:IsForbidden(region) and region.GetAtlas and region:GetAtlas() == "common-dropdown-bg" then
+			local r, g, b = DarkMode:GetTypeColor("frames", region)
+			DarkMode:SetVertexColor(region, r, g, b)
+		end
+	end
+end
+
 function DarkMode:SetupUnitMenuBorder()
 	if not UnitPopup_OpenMenu or not Menu or not Menu.GetManager then return end
 	hooksecurefunc("UnitPopup_OpenMenu", function()
 		local menu = Menu.GetManager():GetOpenMenu()
-		if not menu or DarkMode:IsForbidden(menu) then return end
-		for _, region in ipairs({menu:GetRegions()}) do
-			if not DarkMode:IsForbidden(region) and region.GetAtlas and region:GetAtlas() == "common-dropdown-bg" then
-				local r, g, b = DarkMode:GetTypeColor("frames", region)
-				DarkMode:SetVertexColor(region, r, g, b)
-			end
-		end
+		DarkMode.dmUnitMenu = menu
+		DarkMode:ColorUnitMenu(menu)
 	end)
+
+	if EventRegistry and EventRegistry.RegisterCallback then
+		EventRegistry:RegisterCallback("MenuProxy.OnShow", function(_, menu)
+			local root = DarkMode.dmUnitMenu
+			if not root or menu == root or DarkMode:IsForbidden(root) or not root:IsShown() then return end
+			DarkMode:ColorUnitMenu(menu)
+		end, DarkMode)
+	end
 end
 
 if TargetFrame_UpdateBuffAnchor then
