@@ -52,3 +52,4 @@ data.lua
 colors.lua
 settings.lua
 core.lua
+targetauras.lua

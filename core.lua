@@ -2702,8 +2702,10 @@ function DarkMode:Event(event, ...)
 
 			local BuffFrame_UpdateAllBuffAnchors = getglobal("BuffFrame_UpdateAllBuffAnchors")
 			if DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) then
-				DarkMode:HookTargetAuraContainer(TargetFrame, "target")
-				DarkMode:HookTargetAuraContainer(FocusFrame, "focus")
+				if not (DarkMode.SetupRestrictedTargetAuras and DarkMode:SetupRestrictedTargetAuras()) then
+					DarkMode:HookTargetAuraContainer(TargetFrame, "target")
+					DarkMode:HookTargetAuraContainer(FocusFrame, "focus")
+				end
 				DarkMode:HookTargetBuffPool(TargetFrame)
 				DarkMode:HookTargetBuffPool(FocusFrame)
 				if BuffFrame and BuffFrame.UpdateAuras then
