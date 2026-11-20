@@ -364,6 +364,12 @@ and keeps the frame art where it is, e.g. to leave room for another frame's side
 drawn over the window's left edge. With `resizable = "width"`, `minWidth` / `maxWidth`
 then apply to the width without the shift; `onResize` still gets the full width.
 
+`win:RefreshLanguage()` re-translates the existing window in place after the addon's
+language changed: checkbox, slider, dropdown (label and selected choice), category and
+other element labels, the search hint, the new badges and the navigation. Nothing is
+rebuilt, so frames keep their styling. Texts the addon set itself (titles, footer
+buttons) stay its own job.
+
 ## Resizing
 
 The window is resizable by default (pass `resizable = false` to turn it off) via a

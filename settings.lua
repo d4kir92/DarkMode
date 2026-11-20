@@ -539,17 +539,8 @@ end
 
 function DarkMode:RefreshLanguage()
 	if dmSettings ~= nil then
-		local shown = dmSettings:IsShown()
-		dmSettings:Hide()
-		dmSettings = nil
-		wipe(dmSwatches)
-		wipe(dmLinked)
-		DarkMode:BuildDMSettings()
-		DarkMode:FindRepeatingTextures("DMSettings", dmSettings, "frames", false)
-		if shown then
-			dmSettings:Show()
-			dmSettings:Raise()
-		end
+		dmSettings:RefreshLanguage()
+		if dmSettings.dmRefreshLanguageButton then dmSettings.dmRefreshLanguageButton() end
 	end
 
 	if DarkMode.WhatsNew then DarkMode.WhatsNew:RefreshLanguage() end
@@ -599,7 +590,7 @@ function DarkMode:BuildDMSettings()
 	})
 
 	dmSettings:SetFrameLevel(99)
-	DarkMode:AddLanguageButton(dmSettings)
+	dmSettings.dmRefreshLanguageButton = DarkMode:AddLanguageButton(dmSettings)
 	dmSettings:AddSearch()
 	DMBuildFooter()
 	DMBuildElementList()
