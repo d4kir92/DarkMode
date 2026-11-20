@@ -337,6 +337,19 @@ local function DMBuildElementList()
 	if not getglobal("MSQ") then
 		DMAddCheckbox("MASKACTIONBUTTONS", true)
 		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true)
+		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then
+			local targetAuras = DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20")
+			targetAuras:HookScript("OnEnter", function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+				GameTooltip:SetText(DarkMode:Trans("LID_REPLACETARGETAURAS"))
+				GameTooltip:AddLine(DarkMode:Trans("LID_REPLACETARGETAURAS_TOOLTIP"), 1, 1, 1, true)
+				GameTooltip:Show()
+			end)
+			targetAuras:HookScript("OnLeave", function(self)
+				if GameTooltip:IsOwned(self) then GameTooltip:Hide() end
+			end)
+		end
+
 		DMAddCheckbox("THINBORDERS", false)
 		DMAddCheckbox("SHADOWACTIONBARS", false)
 	end

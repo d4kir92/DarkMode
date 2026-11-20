@@ -108,8 +108,7 @@ function TA:AddGroup(host, key, size, layoutIndex, forceNewLine)
 	host.container:AddAuraGroup(key, AuraUtil.AuraFilters.Helpful, {
 		["maxFrameCount"] = 0,
 		["initializeFrame"] = function(button)
-			host.initCalls = (host.initCalls or 0) + 1
-			TA:Try("InitButton " .. host.unit, TA.InitButton, TA, host, button, size)
+			pcall(TA.InitButton, TA, host, button, size)
 		end,
 		["layout"] = {
 			["elementSpacing"] = spacing,
@@ -245,8 +244,7 @@ function TA:Setup(frame, unit)
 	end)
 
 	local function Refresh()
-		host.configureCalls = (host.configureCalls or 0) + 1
-		TA:Try("Configure " .. unit, TA.Configure, TA, host)
+		pcall(TA.Configure, TA, host)
 	end
 
 	if type(frame.ConfigureAuraContainer) == "function" then hooksecurefunc(frame, "ConfigureAuraContainer", Refresh) end
@@ -257,79 +255,13 @@ function TA:Setup(frame, unit)
 	Refresh()
 end
 
-function TA:Try(label, func, ...)
-	local ok, err = pcall(func, ...)
-	if not ok then
-		TA.errors = TA.errors or {}
-		if #TA.errors < 20 then TA.errors[#TA.errors + 1] = label .. ": " .. tostring(err) end
-	end
-	return ok
+function DarkMode:CanReplaceTargetAuras()
+	return TA:IsRestricted() and TA:IsSupported() and true or false
 end
 
 function DarkMode:SetupRestrictedTargetAuras()
-	TA.setupCalled = true
-	if not TA:IsRestricted() or not TA:IsSupported() then return false end
-	TA:Try("Setup target", TA.Setup, TA, TargetFrame, "target")
-	TA:Try("Setup focus", TA.Setup, TA, FocusFrame, "focus")
+	if not DarkMode:IsEnabled("REPLACETARGETAURAS", true) or not DarkMode:CanReplaceTargetAuras() then return false end
+	pcall(TA.Setup, TA, TargetFrame, "target")
+	pcall(TA.Setup, TA, FocusFrame, "focus")
 	return TA.frames.target ~= nil or TA.frames.focus ~= nil
-end
-
-function TA:Value(func, obj, ...)
-	if not obj or type(obj[func]) ~= "function" then return "n/a" end
-	local results = {pcall(obj[func], obj, ...)}
-	if not results[1] then return "ERR " .. tostring(results[2]) end
-	local out = {}
-	for index = 2, #results do
-		local value = results[index]
-		if DarkMode:IsSecret(value) then
-			out[#out + 1] = "secret"
-		elseif type(value) == "table" then
-			out[#out + 1] = (type(value.GetName) == "function" and value:GetName()) or "table"
-		else
-			out[#out + 1] = tostring(value)
-		end
-	end
-	return table.concat(out, ",")
-end
-
-function TA:Debug()
-	local lines = {}
-	local function Add(...)
-		lines[#lines + 1] = table.concat({...}, " ")
-	end
-
-	Add("setupCalled", tostring(TA.setupCalled), "restricted", tostring(TA:IsRestricted()), "supported", tostring(TA:IsSupported() and true or false))
-	Add("option", tostring(DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true)), "styleEnum", tostring(Enum and Enum.CustomAuraButtonDispelTypeTextureStyle ~= nil), "stealEnum", tostring(Enum and Enum.CustomAuraButtonDispelTypeStealableFilter ~= nil))
-	for _, unit in ipairs({"target", "focus"}) do
-		local host = TA.frames[unit]
-		if host then
-			local c = host.container
-			local f = host.frame
-			Add("[" .. unit .. "]", "configure", tostring(host.configureCalls), "init", tostring(host.initCalls), "buttons", tostring(#host.counts), "frameShown", TA:Value("IsShown", f))
-			Add(" shown", TA:Value("IsShown", c), "visible", TA:Value("IsVisible", c), "alpha", TA:Value("GetEffectiveAlpha", c), "scale", TA:Value("GetEffectiveScale", c), "strata", TA:Value("GetFrameStrata", c), "level", TA:Value("GetFrameLevel", c))
-			Add(" size", TA:Value("GetSize", c), "points", TA:Value("GetNumPoints", c), "point1", TA:Value("GetPoint", c, 1), "unit", TA:Value("GetUnit", c), "enabled", TA:Value("IsEnabled", c))
-			Add(" frame strata", TA:Value("GetFrameStrata", f), "level", TA:Value("GetFrameLevel", f), "blizzAlpha", TA:Value("GetAlpha", f:GetAuraContainer()))
-			for _, key in ipairs({"FirstMine", "FirstOther", "Second"}) do
-				local first = c.GetAuraGroupFrame and select(2, pcall(c.GetAuraGroupFrame, c, key, 1)) or nil
-				local firstInfo = "none"
-				if type(first) == "table" then firstInfo = "shown " .. TA:Value("IsShown", first) .. " visible " .. TA:Value("IsVisible", first) .. " size " .. TA:Value("GetSize", first) .. " pt " .. TA:Value("GetPoint", first, 1) end
-				Add(" group", key, "enabled", TA:Value("IsAuraGroupEnabled", c, key), "frames", TA:Value("GetAuraGroupFrameCount", c, key), "first:", firstInfo)
-			end
-		else
-			Add("[" .. unit .. "] no host")
-		end
-	end
-
-	for _, err in ipairs(TA.errors or {}) do
-		Add("ERROR", err)
-	end
-
-	return table.concat(lines, "\n")
-end
-
-SLASH_DARKMODETA1 = "/dmta"
-SlashCmdList["DARKMODETA"] = function()
-	for line in string.gmatch(TA:Debug(), "[^\n]+") do
-		print("|cff9999ffDMTA|r " .. line)
-	end
 end
