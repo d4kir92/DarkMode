@@ -160,7 +160,7 @@ local function DMUpdateSwatches()
 	local custom = DarkMode:GetColorModeID("Custom")
 	for i = 1, #dmSwatches do
 		local btn = dmSwatches[i]
-		if DarkMode:DMGV(btn.dmkey, 1) == custom then
+		if btn.dmalways or DarkMode:DMGV(btn.dmkey, 1) == custom then
 			local r, g, b, a = DarkMode:GetCustomColor(btn.dmcolorkey)
 			DMSetSolidColor(btn.dmfill, r, g, b, a)
 			btn:Show()
@@ -224,8 +224,9 @@ function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
 	end
 end
 
-local function DMAddColorSwatch(holder, key, colorKey)
+local function DMAddColorSwatch(holder, key, colorKey, always)
 	local btn = DarkMode:CreateButton("DMSettingsSwatch" .. key, holder, true)
+	btn.dmalways = always
 	btn:SetSize(DMSWATCHSIZE, DMSWATCHSIZE)
 	btn:SetPoint("RIGHT", holder, "RIGHT", 0, 0)
 	btn.dmborder = btn:CreateTexture(nil, "BACKGROUND")
@@ -265,6 +266,7 @@ local function DMAddColorSwatch(holder, key, colorKey)
 
 			DarkMode:SetCustomColor(colorKey, newR, newG, newB, newA)
 			DMUpdateSwatches()
+			if btn.dmalways then DMEnableSave() end
 		end)
 	end)
 
@@ -479,6 +481,13 @@ local function DMBuildElementList()
 				cb:SetEnabled(false)
 			else
 				DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP")
+				if DarkMode:IsEnabled("REPLACETARGETAURAS", true) then
+					DarkMode:EnsureTargetAuraGlowColors()
+					for _, key in ipairs({"TARGETAURAPURGEGLOW", "TARGETAURADISPELGLOW"}) do
+						local cb = DMAddCheckbox(key, true, nil, "2026-11-22", "LID_" .. key .. "_TOOLTIP")
+						if cb and cb.holder then DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true) end
+					end
+				end
 			end
 		end
 	end

@@ -11,8 +11,28 @@ local TA = {
 	["mirroredStartY"] = -6,
 	["maxBuffs"] = 32,
 	["maxDebuffs"] = 16,
-	["dispelKeys"] = {"None", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"}
+	["dispelKeys"] = {"None", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"},
+	["glowAsset"] = "Interface\\AddOns\\DarkMode\\media\\auraglow",
+	["glowScale"] = 1.8,
+	["glowDefault"] = {0.2, 0.6, 1, 1},
+	["glowColors"] = {
+		["TARGETAURAPURGEGLOW"] = "CUSTOMTARGETAURAPURGEC",
+		["TARGETAURADISPELGLOW"] = "CUSTOMTARGETAURADISPELC"
+	}
 }
+
+function DarkMode:EnsureTargetAuraGlowColors()
+	if type(DMTAB) ~= "table" then return end
+	for _, colorKey in pairs(TA.glowColors) do
+		if DMTAB[colorKey .. "_r"] == nil then
+			DMTAB[colorKey .. "_r"], DMTAB[colorKey .. "_g"], DMTAB[colorKey .. "_b"], DMTAB[colorKey .. "_a"] = unpack(TA.glowDefault)
+		end
+	end
+end
+
+function DarkMode:GetTargetAuraGlowColorKey(key)
+	return TA.glowColors[key]
+end
 
 function TA:IsRestricted()
 	if type(GetBuildOption) ~= "function" then return false end
@@ -42,7 +62,40 @@ function TA:Filter(...)
 	return nil
 end
 
-function TA:InitButton(host, button, size)
+function TA:AddGlow(button, overlay, size, key, options)
+	if not DarkMode:IsEnabled(key, true) then return false end
+	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
+	if not styles.CustomAsset then return false end
+	DarkMode:EnsureTargetAuraGlowColors()
+	local color = CreateColor(DarkMode:GetCustomColor(TA.glowColors[key]))
+	local assets = {}
+	local colors = {}
+	for _, dispelKey in ipairs(TA.dispelKeys) do
+		assets[dispelKey] = {
+			["asset"] = TA.glowAsset
+		}
+
+		colors[dispelKey] = color
+	end
+
+	local glow = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+	glow:SetSize(size * TA.glowScale, size * TA.glowScale)
+	glow:SetPoint("CENTER", button, "CENTER", 0, 0)
+	glow:SetBlendMode("ADD")
+	options["style"] = styles.CustomAsset
+	options["customDispelAssetMap"] = assets
+	options["customDispelColorMap"] = colors
+	local ok = pcall(button.AddDispelTypeTexture, button, glow, options)
+	if not ok then glow:Hide() end
+	return ok
+end
+
+function TA:UpdateBorder(host, entry)
+	local border = entry.button.dmAuraBorder
+	if border then border:SetShown(not host.harmful[entry.key]) end
+end
+
+function TA:InitButton(host, button, size, key)
 	button:SetSize(size, size)
 	if button.SetFlattensRenderLayers then button:SetFlattensRenderLayers(true) end
 	local icon = button:CreateTexture(nil, "BACKGROUND")
@@ -56,30 +109,52 @@ function TA:InitButton(host, button, size)
 	cooldown:SetHideCountdownNumbers(true)
 	button:SetDurationCooldown(cooldown)
 	DarkMode:ColorAuraButton(button, true)
+	local entry = {
+		["button"] = button,
+		["key"] = key
+	}
+
+	host.buttons[#host.buttons + 1] = entry
+	TA:UpdateBorder(host, entry)
 	local overlay = CreateFrame("Frame", nil, button)
 	overlay:SetAllPoints(button)
 	overlay:SetFrameLevel(cooldown:GetFrameLevel() + 1)
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
-	local dispel = overlay:CreateTexture(nil, "OVERLAY")
-	dispel:SetTexture("Interface\\Buttons\\UI-Debuff-Overlays")
-	dispel:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
-	dispel:SetPoint("TOPLEFT", button, "TOPLEFT", -1, 1)
-	dispel:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
-	button:AddDispelTypeTexture(dispel, {
-		["style"] = styles.PreserveAsset,
+	local dispelGlow = TA:AddGlow(button, overlay, size, "TARGETAURADISPELGLOW", {
 		["showWhenHarmful"] = true,
 		["showWhenHelpful"] = false,
-		["showWithoutDispelType"] = true
+		["showWithoutDispelType"] = false
 	})
 
-	if styles.CustomAsset and Enum.CustomAuraButtonDispelTypeStealableFilter then
+	if not dispelGlow then
+		local dispel = overlay:CreateTexture(nil, "OVERLAY")
+		dispel:SetTexture("Interface\\Buttons\\UI-Debuff-Overlays")
+		dispel:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
+		dispel:SetPoint("TOPLEFT", button, "TOPLEFT", -1, 1)
+		dispel:SetPoint("BOTTOMRIGHT", button, "BOTTOMRIGHT", 1, -1)
+		button:AddDispelTypeTexture(dispel, {
+			["style"] = styles.PreserveAsset,
+			["showWhenHarmful"] = true,
+			["showWhenHelpful"] = false,
+			["showWithoutDispelType"] = true
+		})
+	end
+
+	local purgeGlow = Enum.CustomAuraButtonDispelTypeStealableFilter and TA:AddGlow(button, overlay, size, "TARGETAURAPURGEGLOW", {
+		["showWhenHarmful"] = false,
+		["showWhenHelpful"] = true,
+		["showWithoutDispelType"] = true,
+		["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable
+	})
+
+	if not purgeGlow and styles.CustomAsset and Enum.CustomAuraButtonDispelTypeStealableFilter then
 		local stealable = overlay:CreateTexture(nil, "OVERLAY", nil, 1)
 		stealable:SetSize(24, 24)
 		stealable:SetPoint("CENTER", button, "CENTER", 0, 0)
 		stealable:SetBlendMode("ADD")
 		local assets = {}
-		for _, key in ipairs(TA.dispelKeys) do
-			assets[key] = {
+		for _, dispelKey in ipairs(TA.dispelKeys) do
+			assets[dispelKey] = {
 				["asset"] = "Interface\\TargetingFrame\\UI-TargetingFrame-Stealable"
 			}
 		end
@@ -108,7 +183,7 @@ function TA:AddGroup(host, key, size, layoutIndex, forceNewLine)
 	host.container:AddAuraGroup(key, AuraUtil.AuraFilters.Helpful, {
 		["maxFrameCount"] = 0,
 		["initializeFrame"] = function(button)
-			pcall(TA.InitButton, TA, host, button, size)
+			pcall(TA.InitButton, TA, host, button, size, key)
 		end,
 		["layout"] = {
 			["elementSpacing"] = spacing,
@@ -180,6 +255,13 @@ function TA:Configure(host)
 		TA:SetGroup(container, "Second", TA:Filter(helpful), maxBuffs)
 	end
 
+	host.harmful.FirstMine = not friendly
+	host.harmful.FirstOther = not friendly
+	host.harmful.Second = friendly
+	for _, entry in ipairs(host.buttons) do
+		TA:UpdateBorder(host, entry)
+	end
+
 	local showCount = frame.showAuraCount == true
 	if host.showCount ~= showCount then
 		host.showCount = showCount
@@ -228,7 +310,9 @@ function TA:Setup(frame, unit)
 		["frame"] = frame,
 		["unit"] = unit,
 		["container"] = container,
-		["counts"] = {}
+		["counts"] = {},
+		["buttons"] = {},
+		["harmful"] = {}
 	}
 
 	TA.frames[unit] = host
