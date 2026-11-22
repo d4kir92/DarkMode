@@ -480,14 +480,27 @@ local function DMBuildElementList()
 
 				cb:SetEnabled(false)
 			else
-				DMAddCheckbox("REPLACETARGETAURAS", true, nil, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP")
-				if DarkMode:IsEnabled("REPLACETARGETAURAS", true) then
-					DarkMode:EnsureTargetAuraGlowColors()
-					for _, key in ipairs({"TARGETAURAPURGEGLOW", "TARGETAURADISPELGLOW"}) do
-						local cb = DMAddCheckbox(key, true, nil, "2026-11-22", "LID_" .. key .. "_TOOLTIP")
-						if cb and cb.holder then DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true) end
-					end
+				local replace = DMAddCheckbox(
+					"REPLACETARGETAURAS",
+					true,
+					function()
+						dmSettings:UpdateDependencies()
+						DMEnableSave()
+					end, "2026-11-20", "LID_REPLACETARGETAURAS_TOOLTIP"
+				)
+
+				local function IsReplaceEnabled()
+					return DarkMode:IsEnabled("REPLACETARGETAURAS", true)
 				end
+
+				DarkMode:EnsureTargetAuraGlowColors()
+				for _, key in ipairs({"TARGETAURAPURGEGLOW", "TARGETAURADISPELGLOW"}) do
+					local cb = dmSettings:AddDependency(DMAddCheckbox(key, false, nil, "2026-11-22", "LID_" .. key .. "_TOOLTIP"), IsReplaceEnabled)
+					dmSettings:AddRequirement(cb, replace)
+					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true), IsReplaceEnabled, 0) end
+				end
+
+				dmSettings:UpdateDependencies()
 			end
 		end
 	end

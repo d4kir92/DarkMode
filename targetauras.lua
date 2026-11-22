@@ -63,7 +63,7 @@ function TA:Filter(...)
 end
 
 function TA:AddGlow(button, overlay, size, key, options)
-	if not DarkMode:IsEnabled(key, true) then return false end
+	if not DarkMode:IsEnabled(key, false) then return false end
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
 	if not styles.CustomAsset then return false end
 	DarkMode:EnsureTargetAuraGlowColors()
