@@ -2865,11 +2865,13 @@ function DarkMode:Event(event, ...)
 				if spellbar then
 					local icon = spellbar.Icon
 					if icon then
-						local scale = 1
-						local sw, sh = icon:GetSize()
-						sw = DarkMode:MathR(sw)
-						sh = DarkMode:MathR(sh)
-						DarkMode:AddActionButtonBorder(spellbar, icon, name, sw * scale, sh * scale, 0, 0, "buffsanddebuffs", nil, false)
+						local thin = DarkMode:IsEnabled("THINBORDERS", false)
+						local border = DarkMode:AddActionButtonBorder(spellbar, icon, name, 1, 1, 0, 0, "buffsanddebuffs", "Interface\\AddOns\\DarkMode\\media\\" .. (thin and "border_thin" or "defaultbuff2"), false)
+						if border then
+							border:ClearAllPoints()
+							border:SetAllPoints(icon)
+							if thin then icon:SetTexCoord(0.075, 0.925, 0.075, 0.925) end
+						end
 					end
 				end
 			end

@@ -266,6 +266,7 @@ local function DMAddColorSwatch(holder, key, colorKey, always)
 
 			DarkMode:SetCustomColor(colorKey, newR, newG, newB, newA)
 			DMUpdateSwatches()
+			if DarkMode.UpdateTargetAuraGlows then DarkMode:UpdateTargetAuraGlows() end
 			if btn.dmalways then DMEnableSave() end
 		end)
 	end)
@@ -495,7 +496,13 @@ local function DMBuildElementList()
 
 				DarkMode:EnsureTargetAuraGlowColors()
 				for _, key in ipairs({"TARGETAURAPURGEGLOW", "TARGETAURADISPELGLOW"}) do
-					local cb = dmSettings:AddDependency(DMAddCheckbox(key, false, nil, "2026-11-22", "LID_" .. key .. "_TOOLTIP"), IsReplaceEnabled)
+					local cb = dmSettings:AddDependency(DMAddCheckbox(
+						key,
+						false,
+						function()
+							DarkMode:UpdateTargetAuraGlows()
+							DMEnableSave()
+						end, "2026-11-22", "LID_" .. key .. "_TOOLTIP"), IsReplaceEnabled)
 					dmSettings:AddRequirement(cb, replace)
 					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true), IsReplaceEnabled, 0) end
 				end
