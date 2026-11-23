@@ -12,6 +12,12 @@ local TA = {
 	["maxBuffs"] = 32,
 	["maxDebuffs"] = 16,
 	["dispelKeys"] = {"None", "", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"},
+	["glowFlipbookAtlas"] = "UI-HUD-ActionBar-Proc-Loop-Flipbook",
+	["glowFlipbookScale"] = 1.72,
+	["glowFlipbookRows"] = 6,
+	["glowFlipbookCols"] = 5,
+	["glowFlipbookFrames"] = 30,
+	["glowFlipbookDuration"] = 1,
 	["glowAtlas"] = "UI-HUD-RotationHelper-ProcAltGlow",
 	["glowAtlasScale"] = 1.32,
 	["glowFallbackAsset"] = "Interface\\SpellActivationOverlay\\IconAlert",
@@ -72,14 +78,31 @@ function TA:Filter(...)
 end
 
 function DarkMode:GetTargetAuraGlowStyle()
-	if C_Texture and C_Texture.GetAtlasInfo and C_Texture.GetAtlasInfo(TA.glowAtlas) then
-		return {
-			["asset"] = TA.glowAtlas,
-			["isAtlas"] = true,
-			["scale"] = TA.glowAtlasScale,
-			["desaturate"] = true,
-			["strength"] = TA.glowStrength
-		}
+	if C_Texture and C_Texture.GetAtlasInfo then
+		if C_Texture.GetAtlasInfo(TA.glowFlipbookAtlas) then
+			return {
+				["asset"] = TA.glowFlipbookAtlas,
+				["isAtlas"] = true,
+				["isFlipbook"] = true,
+				["rows"] = TA.glowFlipbookRows,
+				["cols"] = TA.glowFlipbookCols,
+				["frames"] = TA.glowFlipbookFrames,
+				["duration"] = TA.glowFlipbookDuration,
+				["scale"] = TA.glowFlipbookScale,
+				["desaturate"] = true,
+				["strength"] = TA.glowStrength
+			}
+		end
+
+		if C_Texture.GetAtlasInfo(TA.glowAtlas) then
+			return {
+				["asset"] = TA.glowAtlas,
+				["isAtlas"] = true,
+				["scale"] = TA.glowAtlasScale,
+				["desaturate"] = true,
+				["strength"] = TA.glowStrength
+			}
+		end
 	end
 
 	return {
@@ -90,6 +113,22 @@ function DarkMode:GetTargetAuraGlowStyle()
 		["desaturate"] = false,
 		["strength"] = TA.glowStrength
 	}
+end
+
+function DarkMode:AttachTargetAuraGlowAnimation(owner, texture, style)
+	if not owner or not texture or not style or not style.isFlipbook or type(owner.CreateAnimationGroup) ~= "function" then return nil end
+	local anim = owner:CreateAnimationGroup()
+	anim:SetLooping("REPEAT")
+	local flip = anim:CreateAnimation("FlipBook")
+	if not flip then return nil end
+	flip:SetTarget(texture)
+	flip:SetDuration(style.duration or 1)
+	flip:SetFlipBookRows(style.rows or 6)
+	flip:SetFlipBookColumns(style.cols or 5)
+	flip:SetFlipBookFrames(style.frames or 30)
+	if flip.SetFlipBookFrameWidth then flip:SetFlipBookFrameWidth(0) end
+	if flip.SetFlipBookFrameHeight then flip:SetFlipBookFrameHeight(0) end
+	return anim
 end
 
 function TA:CreateAssetMap(asset, texCoords)
@@ -118,15 +157,16 @@ end
 
 function TA:BuildGlowOptions(entry)
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
+	local usePreserve = entry.style and entry.style.isFlipbook and styles.PreserveAsset ~= nil
 	local opts = {
-		["style"] = styles.CustomAsset,
+		["style"] = usePreserve and styles.PreserveAsset or styles.CustomAsset,
 		["showWhenHarmful"] = entry.baseOptions.showWhenHarmful,
 		["showWhenHelpful"] = entry.baseOptions.showWhenHelpful,
 		["showWithoutDispelType"] = entry.baseOptions.showWithoutDispelType,
-		["stealableFilter"] = entry.baseOptions.stealableFilter,
-		["customDispelAssetMap"] = entry.assets
+		["stealableFilter"] = entry.baseOptions.stealableFilter
 	}
 
+	if not usePreserve then opts["customDispelAssetMap"] = entry.assets end
 	local r, g, b, a = DarkMode:GetCustomColor(TA.glowColors[entry.key])
 	local mult = (a or 1) * TA.glowStrength
 	local colors = TA:CreateColorMap(r * mult, g * mult, b * mult)
@@ -274,9 +314,10 @@ function TA:AddGlow(host, button, size, key, baseOptions, fallback, fallbackOpti
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
 	local glow = nil
 	local assets = nil
+	local style = nil
 	if styles.CustomAsset then
 		DarkMode:EnsureTargetAuraGlowColors()
-		local style = DarkMode:GetTargetAuraGlowStyle()
+		style = DarkMode:GetTargetAuraGlowStyle()
 		assets = TA:CreateAssetMap(style.asset, style.texCoords)
 		glow = button:CreateTexture(nil, "BACKGROUND", nil, -2)
 		glow:SetSize(size * style.scale, size * style.scale)
@@ -290,11 +331,20 @@ function TA:AddGlow(host, button, size, key, baseOptions, fallback, fallbackOpti
 		if style.desaturate then glow:SetDesaturated(true) end
 		glow:SetBlendMode("ADD")
 		glow:Hide()
+		local anim = DarkMode:AttachTargetAuraGlowAnimation(button, glow, style)
+		if anim then
+			if type(button.AddAuraShownAnimation) == "function" then
+				pcall(button.AddAuraShownAnimation, button, anim)
+			else
+				anim:Play()
+			end
+		end
 	end
 
 	local entry = {
 		["button"] = button,
 		["glow"] = glow,
+		["style"] = style,
 		["assets"] = assets,
 		["baseOptions"] = baseOptions,
 		["fallback"] = fallback,

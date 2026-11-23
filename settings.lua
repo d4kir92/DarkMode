@@ -587,7 +587,7 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 	local style = DarkMode:GetTargetAuraGlowStyle()
 	local size = 26
 	local holder = CreateFrame("Frame", nil, dmSettings.content)
-	holder:SetSize(math.max(1, dmSettings.contentWidth - 8), 46)
+	holder:SetSize(math.max(1, dmSettings.contentWidth - 8), 52)
 	function holder:SetEnabled() end
 	local bg = holder:CreateTexture(nil, "BACKGROUND")
 	bg:SetAllPoints(holder)
@@ -612,6 +612,11 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 		if style.desaturate then glow:SetDesaturated(true) end
 		glow:SetBlendMode("ADD")
 		glow:Hide()
+		local anim = DarkMode.AttachTargetAuraGlowAnimation and DarkMode:AttachTargetAuraGlowAnimation(box, glow, style)
+		if anim then
+			anim:Play()
+			box:HookScript("OnShow", function() if not anim:IsPlaying() then anim:Play() end end)
+		end
 		local icon = box:CreateTexture(nil, "BACKGROUND", nil, 0)
 		icon:SetAllPoints(box)
 		icon:SetTexture(iconTexture)
@@ -655,7 +660,7 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 	}
 
 	dmSettings.dmAuraPreview = preview
-	DarkMode.UI:Add(dmSettings, holder, 46, DarkMode:Trans("LID_PREVIEW"), true, "TARGETAURAPURGEGLOW TARGETAURADISPELGLOW PREVIEW")
+	DarkMode.UI:Add(dmSettings, holder, 52, DarkMode:Trans("LID_PREVIEW"), true, "TARGETAURAPURGEGLOW TARGETAURADISPELGLOW PREVIEW")
 	dmSettings:AddDependency(holder, isReplaceEnabled)
 	dmSettings:AddRequirement(holder, replace)
 end
