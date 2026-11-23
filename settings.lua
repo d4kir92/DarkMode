@@ -276,6 +276,7 @@ local function DMAddColorSwatch(holder, key, colorKey, always, cb)
 			DarkMode:SetCustomColor(colorKey, newR, newG, newB, newA)
 			DMUpdateSwatches()
 			if DarkMode.UpdateTargetAuraGlows then DarkMode:UpdateTargetAuraGlows() end
+			if DarkMode.UpdateTargetAuraPreview then DarkMode:UpdateTargetAuraPreview() end
 			if btn.dmalways then DMEnableSave() end
 		end)
 	end)
@@ -413,7 +414,13 @@ local function DMBuildElementList()
 	if DarkMode.WhatsNew then DarkMode.WhatsNew:AddSettingsCheckbox(dmSettings, "2026-11-20") end
 	DMAddGeneralColorMode()
 	DMAddCheckbox("DESATURATE", true, function(value) DarkMode:UpdateGrayscale(value) end, nil, "LID_DESATURATE_TOOLTIP")
-	if not masque then DMAddCheckbox("THINBORDERS", false, nil, nil, "LID_THINBORDERS_TOOLTIP") end
+	if not masque then
+		DMAddCheckbox("THINBORDERS", false, function()
+			if DarkMode.UpdateTargetAuraBorders then DarkMode:UpdateTargetAuraBorders() end
+			if DarkMode.UpdateTargetAuraPreview then DarkMode:UpdateTargetAuraPreview() end
+			DMEnableSave()
+		end, nil, "LID_THINBORDERS_TOOLTIP")
+	end
 	DMAddCategory("INTERFACE", "LID_INTERFACE")
 	DMAddColorMode("COLORMODE", 1, "CUSTOMUIC", true)
 	DMAddColorMode("COLORMODEMI", 1, "CUSTOMMIC", true)
@@ -477,7 +484,11 @@ local function DMBuildElementList()
 	DMAddCategory("BUFFSANDDEBUFFS", "LID_BUFFSANDDEBUFFS")
 	DMAddColorMode("COLORMODEBAD", 1, "CUSTOMBADC", true)
 	if not masque then
-		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, nil, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
+		DMAddCheckbox("MASKBUFFSANDDEBUFFS", true, function()
+			if DarkMode.UpdateTargetAuraBorders then DarkMode:UpdateTargetAuraBorders() end
+			if DarkMode.UpdateTargetAuraPreview then DarkMode:UpdateTargetAuraPreview() end
+			DMEnableSave()
+		end, nil, "LID_MASKBUFFSANDDEBUFFS_TOOLTIP")
 		if DarkMode.CanReplaceTargetAuras and DarkMode:CanReplaceTargetAuras() then
 			if DarkMode:IsBBFHandlingTargetAuras() then
 				local cb = dmSettings:AddCheckbox({
@@ -510,12 +521,14 @@ local function DMBuildElementList()
 						false,
 						function()
 							DarkMode:UpdateTargetAuraGlows()
+							DarkMode:UpdateTargetAuraPreview()
 							DMEnableSave()
 						end, "2026-11-22", "LID_" .. key .. "_TOOLTIP"), IsReplaceEnabled)
 					dmSettings:AddRequirement(cb, replace)
 					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true, cb), IsReplaceEnabled, 0) end
 				end
 
+				DarkMode:AddTargetAuraPreview(replace, IsReplaceEnabled)
 				dmSettings:UpdateDependencies()
 			end
 		end
@@ -527,6 +540,7 @@ local function DMBuildElementList()
 	DMAddColorMode("COLORMODETT", 1, "CUSTOMTTC", true)
 	dmSettings:ResumeLayout()
 	DMUpdateSwatches()
+	DarkMode:UpdateTargetAuraPreview()
 end
 
 function DarkMode:ToggleSettings()
@@ -568,10 +582,120 @@ function DarkMode:GetSettingsTitle()
 	return format("|T%s:16:16:0:0|t DarkMode v%s", DarkMode:GetAddonIcon(), DarkMode:GetVersion())
 end
 
+function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
+	if dmSettings == nil or not DarkMode.UI or not DarkMode.GetTargetAuraGlowStyle then return end
+	local style = DarkMode:GetTargetAuraGlowStyle()
+	local size = 26
+	local holder = CreateFrame("Frame", nil, dmSettings.content)
+	holder:SetSize(math.max(1, dmSettings.contentWidth - 8), 46)
+	function holder:SetEnabled() end
+	local bg = holder:CreateTexture(nil, "BACKGROUND")
+	bg:SetAllPoints(holder)
+	DMSetSolidColor(bg, 0.05, 0.05, 0.05, 0.45)
+	local label = holder:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	label:SetPoint("LEFT", holder, "LEFT", 6, 0)
+	label:SetText(DarkMode:Trans("LID_PREVIEW"))
+	local function MakeSlot(xOffset, iconTexture, isDebuff, labelKey)
+		local box = CreateFrame("Frame", nil, holder)
+		box:SetSize(size, size)
+		box:SetPoint("LEFT", holder, "LEFT", xOffset, 0)
+		local glow = box:CreateTexture(nil, "BACKGROUND", nil, -2)
+		glow:SetSize(size * style.scale, size * style.scale)
+		glow:SetPoint("CENTER", box, "CENTER", 0, 0)
+		if style.isAtlas then
+			glow:SetAtlas(style.asset, false)
+		else
+			glow:SetTexture(style.asset)
+			if style.texCoords then glow:SetTexCoord(style.texCoords.left, style.texCoords.right, style.texCoords.top, style.texCoords.bottom) end
+		end
+
+		if style.desaturate then glow:SetDesaturated(true) end
+		glow:SetBlendMode("ADD")
+		glow:Hide()
+		local icon = box:CreateTexture(nil, "BACKGROUND", nil, 0)
+		icon:SetAllPoints(box)
+		icon:SetTexture(iconTexture)
+		local border = nil
+		local stealable = nil
+		if isDebuff then
+			border = box:CreateTexture(nil, "OVERLAY", nil, 0)
+			border:SetTexture("Interface\\Buttons\\UI-Debuff-Overlays")
+			border:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
+			border:SetPoint("TOPLEFT", box, "TOPLEFT", -1, 1)
+			border:SetPoint("BOTTOMRIGHT", box, "BOTTOMRIGHT", 1, -1)
+			border:SetVertexColor(0.2, 0.6, 1, 1)
+		else
+			border = box:CreateTexture(nil, "OVERLAY", nil, 1)
+			border:SetAllPoints(box)
+			stealable = box:CreateTexture(nil, "OVERLAY", nil, 2)
+			stealable:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+			stealable:SetSize(size * 1.4, size * 1.4)
+			stealable:SetPoint("CENTER", box, "CENTER", 0, 0)
+			stealable:SetBlendMode("ADD")
+		end
+
+		local text = holder:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
+		text:SetPoint("LEFT", box, "RIGHT", 10, 0)
+		text:SetText(DarkMode:Trans(labelKey))
+		return {
+			["glow"] = glow,
+			["border"] = border,
+			["stealable"] = stealable,
+			["text"] = text,
+			["labelKey"] = labelKey
+		}
+	end
+
+	local preview = {
+		["holder"] = holder,
+		["label"] = label,
+		["style"] = style,
+		["buff"] = MakeSlot(120, "Interface\\Icons\\Spell_Holy_WordFortitude", false, "LID_BUFF"),
+		["debuff"] = MakeSlot(240, "Interface\\Icons\\Spell_Shadow_ShadowWordPain", true, "LID_DEBUFF")
+	}
+
+	dmSettings.dmAuraPreview = preview
+	DarkMode.UI:Add(dmSettings, holder, 46, DarkMode:Trans("LID_PREVIEW"), true, "TARGETAURAPURGEGLOW TARGETAURADISPELGLOW PREVIEW")
+	dmSettings:AddDependency(holder, isReplaceEnabled)
+	dmSettings:AddRequirement(holder, replace)
+end
+
+function DarkMode:UpdateTargetAuraPreview()
+	if dmSettings == nil or dmSettings.dmAuraPreview == nil then return end
+	local preview = dmSettings.dmAuraPreview
+	local style = preview.style
+	preview.label:SetText(DarkMode:Trans("LID_PREVIEW"))
+	preview.buff.text:SetText(DarkMode:Trans(preview.buff.labelKey))
+	preview.debuff.text:SetText(DarkMode:Trans(preview.debuff.labelKey))
+	local purgeOn = DarkMode:IsEnabled("TARGETAURAPURGEGLOW", false) and true or false
+	local pr, pg, pb, pa = DarkMode:GetCustomColor(DarkMode:GetTargetAuraGlowColorKey("TARGETAURAPURGEGLOW"))
+	local pm = (pa or 1) * (style.strength or 1)
+	preview.buff.glow:SetVertexColor(pr * pm, pg * pm, pb * pm, 1)
+	preview.buff.glow:SetShown(purgeOn)
+	if preview.buff.stealable then preview.buff.stealable:SetShown(not purgeOn) end
+	local showBorder = DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) and true or false
+	local thin = DarkMode:IsEnabled("THINBORDERS", false)
+	preview.buff.border:SetTexture("Interface\\AddOns\\DarkMode\\media\\" .. (thin and "border_thin" or "defaultbuff2"))
+	local br, bg, bb = DarkMode:GetTypeColor("buffsanddebuffs")
+	if br and bg and bb then
+		preview.buff.border:SetVertexColor(br, bg, bb, 1)
+	else
+		preview.buff.border:SetVertexColor(1, 1, 1, 1)
+	end
+
+	preview.buff.border:SetShown(showBorder)
+	local dispelOn = DarkMode:IsEnabled("TARGETAURADISPELGLOW", false) and true or false
+	local dr, dg, db, da = DarkMode:GetCustomColor(DarkMode:GetTargetAuraGlowColorKey("TARGETAURADISPELGLOW"))
+	local dm = (da or 1) * (style.strength or 1)
+	preview.debuff.glow:SetVertexColor(dr * dm, dg * dm, db * dm, 1)
+	preview.debuff.glow:SetShown(dispelOn)
+end
+
 function DarkMode:RefreshLanguage()
 	if dmSettings ~= nil then
 		dmSettings:RefreshLanguage()
 		if dmSettings.dmRefreshLanguageButton then dmSettings.dmRefreshLanguageButton() end
+		DarkMode:UpdateTargetAuraPreview()
 	end
 
 	if DarkMode.WhatsNew then DarkMode.WhatsNew:RefreshLanguage() end

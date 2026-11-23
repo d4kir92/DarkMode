@@ -565,6 +565,8 @@ function DarkMode:UpdateColors()
 	if GameMenuFrame and GameMenuFrame:IsShown() then DarkMode:UpdateGameMenuButtons(GameMenuFrame) end
 	DarkMode:UpdateBBFCastbarBorders()
 	DarkMode:UpdateAuraButtonTooltip()
+	if DarkMode.UpdateTargetAuraBorders then DarkMode:UpdateTargetAuraBorders() end
+	if DarkMode.UpdateTargetAuraPreview then DarkMode:UpdateTargetAuraPreview() end
 end
 
 function DarkMode:UpdateAuraButtonTooltip()
