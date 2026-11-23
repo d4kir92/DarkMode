@@ -655,8 +655,8 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 		["holder"] = holder,
 		["label"] = label,
 		["style"] = style,
-		["buff"] = MakeSlot(120, "Interface\\Icons\\Spell_Holy_WordFortitude", false, "LID_BUFF"),
-		["debuff"] = MakeSlot(240, "Interface\\Icons\\Spell_Shadow_ShadowWordPain", true, "LID_DEBUFF")
+		["buff"] = MakeSlot(90, "Interface\\Icons\\Spell_Holy_WordFortitude", false, "LID_BUFF"),
+		["debuff"] = MakeSlot(185, "Interface\\Icons\\Spell_Shadow_ShadowWordPain", true, "LID_DEBUFF")
 	}
 
 	dmSettings.dmAuraPreview = preview

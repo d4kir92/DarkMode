@@ -333,11 +333,8 @@ function TA:AddGlow(host, button, size, key, baseOptions, fallback, fallbackOpti
 		glow:Hide()
 		local anim = DarkMode:AttachTargetAuraGlowAnimation(button, glow, style)
 		if anim then
-			if type(button.AddAuraShownAnimation) == "function" then
-				pcall(button.AddAuraShownAnimation, button, anim)
-			else
-				anim:Play()
-			end
+			local ok = type(button.AddAuraShownAnimation) == "function" and pcall(button.AddAuraShownAnimation, button, anim)
+			if not ok then anim:Play() end
 		end
 	end
 
@@ -415,13 +412,15 @@ function TA:InitButton(host, button, size, key)
 			["showWithoutDispelType"] = false
 		})
 
+		local stealable = nil
+		local stealableOptions = nil
 		if styles.CustomAsset and Enum.CustomAuraButtonDispelTypeStealableFilter then
-			local stealable = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+			stealable = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
 			stealable:SetSize(24, 24)
 			stealable:SetPoint("CENTER", button, "CENTER", 0, 0)
 			stealable:SetBlendMode("ADD")
 			stealable:Hide()
-			local stealableOptions = {
+			stealableOptions = {
 				["style"] = styles.CustomAsset,
 				["showWhenHarmful"] = false,
 				["showWhenHelpful"] = true,
@@ -429,14 +428,13 @@ function TA:InitButton(host, button, size, key)
 				["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable,
 				["customDispelAssetMap"] = TA:CreateAssetMap("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
 			}
-
-			TA:AddGlow(host, button, size, "TARGETAURAPURGEGLOW", {
-				["showWhenHarmful"] = false,
-				["showWhenHelpful"] = true,
-				["showWithoutDispelType"] = true,
-				["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable
-			}, stealable, stealableOptions)
 		end
+
+		TA:AddGlow(host, button, size, "TARGETAURAPURGEGLOW", {
+			["showWhenHarmful"] = false,
+			["showWhenHelpful"] = true,
+			["showWithoutDispelType"] = false
+		}, stealable, stealableOptions)
 	end
 
 	local count = overlay:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
