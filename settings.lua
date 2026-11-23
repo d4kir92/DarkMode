@@ -224,11 +224,20 @@ function DarkMode:ShowColorPicker(r, g, b, a, changedCallback)
 	end
 end
 
-local function DMAddColorSwatch(holder, key, colorKey, always)
+local function DMAddColorSwatch(holder, key, colorKey, always, cb)
 	local btn = DarkMode:CreateButton("DMSettingsSwatch" .. key, holder, true)
 	btn.dmalways = always
+	btn:SetFrameLevel(holder:GetFrameLevel() + 5)
 	btn:SetSize(DMSWATCHSIZE, DMSWATCHSIZE)
 	btn:SetPoint("RIGHT", holder, "RIGHT", 0, 0)
+	if cb then
+		local function UpdateHitRect()
+			cb:SetHitRectInsets(0, cb:GetWidth() - math.max(cb:GetWidth(), holder:GetWidth() - DMSWATCHSIZE - 4), 0, 0)
+		end
+
+		UpdateHitRect()
+		holder:HookScript("OnSizeChanged", UpdateHitRect)
+	end
 	btn.dmborder = btn:CreateTexture(nil, "BACKGROUND")
 	btn.dmborder:SetAllPoints(btn)
 	DMSetSolidColor(btn.dmborder, 0.6, 0.6, 0.6, 1)
@@ -504,7 +513,7 @@ local function DMBuildElementList()
 							DMEnableSave()
 						end, "2026-11-22", "LID_" .. key .. "_TOOLTIP"), IsReplaceEnabled)
 					dmSettings:AddRequirement(cb, replace)
-					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true), IsReplaceEnabled, 0) end
+					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true, cb), IsReplaceEnabled, 0) end
 				end
 
 				dmSettings:UpdateDependencies()
