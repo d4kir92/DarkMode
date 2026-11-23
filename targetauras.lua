@@ -13,7 +13,8 @@ local TA = {
 	["maxDebuffs"] = 16,
 	["dispelKeys"] = {"None", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"},
 	["glowAsset"] = "Interface\\AddOns\\DarkMode\\media\\auraglow",
-	["glowScale"] = 1.8,
+	["glowScale"] = 1.4,
+	["glowStrength"] = 0.55,
 	["glowDefault"] = {0.2, 0.6, 1, 1},
 	["glowColors"] = {
 		["TARGETAURAPURGEGLOW"] = "CUSTOMTARGETAURAPURGEC",
@@ -73,11 +74,13 @@ function TA:AddGlow(host, button, overlay, size, key, options)
 		}
 	end
 
-	local glow = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+	local holder = CreateFrame("Frame", nil, overlay)
+	holder:SetAllPoints(button)
+	holder:Hide()
+	local glow = holder:CreateTexture(nil, "OVERLAY", nil, 2)
 	glow:SetSize(size * TA.glowScale, size * TA.glowScale)
 	glow:SetPoint("CENTER", button, "CENTER", 0, 0)
 	glow:SetBlendMode("ADD")
-	glow:SetAlpha(0)
 	options["style"] = styles.CustomAsset
 	options["customDispelAssetMap"] = assets
 	if not pcall(button.AddDispelTypeTexture, button, glow, options) then
@@ -87,6 +90,8 @@ function TA:AddGlow(host, button, overlay, size, key, options)
 
 	local entry = {
 		["texture"] = glow,
+		["frame"] = holder,
+		["host"] = host,
 		["key"] = key
 	}
 
@@ -98,6 +103,7 @@ end
 function TA:AddFallback(host, texture, key, hasGlow)
 	local entry = {
 		["texture"] = texture,
+		["host"] = host,
 		["key"] = key,
 		["hasGlow"] = hasGlow,
 		["fallback"] = true
@@ -108,7 +114,8 @@ function TA:AddFallback(host, texture, key, hasGlow)
 end
 
 function TA:UpdateGlow(entry)
-	local enabled = DarkMode:IsEnabled(entry.key, false)
+	local enabled = DarkMode:IsEnabled(entry.key, false) == true
+	if entry.key == "TARGETAURADISPELGLOW" and not entry.host.friendly then enabled = false end
 	if entry.fallback then
 		entry.texture:SetAlpha((enabled and entry.hasGlow) and 0 or 1)
 		return
@@ -116,7 +123,8 @@ function TA:UpdateGlow(entry)
 
 	local r, g, b, a = DarkMode:GetCustomColor(TA.glowColors[entry.key])
 	entry.texture:SetVertexColor(r, g, b)
-	entry.texture:SetAlpha(enabled and (a or 1) or 0)
+	entry.frame:SetAlpha((a or 1) * TA.glowStrength)
+	entry.frame:SetShown(enabled)
 end
 
 function DarkMode:UpdateTargetAuraGlows()
@@ -299,6 +307,13 @@ function TA:Configure(host)
 	host.harmful.Second = friendly
 	for _, entry in ipairs(host.buttons) do
 		TA:UpdateBorder(host, entry)
+	end
+
+	if host.friendly ~= friendly then
+		host.friendly = friendly
+		for _, entry in ipairs(host.glows) do
+			TA:UpdateGlow(entry)
+		end
 	end
 
 	local showCount = frame.showAuraCount == true
