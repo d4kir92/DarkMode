@@ -11,10 +11,10 @@ local TA = {
 	["mirroredStartY"] = -6,
 	["maxBuffs"] = 32,
 	["maxDebuffs"] = 16,
-	["dispelKeys"] = {"None", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"},
+	["dispelKeys"] = {"None", "", "Magic", "Curse", "Disease", "Poison", "Enrage", "Bleed"},
 	["glowAsset"] = "Interface\\AddOns\\DarkMode\\media\\auraglow",
-	["glowScale"] = 1.4,
-	["glowStrength"] = 0.55,
+	["glowScale"] = 1.6,
+	["glowStrength"] = 0.85,
 	["glowDefault"] = {0.2, 0.6, 1, 1},
 	["glowColors"] = {
 		["TARGETAURAPURGEGLOW"] = "CUSTOMTARGETAURAPURGEC",
@@ -63,82 +63,163 @@ function TA:Filter(...)
 	return nil
 end
 
-function TA:AddGlow(host, button, overlay, size, key, options)
-	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
-	if not styles.CustomAsset then return false end
-	DarkMode:EnsureTargetAuraGlowColors()
+function TA:CreateAssetMap(asset)
 	local assets = {}
 	for _, dispelKey in ipairs(TA.dispelKeys) do
 		assets[dispelKey] = {
-			["asset"] = TA.glowAsset
+			["asset"] = asset
 		}
 	end
 
-	local holder = CreateFrame("Frame", nil, overlay)
-	holder:SetAllPoints(button)
-	holder:Hide()
-	local glow = holder:CreateTexture(nil, "OVERLAY", nil, 2)
-	glow:SetSize(size * TA.glowScale, size * TA.glowScale)
-	glow:SetPoint("CENTER", button, "CENTER", 0, 0)
-	glow:SetBlendMode("ADD")
-	options["style"] = styles.CustomAsset
-	options["customDispelAssetMap"] = assets
-	if not pcall(button.AddDispelTypeTexture, button, glow, options) then
+	return assets
+end
+
+function TA:BuildGlowOptions(entry)
+	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
+	local opts = {
+		["style"] = styles.CustomAsset,
+		["showWhenHarmful"] = entry.baseOptions.showWhenHarmful,
+		["showWhenHelpful"] = entry.baseOptions.showWhenHelpful,
+		["showWithoutDispelType"] = entry.baseOptions.showWithoutDispelType,
+		["stealableFilter"] = entry.baseOptions.stealableFilter,
+		["customDispelAssetMap"] = entry.assets
+	}
+
+	local r, g, b, a = DarkMode:GetCustomColor(TA.glowColors[entry.key])
+	local mult = (a or 1) * TA.glowStrength
+	if CreateColor then
+		local color = CreateColor(r * mult, g * mult, b * mult)
+		local colors = {}
+		for _, dispelKey in ipairs(TA.dispelKeys) do
+			colors[dispelKey] = color
+		end
+
+		opts["customDispelColorMap"] = colors
+	end
+
+	return opts, r, g, b, mult
+end
+
+function TA:SchedulePendingGlows()
+	TA.pendingGlows = true
+	if TA.pendingFrame == nil then
+		TA.pendingFrame = CreateFrame("Frame")
+		TA.pendingFrame:SetScript("OnEvent", function(sel)
+			sel:UnregisterEvent("PLAYER_REGEN_ENABLED")
+			if TA.pendingGlows then
+				TA.pendingGlows = nil
+				DarkMode:UpdateTargetAuraGlows()
+			end
+		end)
+	end
+
+	TA.pendingFrame:RegisterEvent("PLAYER_REGEN_ENABLED")
+end
+
+function TA:ApplyGlow(entry)
+	local button = entry.button
+	local enabled = DarkMode:IsEnabled(entry.key, false) and true or false
+	if enabled and entry.glow then
+		if entry.fallback and entry.fallbackActive then
+			local okRemove = pcall(button.RemoveDispelTypeTexture, button, entry.fallback)
+			local okHide = pcall(entry.fallback.Hide, entry.fallback)
+			if not okRemove then
+				TA:SchedulePendingGlows()
+				return
+			end
+
+			entry.fallbackActive = false
+			if not okHide then TA:SchedulePendingGlows() end
+		end
+
+		if entry.glowActive then
+			if not pcall(button.RemoveDispelTypeTexture, button, entry.glow) then
+				TA:SchedulePendingGlows()
+				return
+			end
+
+			entry.glowActive = false
+		end
+
+		local opts, r, g, b, mult = TA:BuildGlowOptions(entry)
+		local ok = pcall(button.AddDispelTypeTexture, button, entry.glow, opts)
+		if not ok and opts["customDispelColorMap"] then
+			opts["customDispelColorMap"] = nil
+			ok = pcall(button.AddDispelTypeTexture, button, entry.glow, opts)
+			if ok then pcall(entry.glow.SetVertexColor, entry.glow, r, g, b, mult) end
+		end
+
+		if ok then
+			entry.glowActive = true
+		else
+			pcall(entry.glow.Hide, entry.glow)
+			TA:SchedulePendingGlows()
+		end
+	else
+		if entry.glow and entry.glowActive then
+			local okRemove = pcall(button.RemoveDispelTypeTexture, button, entry.glow)
+			local okHide = pcall(entry.glow.Hide, entry.glow)
+			if not okRemove then
+				TA:SchedulePendingGlows()
+				return
+			end
+
+			entry.glowActive = false
+			if not okHide then TA:SchedulePendingGlows() end
+		end
+
+		if entry.fallback and not entry.fallbackActive then
+			if pcall(button.AddDispelTypeTexture, button, entry.fallback, entry.fallbackOptions) then
+				entry.fallbackActive = true
+			else
+				TA:SchedulePendingGlows()
+			end
+		end
+	end
+end
+
+function TA:AddGlow(host, button, overlay, size, key, baseOptions, fallback, fallbackOptions)
+	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
+	local glow = nil
+	local assets = nil
+	if styles.CustomAsset then
+		DarkMode:EnsureTargetAuraGlowColors()
+		assets = TA:CreateAssetMap(TA.glowAsset)
+		glow = overlay:CreateTexture(nil, "OVERLAY", nil, 2)
+		glow:SetSize(size * TA.glowScale, size * TA.glowScale)
+		glow:SetPoint("CENTER", button, "CENTER", 0, 0)
+		glow:SetBlendMode("ADD")
 		glow:Hide()
-		return false
 	end
 
 	local entry = {
-		["texture"] = glow,
-		["frame"] = holder,
-		["host"] = host,
+		["button"] = button,
+		["glow"] = glow,
+		["assets"] = assets,
+		["baseOptions"] = baseOptions,
+		["fallback"] = fallback,
+		["fallbackOptions"] = fallbackOptions,
+		["glowActive"] = false,
+		["fallbackActive"] = false,
 		["key"] = key
 	}
 
 	host.glows[#host.glows + 1] = entry
-	TA:UpdateGlow(entry)
-	return true
-end
-
-function TA:AddFallback(host, texture, key, hasGlow)
-	local entry = {
-		["texture"] = texture,
-		["host"] = host,
-		["key"] = key,
-		["hasGlow"] = hasGlow,
-		["fallback"] = true
-	}
-
-	host.glows[#host.glows + 1] = entry
-	TA:UpdateGlow(entry)
-end
-
-function TA:UpdateGlow(entry)
-	local enabled = DarkMode:IsEnabled(entry.key, false) == true
-	if entry.key == "TARGETAURADISPELGLOW" and not entry.host.friendly then enabled = false end
-	if entry.fallback then
-		entry.texture:SetAlpha((enabled and entry.hasGlow) and 0 or 1)
-		return
-	end
-
-	local r, g, b, a = DarkMode:GetCustomColor(TA.glowColors[entry.key])
-	entry.texture:SetVertexColor(r, g, b)
-	entry.frame:SetAlpha((a or 1) * TA.glowStrength)
-	entry.frame:SetShown(enabled)
+	TA:ApplyGlow(entry)
 end
 
 function DarkMode:UpdateTargetAuraGlows()
 	DarkMode:EnsureTargetAuraGlowColors()
 	for _, host in pairs(TA.frames) do
 		for _, entry in ipairs(host.glows) do
-			TA:UpdateGlow(entry)
+			TA:ApplyGlow(entry)
 		end
 	end
 end
 
 function TA:UpdateBorder(host, entry)
 	local border = entry.button.dmAuraBorder
-	if border then border:SetShown(not host.harmful[entry.key]) end
+	if border then pcall(border.SetShown, border, not host.harmful[entry.key]) end
 end
 
 function TA:InitButton(host, button, size, key)
@@ -166,12 +247,6 @@ function TA:InitButton(host, button, size, key)
 	overlay:SetAllPoints(button)
 	overlay:SetFrameLevel(cooldown:GetFrameLevel() + 1)
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
-	local dispelGlow = TA:AddGlow(host, button, overlay, size, "TARGETAURADISPELGLOW", {
-		["showWhenHarmful"] = true,
-		["showWhenHelpful"] = false,
-		["showWithoutDispelType"] = false
-	})
-
 	local dispel = overlay:CreateTexture(nil, "OVERLAY")
 	dispel:SetTexture("Interface\\Buttons\\UI-Debuff-Overlays")
 	dispel:SetTexCoord(0.296875, 0.5703125, 0, 0.515625)
@@ -184,36 +259,35 @@ function TA:InitButton(host, button, size, key)
 		["showWithoutDispelType"] = true
 	})
 
-	TA:AddFallback(host, dispel, "TARGETAURADISPELGLOW", dispelGlow)
-	local purgeGlow = Enum.CustomAuraButtonDispelTypeStealableFilter and TA:AddGlow(host, button, overlay, size, "TARGETAURAPURGEGLOW", {
-		["showWhenHarmful"] = false,
-		["showWhenHelpful"] = true,
-		["showWithoutDispelType"] = true,
-		["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable
-	})
-
-	if styles.CustomAsset and Enum.CustomAuraButtonDispelTypeStealableFilter then
-		local stealable = overlay:CreateTexture(nil, "OVERLAY", nil, 1)
-		stealable:SetSize(24, 24)
-		stealable:SetPoint("CENTER", button, "CENTER", 0, 0)
-		stealable:SetBlendMode("ADD")
-		local assets = {}
-		for _, dispelKey in ipairs(TA.dispelKeys) do
-			assets[dispelKey] = {
-				["asset"] = "Interface\\TargetingFrame\\UI-TargetingFrame-Stealable"
-			}
-		end
-
-		button:AddDispelTypeTexture(stealable, {
-			["style"] = styles.CustomAsset,
-			["showWhenHarmful"] = false,
-			["showWhenHelpful"] = true,
-			["showWithoutDispelType"] = true,
-			["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable,
-			["customDispelAssetMap"] = assets
+	if key == "Second" then
+		TA:AddGlow(host, button, overlay, size, "TARGETAURADISPELGLOW", {
+			["showWhenHarmful"] = true,
+			["showWhenHelpful"] = false,
+			["showWithoutDispelType"] = false
 		})
 
-		TA:AddFallback(host, stealable, "TARGETAURAPURGEGLOW", purgeGlow)
+		if styles.CustomAsset and Enum.CustomAuraButtonDispelTypeStealableFilter then
+			local stealable = overlay:CreateTexture(nil, "OVERLAY", nil, 1)
+			stealable:SetSize(24, 24)
+			stealable:SetPoint("CENTER", button, "CENTER", 0, 0)
+			stealable:SetBlendMode("ADD")
+			stealable:Hide()
+			local stealableOptions = {
+				["style"] = styles.CustomAsset,
+				["showWhenHarmful"] = false,
+				["showWhenHelpful"] = true,
+				["showWithoutDispelType"] = true,
+				["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable,
+				["customDispelAssetMap"] = TA:CreateAssetMap("Interface\\TargetingFrame\\UI-TargetingFrame-Stealable")
+			}
+
+			TA:AddGlow(host, button, overlay, size, "TARGETAURAPURGEGLOW", {
+				["showWhenHarmful"] = false,
+				["showWhenHelpful"] = true,
+				["showWithoutDispelType"] = true,
+				["stealableFilter"] = Enum.CustomAuraButtonDispelTypeStealableFilter.Stealable
+			}, stealable, stealableOptions)
+		end
 	end
 
 	local count = overlay:CreateFontString(nil, "OVERLAY", "NumberFontNormalSmall")
@@ -309,18 +383,11 @@ function TA:Configure(host)
 		TA:UpdateBorder(host, entry)
 	end
 
-	if host.friendly ~= friendly then
-		host.friendly = friendly
-		for _, entry in ipairs(host.glows) do
-			TA:UpdateGlow(entry)
-		end
-	end
-
 	local showCount = frame.showAuraCount == true
 	if host.showCount ~= showCount then
 		host.showCount = showCount
 		for _, count in ipairs(host.counts) do
-			count:SetShown(showCount)
+			pcall(count.SetShown, count, showCount)
 		end
 	end
 
