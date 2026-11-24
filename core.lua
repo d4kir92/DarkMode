@@ -2066,7 +2066,7 @@ end
 function DarkMode:GetDragonTexture(texture)
 	if type(texture) ~= "string" then return "" end
 	local name = texture:lower():gsub("%.%a+$", ""):match("([^\\/]+)$") or ""
-	name = name:gsub("%-nomana$", ""):gsub("%-big$", ""):gsub("%-thickmana$", ""):gsub("%-thickname$", "")
+	name = name:gsub("%-nomana$", ""):gsub("%-big$", ""):gsub("%-retail$", ""):gsub("%-nolevel$", ""):gsub("%-thickmana$", ""):gsub("%-thickname$", "")
 
 	return DarkMode:GetDragonTextures()[name] or ""
 end
@@ -2481,7 +2481,9 @@ function DarkMode:Event(event, ...)
 					end
 				end
 
-				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, tex:GetTexture(), DMLiftLevelText, nil, frame == PlayerFrame and "ufdrp" or "ufdr")
+				local initialPath = tex:GetTexture()
+				if type(initialPath) ~= "string" and tex.GetTextureFilePath then initialPath = tex:GetTextureFilePath() end
+				classicFrame.dmDragon = DarkMode:AddDragonOverlay(tex, classicFrame, initialPath, DMLiftLevelText, nil, frame == PlayerFrame and "ufdrp" or "ufdr")
 				local container = frame.PlayerFrameContainer
 				if container then
 					local function DMLockPlayerElite()
@@ -2506,6 +2508,18 @@ function DarkMode:Event(event, ...)
 				hooksecurefunc(BBF, "SetClassicHDLevelRing", DMLockHDLevelRing)
 				for x, frame in pairs({PlayerFrame, TargetFrame, FocusFrame}) do
 					DMLockHDLevelRing(frame)
+				end
+			end
+
+			if type(BBF) == "table" and type(BBF.UpdateClassicHDElite) == "function" then
+				local function DMLockClassicHDElite(frame)
+					local classicFrame = frame and frame.ClassicFrame
+					if classicFrame and classicFrame.HDElite then DarkMode:LockColorType(classicFrame.HDElite, "ufdr") end
+				end
+
+				hooksecurefunc(BBF, "UpdateClassicHDElite", DMLockClassicHDElite)
+				for x, frame in pairs({TargetFrame, FocusFrame}) do
+					DMLockClassicHDElite(frame)
 				end
 			end
 
