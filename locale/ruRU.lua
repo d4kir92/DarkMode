@@ -79,6 +79,8 @@ DarkMode:AddTrans("ruRU", "LID_SHADOWACTIONBARS", "Тени для кнопок 
 DarkMode:AddTrans("ruRU", "LID_SHADOWACTIONBARS_TOOLTIP", "Использует рамку с внутренней тенью для дополнительной рамки кнопок действий.")
 DarkMode:AddTrans("ruRU", "LID_TARGETAURADISPELGLOW", "Свечение рассеиваемых дебаффов")
 DarkMode:AddTrans("ruRU", "LID_TARGETAURADISPELGLOW_TOOLTIP", "Дебаффы с типом рассеивания (магия, проклятие, болезнь, яд) у цели или фокуса получают свечение выбранного цвета вместо рамки Blizzard. Требуется перезагрузка.")
+DarkMode:AddTrans("ruRU", "LID_TARGETAURAGLOWANIMATED", "Анимация свечения")
+DarkMode:AddTrans("ruRU", "LID_TARGETAURAGLOWANIMATED_TOOLTIP", "Анимирует свечение снимаемых баффов и рассеиваемых дебаффов. Если отключено, отображается статичное свечение без анимации.")
 DarkMode:AddTrans("ruRU", "LID_TARGETAURAPURGEGLOW", "Свечение снимаемых баффов")
 DarkMode:AddTrans("ruRU", "LID_TARGETAURAPURGEGLOW_TOOLTIP", "Снимаемые или похищаемые баффы цели или фокуса получают свечение выбранного цвета вместо рамки Blizzard. Требуется перезагрузка.")
 DarkMode:AddTrans("ruRU", "LID_THINBORDERS", "Тонкие границы для кнопок действий/баффов")

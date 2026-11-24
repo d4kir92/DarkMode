@@ -79,6 +79,8 @@ DarkMode:AddTrans("ptBR", "LID_SHADOWACTIONBARS", "Sombra nos Botões de ação"
 DarkMode:AddTrans("ptBR", "LID_SHADOWACTIONBARS_TOOLTIP", "Usa uma borda com sombra interna para a borda extra dos botões de ação.")
 DarkMode:AddTrans("ptBR", "LID_TARGETAURADISPELGLOW", "Brilho de penalidades dissipáveis")
 DarkMode:AddTrans("ptBR", "LID_TARGETAURADISPELGLOW_TOOLTIP", "Penalidades com tipo de dissipação (Magia, Maldição, Doença, Veneno) do seu alvo ou foco recebem um brilho na cor escolhida em vez da borda da Blizzard. Requer recarregar.")
+DarkMode:AddTrans("ptBR", "LID_TARGETAURAGLOWANIMATED", "Brilho animado")
+DarkMode:AddTrans("ptBR", "LID_TARGETAURAGLOWANIMATED_TOOLTIP", "Anima o brilho de bônus purgáveis e penalidades dissipáveis. Quando desativado, um brilho estático sem animação é exibido.")
 DarkMode:AddTrans("ptBR", "LID_TARGETAURAPURGEGLOW", "Brilho de bônus purgáveis")
 DarkMode:AddTrans("ptBR", "LID_TARGETAURAPURGEGLOW_TOOLTIP", "Bônus purgáveis ou roubáveis do seu alvo ou foco recebem um brilho na cor escolhida em vez da borda da Blizzard. Requer recarregar.")
 DarkMode:AddTrans("ptBR", "LID_THINBORDERS", "Bordas finas para Botões de ação/Benefícios")

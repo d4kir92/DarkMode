@@ -514,12 +514,17 @@ local function DMBuildElementList()
 					return DarkMode:IsEnabled("REPLACETARGETAURAS", true)
 				end
 
+				local function IsAnyGlowEnabled()
+					return IsReplaceEnabled() and (DarkMode:IsEnabled("TARGETAURAPURGEGLOW", false) or DarkMode:IsEnabled("TARGETAURADISPELGLOW", false))
+				end
+
 				DarkMode:EnsureTargetAuraGlowColors()
 				for _, key in ipairs({"TARGETAURAPURGEGLOW", "TARGETAURADISPELGLOW"}) do
 					local cb = dmSettings:AddDependency(DMAddCheckbox(
 						key,
 						false,
 						function()
+							dmSettings:UpdateDependencies()
 							DarkMode:UpdateTargetAuraGlows()
 							DarkMode:UpdateTargetAuraPreview()
 							DMEnableSave()
@@ -528,6 +533,15 @@ local function DMBuildElementList()
 					if cb and cb.holder then dmSettings:AddDependency(DMAddColorSwatch(cb.holder, key, DarkMode:GetTargetAuraGlowColorKey(key), true, cb), IsReplaceEnabled, 0) end
 				end
 
+				local animated = dmSettings:AddDependency(DMAddCheckbox(
+					"TARGETAURAGLOWANIMATED",
+					true,
+					function()
+						DarkMode:UpdateTargetAuraGlows()
+						DarkMode:UpdateTargetAuraPreview()
+						DMEnableSave()
+					end, "2026-11-24", "LID_TARGETAURAGLOWANIMATED_TOOLTIP"), IsAnyGlowEnabled)
+				dmSettings:AddRequirement(animated, replace)
 				DarkMode:AddTargetAuraPreview(replace, IsReplaceEnabled)
 				dmSettings:UpdateDependencies()
 			end
@@ -584,7 +598,8 @@ end
 
 function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 	if dmSettings == nil or not DarkMode.UI or not DarkMode.GetTargetAuraGlowStyle then return end
-	local style = DarkMode:GetTargetAuraGlowStyle()
+	local staticStyle = DarkMode:GetTargetAuraGlowStyle(false)
+	local animStyle = DarkMode:GetTargetAuraGlowStyle(true)
 	local size = 26
 	local holder = CreateFrame("Frame", nil, dmSettings.content)
 	holder:SetSize(math.max(1, dmSettings.contentWidth - 8), 52)
@@ -595,10 +610,7 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 	local label = holder:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	label:SetPoint("LEFT", holder, "LEFT", 6, 0)
 	label:SetText(DarkMode:Trans("LID_PREVIEW"))
-	local function MakeSlot(xOffset, iconTexture, isDebuff, labelKey)
-		local box = CreateFrame("Frame", nil, holder)
-		box:SetSize(size, size)
-		box:SetPoint("LEFT", holder, "LEFT", xOffset, 0)
+	local function MakeGlow(box, style)
 		local glow = box:CreateTexture(nil, "BACKGROUND", nil, -2)
 		glow:SetSize(size * style.scale, size * style.scale)
 		glow:SetPoint("CENTER", box, "CENTER", 0, 0)
@@ -612,11 +624,26 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 		if style.desaturate then glow:SetDesaturated(true) end
 		glow:SetBlendMode("ADD")
 		glow:Hide()
-		local anim = DarkMode.AttachTargetAuraGlowAnimation and DarkMode:AttachTargetAuraGlowAnimation(box, glow, style)
-		if anim then
-			anim:Play()
-			box:HookScript("OnShow", function() if not anim:IsPlaying() then anim:Play() end end)
+		return glow
+	end
+
+	local function MakeSlot(xOffset, iconTexture, isDebuff, labelKey)
+		local box = CreateFrame("Frame", nil, holder)
+		box:SetSize(size, size)
+		box:SetPoint("LEFT", holder, "LEFT", xOffset, 0)
+		local staticGlow = MakeGlow(box, staticStyle)
+		local animGlow = nil
+		local anim = nil
+		if animStyle.isFlipbook then
+			animGlow = MakeGlow(box, animStyle)
+			anim = DarkMode.AttachTargetAuraGlowAnimation and DarkMode:AttachTargetAuraGlowAnimation(box, animGlow, animStyle)
+			if anim then
+				box:HookScript("OnShow", function()
+					if animGlow:IsShown() and not anim:IsPlaying() then anim:Play() end
+				end)
+			end
 		end
+
 		local icon = box:CreateTexture(nil, "BACKGROUND", nil, 0)
 		icon:SetAllPoints(box)
 		icon:SetTexture(iconTexture)
@@ -643,7 +670,9 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 		text:SetPoint("LEFT", box, "RIGHT", 10, 0)
 		text:SetText(DarkMode:Trans(labelKey))
 		return {
-			["glow"] = glow,
+			["staticGlow"] = staticGlow,
+			["animGlow"] = animGlow,
+			["anim"] = anim,
 			["border"] = border,
 			["stealable"] = stealable,
 			["text"] = text,
@@ -654,13 +683,14 @@ function DarkMode:AddTargetAuraPreview(replace, isReplaceEnabled)
 	local preview = {
 		["holder"] = holder,
 		["label"] = label,
-		["style"] = style,
+		["staticStyle"] = staticStyle,
+		["animStyle"] = animStyle,
 		["buff"] = MakeSlot(90, "Interface\\Icons\\Spell_Holy_WordFortitude", false, "LID_BUFF"),
 		["debuff"] = MakeSlot(185, "Interface\\Icons\\Spell_Shadow_ShadowWordPain", true, "LID_DEBUFF")
 	}
 
 	dmSettings.dmAuraPreview = preview
-	DarkMode.UI:Add(dmSettings, holder, 52, DarkMode:Trans("LID_PREVIEW"), true, "TARGETAURAPURGEGLOW TARGETAURADISPELGLOW PREVIEW")
+	DarkMode.UI:Add(dmSettings, holder, 52, DarkMode:Trans("LID_PREVIEW"), true, "TARGETAURAPURGEGLOW TARGETAURADISPELGLOW TARGETAURAGLOWANIMATED PREVIEW")
 	dmSettings:AddDependency(holder, isReplaceEnabled)
 	dmSettings:AddRequirement(holder, replace)
 end
@@ -668,15 +698,32 @@ end
 function DarkMode:UpdateTargetAuraPreview()
 	if dmSettings == nil or dmSettings.dmAuraPreview == nil then return end
 	local preview = dmSettings.dmAuraPreview
-	local style = preview.style
+	local animated = DarkMode.IsTargetAuraGlowAnimated and DarkMode:IsTargetAuraGlowAnimated() or false
 	preview.label:SetText(DarkMode:Trans("LID_PREVIEW"))
 	preview.buff.text:SetText(DarkMode:Trans(preview.buff.labelKey))
 	preview.debuff.text:SetText(DarkMode:Trans(preview.debuff.labelKey))
+	local function ApplySlotGlow(slot, key, on)
+		local r, g, b, a = DarkMode:GetCustomColor(DarkMode:GetTargetAuraGlowColorKey(key))
+		local useAnim = animated and slot.animGlow ~= nil
+		local sm = (a or 1) * (preview.staticStyle.strength or 1)
+		slot.staticGlow:SetVertexColor(r * sm, g * sm, b * sm, 1)
+		slot.staticGlow:SetShown(on and not useAnim)
+		if slot.animGlow then
+			local am = (a or 1) * (preview.animStyle.strength or 1)
+			slot.animGlow:SetVertexColor(r * am, g * am, b * am, 1)
+			slot.animGlow:SetShown(on and useAnim)
+			if slot.anim then
+				if on and useAnim then
+					if not slot.anim:IsPlaying() then slot.anim:Play() end
+				elseif slot.anim:IsPlaying() then
+					slot.anim:Stop()
+				end
+			end
+		end
+	end
+
 	local purgeOn = DarkMode:IsEnabled("TARGETAURAPURGEGLOW", false) and true or false
-	local pr, pg, pb, pa = DarkMode:GetCustomColor(DarkMode:GetTargetAuraGlowColorKey("TARGETAURAPURGEGLOW"))
-	local pm = (pa or 1) * (style.strength or 1)
-	preview.buff.glow:SetVertexColor(pr * pm, pg * pm, pb * pm, 1)
-	preview.buff.glow:SetShown(purgeOn)
+	ApplySlotGlow(preview.buff, "TARGETAURAPURGEGLOW", purgeOn)
 	if preview.buff.stealable then preview.buff.stealable:SetShown(not purgeOn) end
 	local showBorder = DarkMode:IsEnabled("MASKBUFFSANDDEBUFFS", true) and true or false
 	local thin = DarkMode:IsEnabled("THINBORDERS", false)
@@ -690,10 +737,7 @@ function DarkMode:UpdateTargetAuraPreview()
 
 	preview.buff.border:SetShown(showBorder)
 	local dispelOn = DarkMode:IsEnabled("TARGETAURADISPELGLOW", false) and true or false
-	local dr, dg, db, da = DarkMode:GetCustomColor(DarkMode:GetTargetAuraGlowColorKey("TARGETAURADISPELGLOW"))
-	local dm = (da or 1) * (style.strength or 1)
-	preview.debuff.glow:SetVertexColor(dr * dm, dg * dm, db * dm, 1)
-	preview.debuff.glow:SetShown(dispelOn)
+	ApplySlotGlow(preview.debuff, "TARGETAURADISPELGLOW", dispelOn)
 end
 
 function DarkMode:RefreshLanguage()

@@ -79,6 +79,8 @@ DarkMode:AddTrans("esES", "LID_SHADOWACTIONBARS", "Sombra en los Botones de acci
 DarkMode:AddTrans("esES", "LID_SHADOWACTIONBARS_TOOLTIP", "Usa un borde con sombra interior para el borde adicional de los botones de acción.")
 DarkMode:AddTrans("esES", "LID_TARGETAURADISPELGLOW", "Brillo de perjuicios disipables")
 DarkMode:AddTrans("esES", "LID_TARGETAURADISPELGLOW_TOOLTIP", "Los perjuicios con tipo de disipación (Magia, Maldición, Enfermedad, Veneno) de tu objetivo o foco reciben un brillo del color elegido en lugar del borde de Blizzard. Requiere recargar.")
+DarkMode:AddTrans("esES", "LID_TARGETAURAGLOWANIMATED", "Brillo animado")
+DarkMode:AddTrans("esES", "LID_TARGETAURAGLOWANIMATED_TOOLTIP", "Anima el brillo de los beneficios purgables y perjuicios disipables. Si está desactivado, se muestra un brillo estático sin animación.")
 DarkMode:AddTrans("esES", "LID_TARGETAURAPURGEGLOW", "Brillo de beneficios purgables")
 DarkMode:AddTrans("esES", "LID_TARGETAURAPURGEGLOW_TOOLTIP", "Los beneficios purgables o robables de tu objetivo o foco reciben un brillo del color elegido en lugar del borde de Blizzard. Requiere recargar.")
 DarkMode:AddTrans("esES", "LID_THINBORDERS", "Bordes finos para Botones de acción/Beneficios")

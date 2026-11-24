@@ -77,9 +77,14 @@ function TA:Filter(...)
 	return nil
 end
 
-function DarkMode:GetTargetAuraGlowStyle()
+function DarkMode:IsTargetAuraGlowAnimated()
+	return DarkMode:IsEnabled("TARGETAURAGLOWANIMATED", true) and true or false
+end
+
+function DarkMode:GetTargetAuraGlowStyle(animated)
+	if animated == nil then animated = DarkMode:IsTargetAuraGlowAnimated() end
 	if C_Texture and C_Texture.GetAtlasInfo then
-		if C_Texture.GetAtlasInfo(TA.glowFlipbookAtlas) then
+		if animated and C_Texture.GetAtlasInfo(TA.glowFlipbookAtlas) then
 			return {
 				["asset"] = TA.glowFlipbookAtlas,
 				["isAtlas"] = true,
@@ -155,9 +160,9 @@ function TA:CreateColorMap(r, g, b)
 	return colors
 end
 
-function TA:BuildGlowOptions(entry)
+function TA:BuildGlowOptions(entry, useAnim)
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
-	local usePreserve = entry.style and entry.style.isFlipbook and styles.PreserveAsset ~= nil
+	local usePreserve = useAnim and entry.animStyle and entry.animStyle.isFlipbook and styles.PreserveAsset ~= nil
 	local opts = {
 		["style"] = usePreserve and styles.PreserveAsset or styles.CustomAsset,
 		["showWhenHarmful"] = entry.baseOptions.showWhenHarmful,
@@ -166,7 +171,7 @@ function TA:BuildGlowOptions(entry)
 		["stealableFilter"] = entry.baseOptions.stealableFilter
 	}
 
-	if not usePreserve then opts["customDispelAssetMap"] = entry.assets end
+	if not usePreserve then opts["customDispelAssetMap"] = entry.staticAssets end
 	local r, g, b, a = DarkMode:GetCustomColor(TA.glowColors[entry.key])
 	local mult = (a or 1) * TA.glowStrength
 	local colors = TA:CreateColorMap(r * mult, g * mult, b * mult)
@@ -248,10 +253,30 @@ function DarkMode:UpdateTargetAuraBorders()
 	end
 end
 
+function TA:CreateGlowTexture(button, size, style)
+	local glow = button:CreateTexture(nil, "BACKGROUND", nil, -2)
+	glow:SetSize(size * style.scale, size * style.scale)
+	glow:SetPoint("CENTER", button, "CENTER", 0, 0)
+	if style.isAtlas then
+		glow:SetAtlas(style.asset, false)
+	else
+		glow:SetTexture(style.asset)
+		if style.texCoords then glow:SetTexCoord(style.texCoords.left, style.texCoords.right, style.texCoords.top, style.texCoords.bottom) end
+	end
+
+	if style.desaturate then glow:SetDesaturated(true) end
+	glow:SetBlendMode("ADD")
+	glow:Hide()
+	return glow
+end
+
 function TA:ApplyGlow(entry)
 	local button = entry.button
 	local enabled = DarkMode:IsEnabled(entry.key, false) and true or false
-	if enabled and entry.glow then
+	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
+	local useAnim = DarkMode:IsTargetAuraGlowAnimated() and entry.animGlow ~= nil and styles and styles.PreserveAsset ~= nil
+	local targetGlow = useAnim and entry.animGlow or entry.staticGlow
+	if enabled and targetGlow then
 		if entry.fallback and entry.fallbackActive then
 			local okRemove = pcall(button.RemoveDispelTypeTexture, button, entry.fallback)
 			local okHide = pcall(entry.fallback.Hide, entry.fallback)
@@ -264,39 +289,43 @@ function TA:ApplyGlow(entry)
 			if not okHide then TA:SchedulePendingGlows() end
 		end
 
-		if entry.glowActive then
-			if not pcall(button.RemoveDispelTypeTexture, button, entry.glow) then
-				TA:SchedulePendingGlows()
-				return
-			end
-
-			entry.glowActive = false
-		end
-
-		local opts, r, g, b, mult = TA:BuildGlowOptions(entry)
-		local ok = pcall(button.AddDispelTypeTexture, button, entry.glow, opts)
-		if not ok and opts["customDispelColorMap"] then
-			opts["customDispelColorMap"] = nil
-			ok = pcall(button.AddDispelTypeTexture, button, entry.glow, opts)
-			if ok then pcall(entry.glow.SetVertexColor, entry.glow, r, g, b, mult) end
-		end
-
-		if ok then
-			entry.glowActive = true
-		else
-			pcall(entry.glow.Hide, entry.glow)
-			TA:SchedulePendingGlows()
-		end
-	else
-		if entry.glow and entry.glowActive then
-			local okRemove = pcall(button.RemoveDispelTypeTexture, button, entry.glow)
-			local okHide = pcall(entry.glow.Hide, entry.glow)
+		if entry.activeGlow then
+			local oldGlow = entry.activeGlow
+			local okRemove = pcall(button.RemoveDispelTypeTexture, button, oldGlow)
 			if not okRemove then
 				TA:SchedulePendingGlows()
 				return
 			end
 
-			entry.glowActive = false
+			entry.activeGlow = nil
+			if oldGlow ~= targetGlow and not pcall(oldGlow.Hide, oldGlow) then TA:SchedulePendingGlows() end
+		end
+
+		local opts, r, g, b, mult = TA:BuildGlowOptions(entry, useAnim)
+		local ok = pcall(button.AddDispelTypeTexture, button, targetGlow, opts)
+		if not ok and opts["customDispelColorMap"] then
+			opts["customDispelColorMap"] = nil
+			ok = pcall(button.AddDispelTypeTexture, button, targetGlow, opts)
+			if ok then pcall(targetGlow.SetVertexColor, targetGlow, r, g, b, mult) end
+		end
+
+		if ok then
+			entry.activeGlow = targetGlow
+		else
+			pcall(targetGlow.Hide, targetGlow)
+			TA:SchedulePendingGlows()
+		end
+	else
+		if entry.activeGlow then
+			local oldGlow = entry.activeGlow
+			local okRemove = pcall(button.RemoveDispelTypeTexture, button, oldGlow)
+			local okHide = pcall(oldGlow.Hide, oldGlow)
+			if not okRemove then
+				TA:SchedulePendingGlows()
+				return
+			end
+
+			entry.activeGlow = nil
 			if not okHide then TA:SchedulePendingGlows() end
 		end
 
@@ -312,41 +341,39 @@ end
 
 function TA:AddGlow(host, button, size, key, baseOptions, fallback, fallbackOptions)
 	local styles = Enum.CustomAuraButtonDispelTypeTextureStyle
-	local glow = nil
-	local assets = nil
-	local style = nil
+	local staticGlow = nil
+	local staticStyle = nil
+	local staticAssets = nil
+	local animGlow = nil
+	local animStyle = nil
 	if styles.CustomAsset then
 		DarkMode:EnsureTargetAuraGlowColors()
-		style = DarkMode:GetTargetAuraGlowStyle()
-		assets = TA:CreateAssetMap(style.asset, style.texCoords)
-		glow = button:CreateTexture(nil, "BACKGROUND", nil, -2)
-		glow:SetSize(size * style.scale, size * style.scale)
-		glow:SetPoint("CENTER", button, "CENTER", 0, 0)
-		if style.isAtlas then
-			glow:SetAtlas(style.asset, false)
-		else
-			glow:SetTexture(style.asset)
-		end
-
-		if style.desaturate then glow:SetDesaturated(true) end
-		glow:SetBlendMode("ADD")
-		glow:Hide()
-		local anim = DarkMode:AttachTargetAuraGlowAnimation(button, glow, style)
-		if anim then
-			local ok = type(button.AddAuraShownAnimation) == "function" and pcall(button.AddAuraShownAnimation, button, anim)
-			if not ok then anim:Play() end
+		staticStyle = DarkMode:GetTargetAuraGlowStyle(false)
+		staticAssets = TA:CreateAssetMap(staticStyle.asset, staticStyle.texCoords)
+		staticGlow = TA:CreateGlowTexture(button, size, staticStyle)
+		local flipStyle = DarkMode:GetTargetAuraGlowStyle(true)
+		if flipStyle.isFlipbook then
+			animStyle = flipStyle
+			animGlow = TA:CreateGlowTexture(button, size, animStyle)
+			local anim = DarkMode:AttachTargetAuraGlowAnimation(button, animGlow, animStyle)
+			if anim then
+				local ok = type(button.AddAuraShownAnimation) == "function" and pcall(button.AddAuraShownAnimation, button, anim)
+				if not ok then anim:Play() end
+			end
 		end
 	end
 
 	local entry = {
 		["button"] = button,
-		["glow"] = glow,
-		["style"] = style,
-		["assets"] = assets,
+		["staticGlow"] = staticGlow,
+		["staticStyle"] = staticStyle,
+		["staticAssets"] = staticAssets,
+		["animGlow"] = animGlow,
+		["animStyle"] = animStyle,
+		["activeGlow"] = nil,
 		["baseOptions"] = baseOptions,
 		["fallback"] = fallback,
 		["fallbackOptions"] = fallbackOptions,
-		["glowActive"] = false,
 		["fallbackActive"] = false,
 		["key"] = key
 	}

@@ -79,6 +79,8 @@ DarkMode:AddTrans("frFR", "LID_SHADOWACTIONBARS", "Ombre sur les Boutons d'actio
 DarkMode:AddTrans("frFR", "LID_SHADOWACTIONBARS_TOOLTIP", "Utilise une bordure avec une ombre intérieure pour la bordure supplémentaire des boutons d'action.")
 DarkMode:AddTrans("frFR", "LID_TARGETAURADISPELGLOW", "Lueur des affaiblissements dissipables")
 DarkMode:AddTrans("frFR", "LID_TARGETAURADISPELGLOW_TOOLTIP", "Les affaiblissements avec un type de dissipation (Magie, Malédiction, Maladie, Poison) de votre cible ou focalisation reçoivent une lueur de la couleur choisie au lieu de la bordure Blizzard. Nécessite un rechargement.")
+DarkMode:AddTrans("frFR", "LID_TARGETAURAGLOWANIMATED", "Lueur animée")
+DarkMode:AddTrans("frFR", "LID_TARGETAURAGLOWANIMATED_TOOLTIP", "Anime la lueur des améliorations purgeables et des affaiblissements dissipables. Lorsque désactivé, une lueur statique sans animation est affichée.")
 DarkMode:AddTrans("frFR", "LID_TARGETAURAPURGEGLOW", "Lueur des améliorations purgeables")
 DarkMode:AddTrans("frFR", "LID_TARGETAURAPURGEGLOW_TOOLTIP", "Les améliorations purgeables ou volables de votre cible ou focalisation reçoivent une lueur de la couleur choisie au lieu de la bordure Blizzard. Nécessite un rechargement.")
 DarkMode:AddTrans("frFR", "LID_THINBORDERS", "Bordures fines pour les Boutons d'action/Bienfaits")
